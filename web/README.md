@@ -1,3 +1,18 @@
+## Getting Started
+
+Make sure you have `yarn`, `docker`, `docker-compose` and `make` installed.
+
+To run the front end server, use `make start`. It's going to take a while
+when you first run this, as it's building the Docker image from scratch. 
+Subsequent runs will be much faster.
+
+The container runs in detached mode, meaning the output will not be printed
+to the current terminal. So to read the logs, run `make logs`.
+
+Use `make down` to stop the container.
+
+
+## CRA Notes
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
