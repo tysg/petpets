@@ -1,8 +1,8 @@
 start: 
-	docker-compose up -d --build
+	docker-compose -f ./../docker-compose.yml up -d --build web
 
 logs: 
-	docker-compose logs -f web 
+	docker-compose -f ./../docker-compose.yml logs -f web
 
 stop:
-	docker-compose down
+	docker-compose -f ./../docker-compose.yml down
