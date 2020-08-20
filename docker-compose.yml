@@ -1,8 +1,10 @@
 version: "3.7"
 
+# for development
 services:
   app:
     container_name: app
+    image: cs2102_app:dev
     build:
       context: .
       dockerfile: Dockerfile
