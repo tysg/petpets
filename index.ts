@@ -1,10 +1,12 @@
 import express from "express";
+import { apiRouter } from "./routes/api";
+
 import * as path from "path";
 
 const app = express();
 const PORT = 8000;
 
-app.get("/api", (req, res) => res.send("Expressss + TypeScript Server"));
+app.use("/api", apiRouter);
 
 app.use(express.static(path.join(__dirname, "web", "build")));
 app.get("/*", function (req, res) {

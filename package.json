@@ -9,7 +9,7 @@
     "web"
   ],
   "scripts": {
-    "start": "nodemon index.ts",
+    "start": "nodemon index.ts --ignore web/",
     "start-prod": "ts-node index.ts"
   },
   "dependencies": {

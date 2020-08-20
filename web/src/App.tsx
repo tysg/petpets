@@ -1,8 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import axios from "axios";
+
+async function ping(): Promise<string> {
+  return (await axios.get("api/ping")).data;
+}
 
 function App() {
+  const [isReceived, setIsReceived] = useState(false);
+  useEffect(() => {
+    (async () => {
+      const res = await ping();
+      if (res === "pong") {
+        setIsReceived(true);
+      }
+    })();
+  }, []);
   return (
     <div className="App">
       <header className="App-header">
@@ -16,7 +30,8 @@ function App() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React and tested. yess
+          Learn React.
+          {isReceived ? "Backend doesn't work" : "backend works!!"}
         </a>
       </header>
     </div>
