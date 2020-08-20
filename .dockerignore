@@ -1,5 +1,8 @@
 node_modules
-build
+
+web/node_modules
+web/build
+
 .dockerignore
 Dockerfile
 Dockerfile.prod

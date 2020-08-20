@@ -4,11 +4,11 @@
     "module": "commonjs",
     "allowJs": true,
     "checkJs": true,
-    "outDir": "./build",
     "rootDir": "./",
     "strict": true /* Enable all strict type-checking options. */,
     "esModuleInterop": true,
     "skipLibCheck": true /* Skip type checking of declaration files. */,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
-  }
+  },
+  "exclude": ["node_modules", "web"]
 }
