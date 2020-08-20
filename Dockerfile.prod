@@ -14,10 +14,12 @@ RUN yarn install
 # install app dependencies
 COPY web/package.json ./web/
 COPY web/yarn.lock ./web/
-RUN yarn --cwd "web" install 
+RUN yarn --cwd "web" install
 
 # add app
 COPY . ./
 
+RUN yarn --cwd "web" build
+
 # start app
-CMD ["yarn", "start"]
+CMD ["yarn", "start-prod"]
