@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "./",
+    "web"
+  ],
   "scripts": {
     "start": "nodemon index.ts",
     "start-prod": "ts-node index.ts"
