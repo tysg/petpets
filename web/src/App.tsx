@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { HashRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { Layout } from "antd";
 import logo from "./logo.svg";
+import Login from "./login/Login";
 import "./App.css";
 import axios from "axios";
 
@@ -7,7 +10,7 @@ async function ping(): Promise<string> {
   return (await axios.get("api/ping")).data;
 }
 
-function App() {
+function Landing() {
   const [isReceived, setIsReceived] = useState(false);
   useEffect(() => {
     (async () => {
@@ -19,6 +22,7 @@ function App() {
   }, []);
   return (
     <div className="App">
+      <Link to="/login">Login</Link>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -37,5 +41,16 @@ function App() {
     </div>
   );
 }
+
+const App = () => {
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Landing}></Route>
+        <Route exact path="/login" component={Login}></Route>
+      </Switch>
+    </Router>
+  );
+};
 
 export default App;
