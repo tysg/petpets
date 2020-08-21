@@ -19,7 +19,7 @@ services:
   db:
     image: postgres:12.3-alpine
     volumes:
-      - ./pg_data:/var/lib/postgresql/data # persists db data locally
+      - pg_data:/var/lib/postgresql/data # persists db data as a Docker volumn
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin
