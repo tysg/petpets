@@ -10,7 +10,10 @@
   ],
   "scripts": {
     "start": "nodemon index.ts --ignore web/",
-    "start-prod": "ts-node index.ts"
+    "start-prod": "ts-node index.ts",
+    "up": "docker-compose up -d --build",
+    "logs": "docker-compose logs -f app",
+    "down": "docker-compose down"
   },
   "dependencies": {
     "express": "^4.17.1"

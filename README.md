@@ -7,7 +7,7 @@ Recommended node v14.8.0 for development, as this is the one used by production.
 
 ## Prerequisites
 
-Make sure you have `yarn`, `docker`, `docker-compose` and `make` installed.
+Make sure you have `yarn`, `docker`, `docker-compose` installed.
 
 Run `yarn install` to install dependencies for both front and back end.
 
@@ -21,14 +21,14 @@ Go inside the `web` folder, and `yarn start` the development server.
 ### Back-end dev
 
 The backend API and database run on Docker containers. In the root folder,
-run `make up`. It will spawn a Node server, a PostgreSQL server.
+run `yarn up`. It will spawn a Node server, a PostgreSQL server.
 
 The container runs in detached mode, meaning the output will not be printed
-to the current terminal. So to read the logs, run `make logs`.
+to the current terminal. So to read the logs, run `yarn logs`.
 
 The SQL server is available at port 5433, and the Express server runs on port 8000.
 
-Use `make down` to stop the containers.
+Use `yarn down` to stop the containers.
 
 ## Adding Dependencies
 
