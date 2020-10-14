@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { HashRouter as Router, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import logo from "./logo.svg";
 import Login from "./login/Login";
 import "./App.css";
@@ -44,7 +44,8 @@ const App = () => {
     <Router>
       <Switch>
         <Route exact path="/" component={Landing}></Route>
-        <Route exact path="/login" component={Login}></Route>
+        <Route path="/login" component={Login}></Route>
+        <Route path="/dashboard" component={Landing}></Route>
       </Switch>
     </Router>
   );

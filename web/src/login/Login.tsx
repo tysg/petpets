@@ -2,12 +2,14 @@ import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import { Store } from "antd/lib/form/interface";
 import axios from "axios";
+import { RouteComponentProps } from "react-router-dom";
 
-const Login = () => {
+const Login = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
     axios
-      .post("localhost:8000/login", values)
+      .post("api/login", values)
       .then((res) => console.log(res))
+      .then((res) => props.history.push("/dashboard"))
       .catch((err) => console.log(err));
   };
   const onFail = (values: Store) => console.log(values);
