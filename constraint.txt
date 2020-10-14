@@ -1,0 +1,28 @@
+These constraints include, but not limited to:
+1. Each Use r must have a user ID, account and password 
+2. PCS Administrator has an account and password 
+3. A User should be either a Pet Owner or a Care Taker , or both 
+4. Each Pet must have a pet ID, and belongs to one category that is identified by the category name
+5. Each Care Taker should be either a full-time or a part-time employee 
+6. Each Care Taker should minimally state the days they are available, the kind of pets they can take care and their daily price for each kind of Pet
+7. A Care Taker should not take care of Pet they cannot care for 
+8. A Care Taker may take care of more than one Pet at any given time 
+9. Both the Pet Owner and Care Taker should agree on how to transfer the Pet , which can only be one of the following three: 
+	a. Pet Owner deliver 
+	b. Care Taker pick up 
+	c. Transfer through the physical building of PCS administrator
+10. Full-time Care Takers cannot be on leave if taking care of at least 1 Pet 
+11. Care Taker can only take care of at most 5 Pet at any time regardless of rating 
+12. Care Taker can only provide availability for the current year and the next 
+13. Part-time Care Taker can only take care of at most 2 Pet unless he has a rating of at least 4
+14. A Pet Owner can only bid at least the base daily price set by the PCS administrator for any Full-time Care Taker
+15. A Full-time Care Taker will receive a salary of $3000 per month for the first 60 pet-days (number of pets taken care of for how many days). They will receive 80% of their price from any excess pet-day
+16. A Part-time Care Taker will take only 75% of their price as payment 
+17. The rating of Feedback is an integer of no less than 1 and no more than 5 
+18. Care Taker ’s rating is a floating point number between 1 and 5. 
+19. Transaction payment method can only be credit card or cash
+20. Full-time Care Taker must work a minimum of 2 times 150 consecutive days a year 
+
+ER primary keys: All primary keys are UUIDs, no serial types were involved in the creation of this ER diagram.
+Note:
+We have an ID attribute for the majority of the entities. The ID doesn’t need to be a serial type, it could be a UUID as well. These IDs will act as the primary key of the table to uniquely identify a tuple.

@@ -4,7 +4,7 @@ import { apiRouter } from "./routes/api";
 import * as path from "path";
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT ?? 8000;
 
 app.use("/api", apiRouter);
 
