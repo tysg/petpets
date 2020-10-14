@@ -29,6 +29,13 @@
   color: #61dafb;
 }
 
+.App-link-green {
+  color: greenyellow;
+}
+
+.App-link-red {
+  color: red;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

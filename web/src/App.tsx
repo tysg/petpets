@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { HashRouter as Router, Route, Switch, Link } from "react-router-dom";
-import { Layout } from "antd";
 import logo from "./logo.svg";
 import Login from "./login/Login";
 import "./App.css";
 import axios from "axios";
 
-async function ping(): Promise<string> {
-  return (await axios.get("api/ping")).data;
+async function ping(): Promise<boolean> {
+  const reply = (await axios.get("api/ping")).data;
+  return reply === "PONG";
 }
 
 function Landing() {
@@ -15,9 +15,7 @@ function Landing() {
   useEffect(() => {
     (async () => {
       const res = await ping();
-      if (res === "pong") {
-        setIsReceived(true);
-      }
+      setIsReceived(res);
     })();
   }, []);
   return (
@@ -29,13 +27,12 @@ function Landing() {
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <a
-          className="App-link"
+          className={isReceived ? "App-link-green" : "App-link-red"}
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React.
-          {isReceived ? "Backend doesn't work" : "backend works!!"}
+          Backend is {isReceived ? "online!" : "offline!"}
         </a>
       </header>
     </div>

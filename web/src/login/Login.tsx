@@ -1,14 +1,26 @@
 import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
+import { Store } from "antd/lib/form/interface";
 import axios from "axios";
 
 const Login = () => {
-  const onFinish = (values: any) => console.log(values);
+  const onFinish = (values: Store) => {
+    axios
+      .post("localhost:8000/login", values)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+  const onFail = (values: Store) => console.log(values);
 
   // const a = 4;
 
   return (
-    <Form name="basic" initialValues={{ remember: true }} onFinish={onFinish}>
+    <Form
+      name="basic"
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      onFinishFailed={onFail}
+    >
       <Form.Item
         label="Username"
         name="username"

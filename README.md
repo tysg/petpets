@@ -3,6 +3,8 @@
 Project repo for CS2102 Intro to Database Management Systems.
 Recommended node v14.8.0 for development, as this is the one used by production.
 
+Application website resides [here](https://cs2102-proj.herokuapp.com/)
+
 # Getting Started
 
 ## Prerequisites
