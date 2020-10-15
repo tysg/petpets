@@ -8,7 +8,7 @@ const Login = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
     axios
       .post("api/login", values)
-      .then((res) => console.log(res))
+      // .then((res) => console.log(res))
       .then((res) => props.history.push("/dashboard"))
       .catch((err) => console.log(err));
   };
