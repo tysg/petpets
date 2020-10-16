@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import logo from "./logo.svg";
-import Login from "./login/Login";
+import LoginOrSignUp from "./login/Login";
 import "./App.css";
 import axios from "axios";
 
@@ -20,7 +20,6 @@ function Landing() {
   }, []);
   return (
     <div className="App">
-      <Link to="/login">Login</Link>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -35,6 +34,7 @@ function Landing() {
           Backend is {isReceived ? "online!" : "offline!"}
         </a>
       </header>
+      <Link to="/login">Login</Link>
     </div>
   );
 }
@@ -44,7 +44,7 @@ const App = () => {
     <Router>
       <Switch>
         <Route exact path="/" component={Landing}></Route>
-        <Route path="/login" component={Login}></Route>
+        <Route path="/login" component={LoginOrSignUp}></Route>
         <Route path="/dashboard" component={Landing}></Route>
       </Switch>
     </Router>
