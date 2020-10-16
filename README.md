@@ -47,3 +47,23 @@ It uses a different Dockerfile for deployment. The production container builds t
 application, and servers both the front and back end through a single Express server.
 
 It (may) use Heroku's hosted SQL server instead of another container.
+
+
+## Database Connection
+
+Check if PostgreSQL's docker container is running with `docker ps`.
+
+Make sure that you have the PostgreSQL client `psql` installed.
+
+Run `psql -h localhost -p 5433 -U postgres -d cs2102_project` to connect to the database, you are now in the `cs2102_project` database.
+
+`\l` shows all the databases on the server.
+
+`\c [DATABASE]` changes the current workspace to that database.
+
+`\d` shows all the relations (tables) in the database.
+
+`\i [file]` runs the specified SQL file
+
+
+
