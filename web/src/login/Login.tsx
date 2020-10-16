@@ -130,7 +130,7 @@ const contentList: ContentInterface = {
 };
 
 const LoginOrSignUp = (props: RouteComponentProps) => {
-  const [key, setKey] = useState("signup");
+  const [key, setKey] = useState("login");
   const onTabChange = (key: string) => setKey(key);
   return (
     <Card tabList={tabList} activeTabKey={key} onTabChange={onTabChange}>
