@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Card, Alert, InputNumber } from "antd";
+import { Form, Input, Button, Card, Alert } from "antd";
 import { Store } from "antd/lib/form/interface";
 import axios from "axios";
 import { RouteComponentProps } from "react-router-dom";
@@ -7,11 +7,12 @@ import { NewUser } from "../../../models/userModel";
 
 const SignUp = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
+    const { username, password, address, phone, email } = values;
+    const newUserData: NewUser = { username, password, address, phone, email };
     axios
-      .post("/api/signup", values)
+      .post("/api/signup", newUserData)
       .then((res) => props.history.push("/dashboard"))
       .catch((err) => {
-        console.log(err);
         setAuthfail(true);
         setErrMsg(err.response.data.errorMessage);
       });
@@ -93,7 +94,6 @@ const SignUp = (props: RouteComponentProps) => {
           }),
         ]}
       >
-        {/* <InputNumber min={0} max={99999999} /> */}
         <Input />
       </Form.Item>
       <Form.Item
@@ -115,7 +115,6 @@ const SignUp = (props: RouteComponentProps) => {
 
 const Login = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
-    console.log("Received values of form: ", values);
     axios
       .post("api/login", values)
       .then((res) => props.history.push("/dashboard"))
