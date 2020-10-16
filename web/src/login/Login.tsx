@@ -7,8 +7,15 @@ import { NewUser } from "../../../models/userModel";
 
 const SignUp = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
-    const { username, password, address, phone, email } = values;
-    const newUserData: NewUser = { username, password, address, phone, email };
+    const { username, password, address, phone, email, avatarUrl } = values;
+    const newUserData: NewUser = {
+      username,
+      password,
+      address,
+      phone,
+      email,
+      avatarUrl,
+    };
     axios
       .post("/api/signup", newUserData)
       .then((res) => props.history.push("/dashboard"))
@@ -100,6 +107,15 @@ const SignUp = (props: RouteComponentProps) => {
         name="address"
         label="Home Address"
         rules={[{ required: true, message: "Please input your home address!" }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="avatarUrl"
+        label="Gravatar Link"
+        rules={[
+          { required: true, message: "Please give a link to your avatar!" },
+        ]}
       >
         <Input />
       </Form.Item>
