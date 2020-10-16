@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Checkbox, Card } from "antd";
+import { Form, Input, Button, Card, Alert } from "antd";
 import { Store } from "antd/lib/form/interface";
 import axios from "axios";
 import { RouteComponentProps } from "react-router-dom";
@@ -9,9 +9,14 @@ const SignUp = (props: RouteComponentProps) => {
     axios
       .post("/api/signup", values)
       .then((res) => props.history.push("/dashboard"))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        // setAuthfail(true);
+      });
   };
   const onFail = (values: Store) => console.log(values);
+  const [authfail, setAuthfail] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
   return (
     <Form onFinish={onFinish} onFinishFailed={onFail}>
@@ -66,9 +71,15 @@ const Login = (props: RouteComponentProps) => {
     axios
       .post("api/login", values)
       .then((res) => props.history.push("/dashboard"))
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err.response);
+        setErrMsg(err.response.data.errorMessage);
+        setAuthfail(true);
+      });
   };
   const onFail = (values: Store) => console.log(values);
+  const [authfail, setAuthfail] = useState(false);
+  const [errMsg, setErrMsg] = useState("");
 
   // const a = 4;
 
@@ -93,6 +104,7 @@ const Login = (props: RouteComponentProps) => {
           Submit
         </Button>
       </Form.Item>
+      {authfail && <Alert type="error" message={errMsg}></Alert>}
     </Form>
   );
 };
@@ -118,7 +130,7 @@ const contentList: ContentInterface = {
 };
 
 const LoginOrSignUp = (props: RouteComponentProps) => {
-  const [key, setKey] = useState("login");
+  const [key, setKey] = useState("signup");
   const onTabChange = (key: string) => setKey(key);
   return (
     <Card tabList={tabList} activeTabKey={key} onTabChange={onTabChange}>

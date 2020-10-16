@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import logo from "./logo.svg";
+import logo from "./assets/logo.png";
 import LoginOrSignUp from "./login/Login";
 import "./App.css";
 import axios from "axios";
@@ -18,13 +18,12 @@ function Landing() {
       setIsReceived(res);
     })();
   }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
+        <p>At Petpets Daycare, we care!</p>
         <a
           className={isReceived ? "App-link-green" : "App-link-red"}
           href="https://reactjs.org"
@@ -33,8 +32,8 @@ function Landing() {
         >
           Backend is {isReceived ? "online!" : "offline!"}
         </a>
+        <Link to="/login">Login</Link>
       </header>
-      <Link to="/login">Login</Link>
     </div>
   );
 }
