@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import puppies from "./puppies.jpg";
-import Login from "./login/Login";
+import LoginOrSignUp from "./login/Login";
 import "./App.css";
 import axios from "axios";
 
