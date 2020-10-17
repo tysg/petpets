@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import logo from "./logo.svg";
+import puppies from "./puppies.jpg";
 import Login from "./login/Login";
 import "./App.css";
 import axios from "axios";
@@ -20,19 +20,18 @@ function Landing() {
   }, []);
   return (
     <div className="App">
-      <Link to="/login">Login</Link>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={puppies} className="App-background" alt="" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Welcome to Petpets!
         </p>
         <a
-          className={isReceived ? "App-link-green" : "App-link-red"}
-          href="https://reactjs.org"
+          className={isReceived ? "App-link-green" : "App-link-blue"}
+          href="/login"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Backend is {isReceived ? "online!" : "offline!"}
+          Getting Started
         </a>
       </header>
     </div>
