@@ -12,7 +12,7 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-  .App-background{
+  .App-background {
     align-items: center;
     width: 800px;
     border-radius: 8px;
@@ -27,7 +27,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(15px + 2vmin);
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   color: burlywood;
 }
 
@@ -40,7 +40,7 @@
 }
 
 .App-link-blue {
-  color:pink;
+  color: pink;
 }
 @keyframes App-logo-spin {
   from {

@@ -18,13 +18,12 @@ function Landing() {
       setIsReceived(res);
     })();
   }, []);
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={puppies} className="App-background" alt="" />
-        <p>
-          Welcome to Petpets!
-        </p>
+        <p>Welcome to Petpets!</p>
         <a
           className={isReceived ? "App-link-green" : "App-link-blue"}
           href="/login"
@@ -33,6 +32,7 @@ function Landing() {
         >
           Getting Started
         </a>
+        <Link to="/login">Login</Link>
       </header>
     </div>
   );
@@ -43,7 +43,7 @@ const App = () => {
     <Router>
       <Switch>
         <Route exact path="/" component={Landing}></Route>
-        <Route path="/login" component={Login}></Route>
+        <Route path="/login" component={LoginOrSignUp}></Route>
         <Route path="/dashboard" component={Landing}></Route>
       </Switch>
     </Router>

@@ -6,25 +6,38 @@ import { Pool } from "pg";
 import sql_query from "../sql/sql_query";
 import { signupController } from "./../controllers/userController";
 
-
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
 const findUser = (username: String, callback: Function) => {
-  console.log("finding user", username);
   // make a call to pg here
-  if (username === "admin") {
-    callback(null, { passwordHash: "admin" });
-  } else {
-    callback("cannot find user", null);
-  }
+  pool.query(sql_query.userpass, [username], (err, res) => {
+    if (err) return callback(err, false);
+
+    if (res.rowCount == 0) {
+      console.error("User does not exist");
+      return callback("User does not exist", false);
+    } else if (res.rowCount > 1) {
+      console.error("More than 1 user found");
+      return callback("More than 1 user found", false);
+    }
+
+    const [username, passwordHash, fullname, accType] = res.rows[0];
+    return callback(null, { username, passwordHash, fullname, accType });
+  });
+  // if (username === "admin") {
+  //   callback(null, { passwordHash: "admin" });
+  // } else {
+  //   callback("cannot find user", null);
+  // }
 };
 
 passport.use(
   new LocalStrategy((username, password, done) => {
     // return done(null, { user: "admin" });
     findUser(username, (err: any, user: any) => {
+      console.log("localstrat", err, user);
       if (err) return done(err);
       if (!user) return done(null, false);
 
@@ -47,12 +60,12 @@ apiRouter.get("/", (req, res) => {
 apiRouter.get("/ping", (req, res) => res.send("PONG"));
 
 // apiRouter.post("/login", (req, res) => res.send(req.body));
-apiRouter.post('/signup', signupController);
+apiRouter.post("/signup", signupController);
 
 apiRouter.post("/login", (req, res) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) console.log("error", err);
-    if (!user) return res.status(401).send({ error: "User not found" });
+    if (!user) return res.status(401).send({ errorMessage: "User not found" });
     console.log("user", user);
     console.log("info", info);
     return res.send({ msg: "success", info });
