@@ -4,6 +4,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcrypt";
 import { Pool } from "pg";
 import sql_query from "../sql/sql_query";
+import { signupController } from "./../controllers/userController";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -55,8 +56,12 @@ apiRouter.get("/", (req, res) => {
   res.send("Expressss + TypeScript Server");
   console.log("hi");
 });
+
 apiRouter.get("/ping", (req, res) => res.send("PONG"));
+
 // apiRouter.post("/login", (req, res) => res.send(req.body));
+apiRouter.post("/signup", signupController);
+
 apiRouter.post("/login", (req, res) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) console.log("error", err);
