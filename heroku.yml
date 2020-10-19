@@ -1,7 +1,12 @@
 setup:
   addons:
-  - plan: heroku-postgresql
-    as: DATABASE
+    - plan: heroku-postgresql
+      as: DATABASE
 build:
   docker:
     web: Dockerfile.prod
+
+release:
+  image: web
+  command:
+    - yarn ts-node sql/sqlSetup.ts

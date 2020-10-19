@@ -18,6 +18,7 @@ services:
     stdin_open: true
     environment:
       DATABASE_URL: postgresql://postgres:admin@db/cs2102_project
+    command: yarn ts-node sql/sqlSetup.ts
   db:
     image: postgres:12.3-alpine
     volumes:
