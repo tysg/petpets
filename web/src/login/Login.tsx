@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, Alert } from "antd";
 import { Store } from "antd/lib/form/interface";
 import axios from "axios";
 import { RouteComponentProps } from "react-router-dom";
-import { NewUser } from "../../../models/user";
+import { NewUser, SignUpResponse } from "../../../models/user";
 
 const SignUp = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
@@ -21,7 +21,8 @@ const SignUp = (props: RouteComponentProps) => {
       .then((res) => props.history.push("/dashboard"))
       .catch((err) => {
         setAuthfail(true);
-        setErrMsg(err.response.data.errorMessage);
+        const errBody: SignUpResponse = err.response.data;
+        setErrMsg(errBody.error);
       });
   };
   const onFail = (values: Store) => console.log(values);

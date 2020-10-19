@@ -9,10 +9,9 @@
     "web"
   ],
   "scripts": {
-    "start": "nodemon index.ts --ignore web/",
+    "start": "yarn ts-node sql/sqlSetup.ts && nodemon index.ts --ignore web/",
     "start-prod": "ts-node index.ts",
-    "up": "docker-compose up -d",
-    "up:rebuild": "docker-compose up -d --build",
+    "up": "docker-compose up -d --build",
     "logs": "docker-compose logs -f app",
     "down": "docker-compose down"
   },

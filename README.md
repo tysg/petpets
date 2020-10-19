@@ -49,11 +49,8 @@ application, and servers both the front and back end through a single Express se
 
 ## Database Setup
 
-Database setup is done after the Docker image is successfully built. Therefore,
-in order for the schema changes to take effect automatically, run `yarn up:rebuild`
-so that a image rebuild is triggered, and the post-build script (i.e. `sql/sqlSetup.ts`) 
-runs.
-
+Database reset is done after each time that server restarts. This is done automatically via
+`yarn up`. 
 
 
 ## Database Connection
