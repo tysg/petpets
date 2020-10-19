@@ -3,7 +3,7 @@ import { Form, Input, Button, Card, Alert } from "antd";
 import { Store } from "antd/lib/form/interface";
 import axios from "axios";
 import { RouteComponentProps } from "react-router-dom";
-import { NewUser } from "../../../models/userModel";
+import { NewUser } from "../../../models/user";
 
 const SignUp = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
