@@ -1,6 +1,6 @@
 import { ApiResponse } from "./index";
 
-export type SignUpResponse = ApiResponse<string, string>
+export type SignUpResponse = ApiResponse<string, string>;
 
 export interface NewUser {
     username: string;
@@ -9,5 +9,5 @@ export interface NewUser {
     address: string;
     email: string;
     avatarUrl: string;
-}
+};
 
