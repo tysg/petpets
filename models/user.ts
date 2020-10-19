@@ -1,11 +1,13 @@
 import { ApiResponse } from "./index";
 
-export interface SignUpRequest {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-}
-
 export type SignUpResponse = ApiResponse<string, string>
+
+export interface NewUser {
+    username: string;
+    password: string;
+    phone: number;
+    address: string;
+    email: string;
+    avatarUrl: string;
+}
 
