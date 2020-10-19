@@ -3,5 +3,4 @@ export interface ApiResponse<D, E = {}> {
     error: E;
 }
 
-// const a: ApiResponse<string> = { data: "help", error: {} }
 

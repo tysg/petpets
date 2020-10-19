@@ -26,11 +26,6 @@ const findUser = (username: String, callback: Function) => {
     const [username, passwordHash, fullname, accType] = res.rows[0];
     return callback(null, { username, passwordHash, fullname, accType });
   });
-  // if (username === "admin") {
-  //   callback(null, { passwordHash: "admin" });
-  // } else {
-  //   callback("cannot find user", null);
-  // }
 };
 
 passport.use(

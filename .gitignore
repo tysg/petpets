@@ -64,3 +64,6 @@ typings/
 
 # docker postgres local data
 pg_data/
+
+
+temp/
