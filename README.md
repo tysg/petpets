@@ -46,7 +46,14 @@ dependencies for frontend should be added using `yarn add {package-name}` in the
 It uses a different Dockerfile for deployment. The production container builds the React
 application, and servers both the front and back end through a single Express server.
 
-It (may) use Heroku's hosted SQL server instead of another container.
+
+## Database Setup
+
+Database setup is done after the Docker image is successfully built. Therefore,
+in order for the schema changes to take effect automatically, run `yarn up:rebuild`
+so that a image rebuild is triggered, and the post-build script (i.e. `sql/sqlSetup.ts`) 
+runs.
+
 
 
 ## Database Connection
@@ -64,6 +71,7 @@ Run `psql -h localhost -p 5433 -U postgres -d cs2102_project` to connect to the 
 `\d` shows all the relations (tables) in the database.
 
 `\i [file]` runs the specified SQL file
+
 
 
 
