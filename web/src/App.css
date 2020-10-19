@@ -12,11 +12,12 @@
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
-  .App-background {
-    align-items: center;
-    width: 800px;
-    border-radius: 8px;
-  }
+}
+
+.App-background {
+  align-items: center;
+  width: 800px;
+  border-radius: 8px;
 }
 
 .App-header {
