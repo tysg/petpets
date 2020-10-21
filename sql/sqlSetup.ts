@@ -12,7 +12,6 @@ const pool = new pg.Pool({
 pool.query(schema, (err, res) => {
     if (err) {
         console.log("Setup database failed: ", err);
-
     }
     console.log("Setup database succeeded.");
 });
