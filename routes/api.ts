@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { Pool } from "pg";
 import sql_query from "../sql/sql_query";
 import { signupController } from "./../controllers/userController";
+import pets from "./pets";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -66,3 +67,5 @@ apiRouter.post("/login", (req, res) => {
     return res.send({ msg: "success", info });
   })(req, res);
 });
+
+apiRouter.use("/pets", pets);
