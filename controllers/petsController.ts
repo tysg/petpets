@@ -79,7 +79,7 @@ export const create = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { name, owner } = req.params;
+        const { name, owner } = req.body;
         log.error("get pet error", error);
         const response: StringResponse = {
             data: "",
@@ -99,11 +99,11 @@ export const update = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { name, email } = req.params;
+        const { name, owner } = req.body;
         log.error("get pet error", error);
         const response: StringResponse = {
             data: "",
-            error: `Pet ${name} ${email} cannot be updated:` + error
+            error: `Pet ${name} ${owner} cannot be updated:` + error
         };
         res.status(400).send(response);
     }
