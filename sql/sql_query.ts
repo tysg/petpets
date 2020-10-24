@@ -7,9 +7,10 @@ export const sql_query = {
 
 export const pet_query = {
   get_pet: "SELECT * FROM pet WHERE name=$1 AND owner=$2",
+  index_owner: "SELECT * FROM pet WHERE owner=$1",
   delete_pet: "DELETE * FROM pet WHERE name=$1 AND owner=$2",
-  create_pet: "INSERT INTO pet (name, owner, requirements, remarks) VALUES ($1, $2, $3, $4)",
-  update_pet: "UPDATE pet SET (name, owner, requirements, remarks) = ($1, $2, $3, $4) WHERE name=$1 AND email=$2"
+  create_pet: "INSERT INTO pet (name, owner, category, requirements, remarks) VALUES ($1, $2, $3, $4, $5)",
+  update_pet: "UPDATE pet SET (name, owner, category, requirements, remarks) = ($1, $2, $3, $4, $5) WHERE name=$1 AND email=$2"
 }
 
 export default sql_query;

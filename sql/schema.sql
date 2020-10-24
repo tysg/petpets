@@ -1,4 +1,7 @@
+DROP TABLE IF EXISTS pet;
+DROP TABLE IF EXISTS pet_category;
 DROP TABLE IF EXISTS person;
+
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,
 	username varchar(64) NOT NULL,
@@ -8,19 +11,16 @@ CREATE TABLE person(
 	avatar_link varchar NOT NULL
 );
 
-DROP TABLE IF EXISTS pet_cateogry;
-CREATE TABLE pet_cateogry(
-	category int PRIMARY KEY,
-	type varchar(64) NOT NULL,
+CREATE TABLE pet_category(
+	type_name varchar(64) PRIMARY KEY,
 	base_daily_price int NOT NULL
 );
 
-DROP TABLE IF EXISTS pet;
 CREATE TABLE pet(
 	name varchar(64),
-	owner varchar(64) REFERENCES person,
-	requirements text NOT NULL,
-	remarks text NOT NULL,
-	category REFERENCES pet_cateogry,
+	owner varchar(64) REFERENCES person(email),
+	category varchar(64) REFERENCES pet_category(type_name),
+	requirements text,
+	remarks text,
 	CONSTRAINT pet_id PRIMARY KEY (name, owner)
 );
