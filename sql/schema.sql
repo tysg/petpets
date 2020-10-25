@@ -24,3 +24,11 @@ CREATE TABLE pet(
 	description text,
 	CONSTRAINT pet_id PRIMARY KEY (name, owner)
 );
+
+CREATE TABLE credit_card(
+	cardNumber number,
+	cardholder varchar(64) REFERENCES person(email),
+	expiryDate Date
+	securityCode number,
+	CONSTRAINT credit_card_id PRIMARY KEY (cardNumber, cardholder)
+);

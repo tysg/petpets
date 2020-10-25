@@ -13,4 +13,14 @@ export const pet_query = {
   update_pet: "UPDATE pet SET (name, owner, category, requirements, description) = ($1, $2, $3, $4, $5) WHERE name=$1 AND email=$2"
 }
 
+
+export const credit_card_query = {
+  get_credit_card: "SELECT * FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+  index_cardholder: "SELECT * FROM credit_card WHERE cardholder=$1",
+  delete_credit_card: "DELETE * FROM credit_card WHERE cardNumber=$1 AND owner=$2",
+  create_credit_card: "INSERT INTO credit_card (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
+  update_credit_card: "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND email=$2"
+}
+
+
 export default sql_query;
