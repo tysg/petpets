@@ -3,19 +3,20 @@ import pg from "pg";
 
 console.log("Setting up database...");
 const schema = fs.readFileSync("sql/schema.sql").toString();
+const seed = fs.readFileSync("sql/seeds.sql").toString();
 
 const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL
 });
 
 
-pool.query(schema, (err, res) => {
+pool.query(schema+seed, (err, res) => {
     if (err) {
         console.log("Setup database failed: ", err);
-
     }
-    console.log("Setup database succeeded.");
+    console.log("Setup database succeeded.");    
 });
+
 
 pool.end(() => {
     console.log('pool has ended');
