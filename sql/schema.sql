@@ -21,6 +21,6 @@ CREATE TABLE pet(
 	owner varchar(64) REFERENCES person(email),
 	category varchar(64) REFERENCES pet_category(type_name),
 	requirements text,
-	remarks text,
+	description text,
 	CONSTRAINT pet_id PRIMARY KEY (name, owner)
 );
