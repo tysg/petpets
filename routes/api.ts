@@ -55,18 +55,18 @@ apiRouter.get("/", (req, res) => {
 
 apiRouter.get("/ping", (req, res) => res.send("PONG"));
 
-// apiRouter.post("/login", (req, res) => res.send(req.body));
+apiRouter.post("/login", userController.signIn);
 apiRouter.post("/signup", userController.signUp);
 
 
-apiRouter.post("/login", (req, res) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) console.log("error", err);
-    if (!user) return res.status(401).send({ errorMessage: "User not found" });
-    console.log("user", user);
-    console.log("info", info);
-    return res.send({ msg: "success", info });
-  })(req, res);
-});
+// apiRouter.post("/login", (req, res) => {
+//   passport.authenticate("local", (err, user, info) => {
+//     if (err) console.log("error", err);
+//     if (!user) return res.status(401).send({ errorMessage: "User not found" });
+//     console.log("user", user);
+//     console.log("info", info);
+//     return res.send({ msg: "success", info });
+//   })(req, res);
+// });
 
 apiRouter.use("/pets", pets);
