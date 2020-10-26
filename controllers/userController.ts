@@ -9,7 +9,7 @@ import bcrypt from "bcrypt";
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
 
-const signupController = async (req: Request, res: Response) => {
+const signUp = async (req: Request, res: Response) => {
     const body: NewUser = req.body;
     const hashedPassword = bcrypt.hashSync(body.password, salt);
     try {
@@ -30,4 +30,4 @@ const signupController = async (req: Request, res: Response) => {
 };
 
 
-export { signupController };
+export default { signUp };

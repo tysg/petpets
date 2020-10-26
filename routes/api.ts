@@ -4,7 +4,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcrypt";
 import { Pool } from "pg";
 import sql_query from "../sql/sql_query";
-import { signupController } from "./../controllers/userController";
+import userController from "./../controllers/userController";
 import pets from "./pets";
 
 const pool = new Pool({
@@ -56,7 +56,8 @@ apiRouter.get("/", (req, res) => {
 apiRouter.get("/ping", (req, res) => res.send("PONG"));
 
 // apiRouter.post("/login", (req, res) => res.send(req.body));
-apiRouter.post("/signup", signupController);
+apiRouter.post("/signup", userController.signUp);
+
 
 apiRouter.post("/login", (req, res) => {
   passport.authenticate("local", (err, user, info) => {
