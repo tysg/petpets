@@ -32,6 +32,7 @@ const signUp = async (req: Request, res: Response) => {
 
 const signIn = async (req: Request, res: Response) => {
     const body: SignInRequest = req.body;
+    console.log(body);
 
     try {
         type UserPass = Record<"email" | "username" | "password" | "avatar_link", string>;

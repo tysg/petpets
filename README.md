@@ -71,4 +71,11 @@ Run `psql -h localhost -p 5433 -U postgres -d cs2102_project` to connect to the 
 
 
 
+## Demo User Accounts
+
+| email         | password | username |
+| ------------- | -------- | -------- |
+| jan@gmail.com | abcde    | jan      |
+
+
 
