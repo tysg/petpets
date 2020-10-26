@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import puppies from "./puppies.jpg";
+import puppies from "./assets/puppies.jpg";
 import LoginOrSignUp from "./login/Login";
+import Dashboard from "./Dashboard";
 import "./App.css";
 import axios from "axios";
 
@@ -44,7 +45,7 @@ const App = () => {
       <Switch>
         <Route exact path="/" component={Landing}></Route>
         <Route path="/login" component={LoginOrSignUp}></Route>
-        <Route path="/dashboard" component={Landing}></Route>
+        <Route path="/dashboard" component={Dashboard}></Route>
       </Switch>
     </Router>
   );
