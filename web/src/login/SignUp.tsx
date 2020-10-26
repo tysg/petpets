@@ -7,10 +7,9 @@ import { NewUser, SignUpResponse } from "../../../models/user";
 
 const SignUp = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
-    const { firstname, lastname, password, address, phone, email } = values;
+    const { username, password, address, phone, email } = values;
     const newUserData: NewUser = {
-      firstname,
-      lastname,
+      username,
       password,
       address,
       phone,
@@ -32,16 +31,9 @@ const SignUp = (props: RouteComponentProps) => {
   return (
     <Form onFinish={onFinish} onFinishFailed={onFail}>
       <Form.Item
-        label="First Name"
-        name="firstname"
-        rules={[{ required: true, message: "Please input your first name!" }]}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Last Name"
-        name="lastname"
-        rules={[{ required: true, message: "Please input your last name!" }]}
+        label="Username"
+        name="username"
+        rules={[{ required: true, message: "Please input your user name!" }]}
       >
         <Input />
       </Form.Item>

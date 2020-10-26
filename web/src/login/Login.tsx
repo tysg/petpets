@@ -4,12 +4,12 @@ import { Store } from "antd/lib/form/interface";
 import axios from "axios";
 import { RouteComponentProps } from "react-router-dom";
 import SignUp from "./SignUp";
-import { LoginUser } from "./../../../models/user";
+import { SignInRequest} from "./../../../models/user";
 
 const Login = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
     const { email, password } = values;
-    const loginDetails: LoginUser = { username: email, password };
+    const loginDetails: SignInRequest= { email, password };
     axios
       .post("api/login", loginDetails)
       .then((res) => props.history.push("/dashboard"))

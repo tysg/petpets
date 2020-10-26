@@ -14,7 +14,7 @@ export interface NewUser {
     phone: number;
     address: string;
     email: string;
-    avatarUrl: string;
+    avatarUrl?: string;
 };
 
 
