@@ -21,7 +21,7 @@ export const index = async (req: Request, res: Response) => {
         log.error("get card error", error);
         const response: StringResponse = {
             data: "",
-            error: `Credit cards of ${cardholder} not found:` + error
+            error: `Credit cards of ${cardholder} not found: ` + error
         };
         res.status(400).send(response);
     }
@@ -43,7 +43,7 @@ export const get = async (req: Request, res: Response) => {
         log.error("get card error", error);
         const response: StringResponse = {
             data: "",
-            error: `Credit card ${cardNumber} of ${cardholder} not found:` + error
+            error: `Credit card ${cardNumber} of ${cardholder} not found: ` + error
         };
         res.status(400).send(response);
     }
@@ -54,7 +54,7 @@ export const remove = async (req: Request, res: Response) => {
         const { cardNumber, cardholder } = req.params;
         await asyncQuery(credit_card_query.delete_credit_card, [cardNumber, cardholder]);
         const response: StringResponse = {
-            data: `${cardNumber} ${cardholder} has been deleted`,
+            data: `${cardNumber} ${cardholder} has been deleted `,
             error: ""
         };
         res.send(response);
@@ -63,7 +63,7 @@ export const remove = async (req: Request, res: Response) => {
         log.error("delete card error", error);
         const response: StringResponse = {
             data: "",
-            error: `Credit card ${cardNumber} of ${cardholder} cannot be deleted:` + error
+            error: `Credit card ${cardNumber} of ${cardholder} cannot be deleted: ` + error
         };
         res.status(400).send(response);
     }
@@ -83,7 +83,7 @@ export const create = async (req: Request, res: Response) => {
         log.error("create card error", error);
         const response: StringResponse = {
             data: "",
-            error: `Credit card ${cardNumber} of ${cardholder} cannot be created:` + error
+            error: `Credit card ${cardNumber} of ${cardholder} cannot be created: ` + error
         };
         res.status(400).send(response);
     }
