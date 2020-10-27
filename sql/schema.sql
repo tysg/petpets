@@ -26,7 +26,7 @@ CREATE TABLE pet(
 	CONSTRAINT pet_id PRIMARY KEY (name, owner)
 );
 
-CREATE TABLE creditCard(
+CREATE TABLE credit_card(
 	cardNumber bigint,
 	cardholder varchar(64) REFERENCES person(email),
 	expiryDate Date,

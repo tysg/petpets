@@ -6,4 +6,4 @@ INSERT INTO person VALUES ('p@gmail.com', 'p', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkH
 -- credit cards
 
 -- Postgresql uses the yyyy-mm-dd format
-INSERT INTO creditCard VALUES ('1111111111111111', 'p@gmail.com', '2022-12-01', 023);
+INSERT INTO credit_card VALUES ('1111111111111111', 'p@gmail.com', '2022-12-01', 023);

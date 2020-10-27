@@ -15,11 +15,11 @@ export const pet_query = {
 
 
 export const credit_card_query = {
-  get_credit_card: "SELECT * FROM creditCard WHERE cardNumber=$1 AND cardholder=$2",
-  index_cardholder: "SELECT * FROM creditCard WHERE cardholder=$1",
-  delete_credit_card: "DELETE FROM creditCard WHERE cardNumber=$1 AND cardholder=$2",
-  create_credit_card: "INSERT INTO creditCard (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
-  update_credit_card: "UPDATE creditCard SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND email=$2"
+  get_credit_card: "SELECT * FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+  index_cardholder: "SELECT * FROM credit_card WHERE cardholder=$1",
+  delete_credit_card: "DELETE FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+  create_credit_card: "INSERT INTO credit_card (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
+  update_credit_card: "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 }
 
 
