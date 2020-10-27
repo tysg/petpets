@@ -8,7 +8,7 @@ export const sql_query = {
 export const pet_query = {
   get_pet: "SELECT * FROM pet WHERE name=$1 AND owner=$2",
   index_owner: "SELECT * FROM pet WHERE owner=$1",
-  delete_pet: "DELETE * FROM pet WHERE name=$1 AND owner=$2",
+  delete_pet: "DELETE FROM pet WHERE name=$1 AND owner=$2",
   create_pet: "INSERT INTO pet (name, owner, category, requirements, description) VALUES ($1, $2, $3, $4, $5)",
   update_pet: "UPDATE pet SET (name, owner, category, requirements, description) = ($1, $2, $3, $4, $5) WHERE name=$1 AND email=$2"
 };
@@ -17,7 +17,7 @@ export const pet_query = {
 export const credit_card_query = {
   get_credit_card: "SELECT * FROM creditCard WHERE cardNumber=$1 AND cardholder=$2",
   index_cardholder: "SELECT * FROM creditCard WHERE cardholder=$1",
-  delete_credit_card: "DELETE * FROM creditCard WHERE cardNumber=$1 AND owner=$2",
+  delete_credit_card: "DELETE FROM creditCard WHERE cardNumber=$1 AND cardholder=$2",
   create_credit_card: "INSERT INTO creditCard (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
   update_credit_card: "UPDATE creditCard SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND email=$2"
 }
