@@ -6,7 +6,7 @@ const pool = new Pool({
 });
 
 // Returns a Promise and lets the call site decide what to do
-export function asyncQuery(text: string, params?: (string | number | undefined)[]) {
+export function asyncQuery(text: string, params?: (string | number | undefined | Date)[]) {
     const start = Date.now();
     return pool
         .query(text, params)

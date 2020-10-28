@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS creditCard;
 DROP TABLE IF EXISTS pet;
 DROP TABLE IF EXISTS pet_category;
 DROP TABLE IF EXISTS person;
@@ -23,4 +24,12 @@ CREATE TABLE pet(
 	requirements text,
 	description text,
 	CONSTRAINT pet_id PRIMARY KEY (name, owner)
+);
+
+CREATE TABLE credit_card(
+	cardNumber bigint,
+	cardholder varchar(64) REFERENCES person(email),
+	expiryDate Date,
+	securityCode smallint,
+	CONSTRAINT credit_card_id PRIMARY KEY (cardNumber, cardholder)
 );

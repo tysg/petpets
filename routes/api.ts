@@ -6,6 +6,7 @@ import { Pool } from "pg";
 import sql_query from "../sql/sql_query";
 import userController from "./../controllers/userController";
 import pets from "./pets";
+import credit_cards from "./creditCards";
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -70,3 +71,4 @@ apiRouter.post("/signup", userController.signUp);
 // });
 
 apiRouter.use("/pets", pets);
+apiRouter.use("/credit_cards", credit_cards);
