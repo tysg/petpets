@@ -71,4 +71,4 @@ apiRouter.post("/signup", userController.signUp);
 // });
 
 apiRouter.use("/pets", pets);
-apiRouter.use("/creditCards", credit_cards);
+apiRouter.use("/credit_cards", credit_cards);
