@@ -4,6 +4,7 @@ import axios from "axios";
 import { clearToken } from "./common/token";
 import SiteLayout from "./common/SiteLayout";
 import { Button } from "antd";
+import { user as userApi } from "./common/api";
 
 const Dashboard = (props: RouteComponentProps) => {
   const logout = () => {
@@ -11,16 +12,16 @@ const Dashboard = (props: RouteComponentProps) => {
     props.history.push("/");
   };
   useEffect(() => {
-    axios
+    userApi
       .get("/api/ping")
       .then((res) => setState("pinged success"))
-      .catch((err) => setState(err));
+      .catch((err) => console.log(err));
   });
   const [ping, setState] = useState("pinging");
   return (
     <>
       <SiteLayout></SiteLayout>
-      <Button onClick={logout}>Logout</Button>
+      <Button onClick={logout}>{ping}</Button>
     </>
   );
 };

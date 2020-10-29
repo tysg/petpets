@@ -11,7 +11,7 @@ apiRouter.get("/", (req, res) => {
   console.log("hi");
 });
 
-apiRouter.get("/ping", (req, res) => res.send("PONG"));
+apiRouter.get("/ping", verifyToken, (req, res) => res.send("PONG"));
 
 apiRouter.post("/login", userController.signIn);
 apiRouter.post("/signup", userController.signUp);
