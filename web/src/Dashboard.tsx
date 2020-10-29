@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import axios from "axios";
+import { clearToken } from "./common/token";
 
 const Dashboard = (props: RouteComponentProps) => {
   const logout = () => {
-    axios
-      .get("/api/logout")
-      .then((res) => props.history.push("/"))
-      .catch((err) => console.log(err));
+    clearToken();
+    props.history.push("/");
   };
   useEffect(() => {
     axios

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import puppies from "./assets/puppies.jpg";
-import LoginOrSignUp from "./login/Login";
+import LoginOrSignUp from "./auth/Login";
 import Dashboard from "./Dashboard";
+import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import "./App.css";
 import axios from "axios";
 
@@ -40,12 +41,13 @@ function Landing() {
 }
 
 const App = () => {
+  const [user, setUser] = useState();
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={Landing}></Route>
-        <Route path="/login" component={LoginOrSignUp}></Route>
-        <Route path="/dashboard" component={Dashboard}></Route>
+        <Route exact path="/" component={Landing} />
+        <Route path="/login" component={LoginOrSignUp} setUser={setUser} />
+        <AuthenticatedRoute path="/dashboard" component={Dashboard} />
       </Switch>
     </Router>
   );

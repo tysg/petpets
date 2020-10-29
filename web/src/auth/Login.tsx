@@ -1,18 +1,23 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Alert } from "antd";
 import { Store } from "antd/lib/form/interface";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { RouteComponentProps } from "react-router-dom";
 import SignUp from "./SignUp";
-import { SignInRequest} from "./../../../models/user";
+import { SignInRequest, SignInPayload, User } from "./../../../models/user";
+import { setToken } from "./../common/token";
 
 const Login = (props: RouteComponentProps) => {
   const onFinish = (values: Store) => {
     const { email, password } = values;
-    const loginDetails: SignInRequest= { email, password };
+    const loginDetails: SignInRequest = { email, password };
     axios
       .post("api/login", loginDetails)
-      .then((res) => props.history.push("/dashboard"))
+      .then((res: AxiosResponse<SignInPayload>) => {
+        const token: string = res.data.accessToken;
+        setToken(token);
+        props.history.push("/dashboard");
+      })
       .catch((err) => {
         console.log(err.response);
         setErrMsg(err.response.data.errorMessage);
@@ -22,8 +27,6 @@ const Login = (props: RouteComponentProps) => {
   const onFail = (values: Store) => console.log(values);
   const [authfail, setAuthfail] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-
-  // const a = 4;
 
   return (
     <Form name="basic" onFinish={onFinish} onFinishFailed={onFail}>
