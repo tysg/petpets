@@ -4,7 +4,7 @@ import { Store } from "antd/lib/form/interface";
 import axios, { AxiosResponse } from "axios";
 import { RouteComponentProps } from "react-router-dom";
 import SignUp from "./SignUp";
-import { SignInRequest, SignInPayload } from "./../../../models/user";
+import { SignInRequest, SignInResponse } from "./../../../models/user";
 import { setToken } from "./../common/token";
 
 const Login = (props: RouteComponentProps) => {
@@ -13,8 +13,8 @@ const Login = (props: RouteComponentProps) => {
     const loginDetails: SignInRequest = { email, password };
     axios
       .post("api/login", loginDetails)
-      .then((res: AxiosResponse<SignInPayload>) => {
-        const token: string = res.data.accessToken;
+      .then((res: AxiosResponse<SignInResponse>) => {
+        const token: string = res.data.data.accessToken;
         setToken(token);
         props.history.push("/dashboard");
       })

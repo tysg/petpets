@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 const secret = process.env.SECRET!;
 
-const verifyToken = (req: any, res: any, next: any) => {
+export const verifyToken = (req: any, res: any, next: any) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
