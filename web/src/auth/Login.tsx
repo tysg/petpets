@@ -4,7 +4,7 @@ import { Store } from "antd/lib/form/interface";
 import axios, { AxiosResponse } from "axios";
 import { RouteComponentProps } from "react-router-dom";
 import SignUp from "./SignUp";
-import { SignInRequest, SignInPayload, User } from "./../../../models/user";
+import { SignInRequest, SignInPayload } from "./../../../models/user";
 import { setToken } from "./../common/token";
 
 const Login = (props: RouteComponentProps) => {

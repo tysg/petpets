@@ -4,6 +4,7 @@ import puppies from "./assets/puppies.jpg";
 import LoginOrSignUp from "./auth/Login";
 import Dashboard from "./Dashboard";
 import AuthenticatedRoute from "./auth/AuthenticatedRoute";
+import PublicRoute from "./auth/PublicRoute";
 import "./App.css";
 import axios from "axios";
 
@@ -41,12 +42,11 @@ function Landing() {
 }
 
 const App = () => {
-  const [user, setUser] = useState();
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={Landing} />
-        <Route path="/login" component={LoginOrSignUp} setUser={setUser} />
+        <PublicRoute exact path="/" component={Landing} />
+        <PublicRoute path="/login" component={LoginOrSignUp} />
         <AuthenticatedRoute path="/dashboard" component={Dashboard} />
       </Switch>
     </Router>
