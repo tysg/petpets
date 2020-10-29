@@ -33,19 +33,21 @@ const App = () => {
   useEffect(() => {
     const token = getToken();
     if (!token) return;
-    //verify token on page refresh
-    // userApi.verify().catch((err) => {
-    //   clearToken();
-    //   console.log(err);
-    // });
-    axios
-      .post("/api/verifyToken", token, {
-        headers: { "x-access-token": token },
-      })
-      .catch((err) => {
-        clearToken();
-        console.log(err);
-      });
+    // verify token on page refresh
+    userApi.verify().catch((err) => {
+      clearToken();
+      console.log(err);
+    });
+    // axios
+    //   .post("/api/verifyToken", token, {
+    //     headers: {
+    //       "x-access-token": token,
+    //     },
+    //   })
+    //   .catch((err) => {
+    //     clearToken();
+    //     console.log(err);
+    //   });
   });
   return (
     <Router>

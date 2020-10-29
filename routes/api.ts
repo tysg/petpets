@@ -15,7 +15,9 @@ apiRouter.get("/ping", (req, res) => res.send("PONG"));
 
 apiRouter.post("/login", userController.signIn);
 apiRouter.post("/signup", userController.signUp);
-apiRouter.post("/verifyToken", verifyToken);
+apiRouter.post("/verifyToken", verifyToken, (req, res) =>
+  res.status(200).send("OK")
+);
 
 apiRouter.use("/pets", pets);
 apiRouter.use("/credit_cards", credit_cards);
