@@ -7,6 +7,7 @@ import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import PublicRoute from "./auth/PublicRoute";
 import "./App.css";
 import axios from "axios";
+import { getToken } from "./common/token";
 
 async function ping(): Promise<boolean> {
   const reply = (await axios.get("api/ping")).data;
@@ -14,27 +15,11 @@ async function ping(): Promise<boolean> {
 }
 
 function Landing() {
-  const [isReceived, setIsReceived] = useState(false);
-  useEffect(() => {
-    (async () => {
-      const res = await ping();
-      setIsReceived(res);
-    })();
-  }, []);
-
   return (
     <div className="App">
       <header className="App-header">
         <img src={puppies} className="App-background" alt="" />
         <p>Welcome to Petpets!</p>
-        <a
-          className={isReceived ? "App-link-green" : "App-link-blue"}
-          href="/login"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Getting Started
-        </a>
         <Link to="/login">Login</Link>
       </header>
     </div>
@@ -42,6 +27,11 @@ function Landing() {
 }
 
 const App = () => {
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+    //verify token on page refresh
+  });
   return (
     <Router>
       <Switch>
