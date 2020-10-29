@@ -24,7 +24,7 @@ const signUp = async (req: Request, res: Response) => {
   try {
     await asyncQuery(user_query.add_user, [
       body.email,
-      body.username,
+      body.fullname,
       hashedPassword,
       body.address,
       body.phone,

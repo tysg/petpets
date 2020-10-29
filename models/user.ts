@@ -9,7 +9,7 @@ export type SignUpResponse = ApiResponse<string, string>;
  * POST api/signup, request.
  */
 export interface NewUser {
-  username: string;
+  fullname: string;
   password: string;
   phone: number;
   address: string;
@@ -21,7 +21,7 @@ export interface NewUser {
  * POST api/signin, request.
  */
 export interface User {
-  username: string;
+  fullname: string;
   phone: number;
   address: string;
   email: string;
