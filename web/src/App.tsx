@@ -8,16 +8,9 @@ import PublicRoute from "./auth/PublicRoute";
 import "./App.css";
 import { user as userApi } from "./common/api";
 import { getToken, clearToken } from "./common/token";
-import axios from "axios";
 
 function Landing() {
   // unauthenticated request
-  useEffect(() => {
-    axios
-      .get("/api/ping")
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  });
   return (
     <div className="App">
       <header className="App-header">
@@ -38,16 +31,6 @@ const App = () => {
       clearToken();
       console.log(err);
     });
-    // axios
-    //   .post("/api/verifyToken", token, {
-    //     headers: {
-    //       "x-access-token": token,
-    //     },
-    //   })
-    //   .catch((err) => {
-    //     clearToken();
-    //     console.log(err);
-    //   });
   });
   return (
     <Router>
@@ -55,6 +38,7 @@ const App = () => {
         <PublicRoute exact path="/" component={Landing} />
         <PublicRoute path="/login" component={LoginOrSignUp} />
         <AuthenticatedRoute path="/dashboard" component={Dashboard} />
+        <Route>Oops this page does not exist</Route>
       </Switch>
     </Router>
   );

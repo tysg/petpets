@@ -1,28 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { RouteComponentProps } from "react-router-dom";
-import axios from "axios";
-import { clearToken } from "./common/token";
+import {
+  BrowserRouter,
+  Route,
+  RouteComponentProps,
+  Switch,
+  useRouteMatch,
+} from "react-router-dom";
 import SiteLayout from "./common/SiteLayout";
-import { Button } from "antd";
 import { user as userApi } from "./common/api";
 
+const PetOwnerStub = (props: RouteComponentProps) => {
+  return <div>Oops, this page is still under construction</div>;
+};
+
+const CareTakerStub = (props: RouteComponentProps) => (
+  <div>This is the content that you subscribed for</div>
+);
+
 const Dashboard = (props: RouteComponentProps) => {
-  const logout = () => {
-    clearToken();
-    props.history.push("/");
-  };
-  useEffect(() => {
-    userApi
-      .get("/api/ping")
-      .then((res) => setState("pinged success"))
-      .catch((err) => console.log(err));
-  });
-  const [ping, setState] = useState("pinging");
+  const { path, url } = useRouteMatch();
+  console.log(path, url);
   return (
-    <>
-      <SiteLayout></SiteLayout>
-      <Button onClick={logout}>{ping}</Button>
-    </>
+    <BrowserRouter>
+      <SiteLayout {...props}>
+        {/* <div> This is the landing page for Dashboard </div> */}
+        <Switch>
+          <Route path={`${path}/owner`} component={PetOwnerStub}></Route>
+          <Route path={`${path}/sitter`} component={CareTakerStub}></Route>
+          {/* <Route path={`${path}/admin`} component={CareTakerStub}></Route> */}
+        </Switch>
+      </SiteLayout>
+    </BrowserRouter>
   );
 };
 
