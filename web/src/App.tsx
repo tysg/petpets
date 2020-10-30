@@ -1,38 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import puppies from "./assets/puppies.jpg";
-import LoginOrSignUp from "./login/Login";
+import LoginOrSignUp from "./auth/Login";
 import Dashboard from "./Dashboard";
+import AuthenticatedRoute from "./auth/AuthenticatedRoute";
+import PublicRoute from "./auth/PublicRoute";
 import "./App.css";
-import axios from "axios";
-
-async function ping(): Promise<boolean> {
-  const reply = (await axios.get("api/ping")).data;
-  return reply === "PONG";
-}
+import { user as userApi } from "./common/api";
+import { getToken, clearToken } from "./common/token";
 
 function Landing() {
-  const [isReceived, setIsReceived] = useState(false);
-  useEffect(() => {
-    (async () => {
-      const res = await ping();
-      setIsReceived(res);
-    })();
-  }, []);
-
+  // unauthenticated request
   return (
     <div className="App">
       <header className="App-header">
         <img src={puppies} className="App-background" alt="" />
         <p>Welcome to Petpets!</p>
-        <a
-          className={isReceived ? "App-link-green" : "App-link-blue"}
-          href="/login"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Getting Started
-        </a>
         <Link to="/login">Login</Link>
       </header>
     </div>
@@ -40,12 +23,22 @@ function Landing() {
 }
 
 const App = () => {
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+    // verify token on page refresh
+    userApi.verify().catch((err) => {
+      clearToken();
+      console.log(err);
+    });
+  });
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={Landing}></Route>
-        <Route path="/login" component={LoginOrSignUp}></Route>
-        <Route path="/dashboard" component={Dashboard}></Route>
+        <PublicRoute exact path="/" component={Landing} />
+        <PublicRoute path="/login" component={LoginOrSignUp} />
+        <AuthenticatedRoute path="/dashboard" component={Dashboard} />
+        <Route>Oops this page does not exist</Route>
       </Switch>
     </Router>
   );
