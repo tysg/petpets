@@ -2,7 +2,6 @@ import React, { ComponentProps, PropsWithChildren } from "react";
 import { Layout, Menu, Breadcrumb, Button } from "antd";
 import {
   UserOutlined,
-  LaptopOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { clearToken } from "./token";
@@ -11,7 +10,7 @@ import { Link, RouteChildrenProps } from "react-router-dom";
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
-const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
+const AdministratorSiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
   const logout = () => {
     clearToken();
     props.history.push("/");
@@ -22,10 +21,7 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
         <div className="logo" />
         <Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
           <Menu.Item key="1">
-            <Link to="/dashboard/owner">Pet Owner</Link>
-          </Menu.Item>
-          <Menu.Item key="2">
-            <Link to="/dashboard/sitter">Pet Sitter</Link>
+            <Link to="/dashboard/administrator">PCS Administrator</Link>
           </Menu.Item>
           <Button onClick={logout}>
             <LogoutOutlined />
@@ -42,16 +38,8 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
             style={{ height: "100%", borderRight: 0 }}
           >
             <SubMenu key="sub1" icon={<UserOutlined />} title="Pet Owner">
-              <Menu.Item key="1">My Pets</Menu.Item>
-              <Menu.Item key="2">My Profile</Menu.Item>
-              <Menu.Item key="3">New Request</Menu.Item>
-              <Menu.Item key="4">Arrangements</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub2" icon={<LaptopOutlined />} title="Pet Sitter">
-              <Menu.Item key="5">option5</Menu.Item>
-              <Menu.Item key="6">option6</Menu.Item>
-              <Menu.Item key="7">option7</Menu.Item>
-              <Menu.Item key="8">option8</Menu.Item>
+              <Menu.Item key="1">Settings</Menu.Item>
+              <Menu.Item key="2">Summary</Menu.Item>
             </SubMenu>
           </Menu>
         </Sider>
@@ -72,4 +60,4 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
     </Layout>
   );
 };
-export default SiteLayout;
+export default AdministratorSiteLayout;

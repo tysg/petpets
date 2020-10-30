@@ -6,7 +6,7 @@ import {
   Switch,
   useRouteMatch,
 } from "react-router-dom";
-import SiteLayout from "./common/SiteLayout";
+import SiteLayout from "./common/UserSiteLayout";
 import { user as userApi } from "./common/api";
 
 const PetOwnerStub = (props: RouteComponentProps) => {

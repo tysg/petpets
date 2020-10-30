@@ -1,5 +1,6 @@
 import { Router } from "express";
 import userController from "./../controllers/userController";
+import administratorController from "./../controllers/administratorController";
 import pets from "./pets";
 import credit_cards from "./creditCards";
 import { verifyToken } from "./../middleware/auth";
@@ -15,6 +16,7 @@ apiRouter.get("/ping", verifyToken, (req, res) => res.send("PONG"));
 
 apiRouter.post("/login", userController.signIn);
 apiRouter.post("/signup", userController.signUp);
+apiRouter.post("/administratorlogin", administratorController.administratorSignIn);
 apiRouter.post("/verifyToken", verifyToken, (req, res) =>
   res.status(200).send("OK")
 );

@@ -12,3 +12,10 @@ export const user = {
     axios.post(endpoint, data, authHeaderConfig),
   get: (endpoint: string) => axios.get(endpoint, authHeaderConfig),
 };
+
+export const administrator = {
+  verify: () => axios.post("/api/verifyToken", token, authHeaderConfig),
+  post: (endpoint: string, data: any) =>
+    axios.post(endpoint, data, authHeaderConfig),
+  get: (endpoint: string) => axios.get(endpoint, authHeaderConfig),
+};

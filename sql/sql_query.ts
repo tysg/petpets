@@ -5,6 +5,11 @@ export const user_query = {
     "INSERT INTO person (email, fullname, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)",
 };
 
+export const administrator_query = {
+  administratorlogin:
+    "SELECT email, password FROM administrator WHERE email=$1 LIMIT 1",
+};
+
 export const pet_query = {
   get_pet: "SELECT * FROM pet WHERE name=$1 AND owner=$2",
   index_owner: "SELECT * FROM pet WHERE owner=$1",
@@ -27,4 +32,4 @@ export const credit_card_query = {
     "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2",
 };
 
-export default { user_query, pet_query, credit_card_query };
+export default { user_query, administrator_query, pet_query, credit_card_query };

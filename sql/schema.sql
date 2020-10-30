@@ -2,6 +2,11 @@ DROP TABLE IF EXISTS credit_card;
 DROP TABLE IF EXISTS pet;
 DROP TABLE IF EXISTS pet_category;
 DROP TABLE IF EXISTS person;
+DROP TABLE IF EXISTS administrator;
+CREATE TABLE administrator(
+	email varchar(64) PRIMARY KEY,
+	password varchar(64) NOT NULL
+)
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,
 	fullname varchar(64) NOT NULL,
