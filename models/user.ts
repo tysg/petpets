@@ -35,8 +35,7 @@ export interface SignInRequest {
 /**
  * POST api/signin, response.
  */
-export type SignInPayload = Record<
-    "email" | "username" | "avatarUrl" | "accessToken",
+export type SignInResponse = ApiResponse<
+    Record<"email" | "username" | "avatarUrl" | "accessToken", string>,
     string
 >;
-export type SignInResponse = ApiResponse<SignInPayload, string>;
