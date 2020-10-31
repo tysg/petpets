@@ -5,7 +5,7 @@ import {
     CareTakerDetails,
     IndexResponse,
     GetResponse,
-    StringResponse,
+    StringResponse
 } from "../models/careTaker";
 import { asyncQuery } from "./../utils/db";
 import { caretaker_query } from "./../sql/sql_query";
@@ -20,14 +20,14 @@ export const index = async (req: Request, res: Response) => {
         const { rows } = qr;
         const response: IndexResponse = {
             data: rows,
-            error: "",
+            error: ""
         };
         res.send(response);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
             data: "",
-            error: error,
+            error: error
         };
         res.status(400).send(response);
     }
@@ -35,10 +35,10 @@ export const index = async (req: Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => {
     try {
-        const { date } = req.params;
+        const { date } = req.query;
         const qr: QueryResult<CareTakerDetails> = await asyncQuery(
             caretaker_query.search_caretaker,
-            [date]
+            [`${date}`]
         );
         // TODO add check for specialization
         // TODO add check for no existing bookings
@@ -46,14 +46,14 @@ export const search = async (req: Request, res: Response) => {
         const { rows } = qr;
         const response: IndexResponse = {
             data: rows,
-            error: "",
+            error: ""
         };
         res.send(response);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
             data: "",
-            error: error,
+            error: error
         };
         res.status(400).send(response);
     }
@@ -68,14 +68,14 @@ export const get = async (req: Request, res: Response) => {
         );
         const response: GetResponse = {
             data: qr.rows[0],
-            error: "",
+            error: ""
         };
         res.send(response);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
             data: "",
-            error: error,
+            error: error
         };
         res.status(400).send(response);
     }
@@ -87,13 +87,13 @@ export const remove = async (req: Request, res: Response) => {
         await asyncQuery(caretaker_query.delete_caretaker, [email]);
         const response: StringResponse = {
             data: `${email} is no longer a caretaker`,
-            error: "",
+            error: ""
         };
         res.send(response);
     } catch (error) {
         const response: StringResponse = {
             data: "",
-            error: error,
+            error: error
         };
         res.status(400).send(response);
     }
@@ -104,22 +104,22 @@ export const create = async (req: Request, res: Response) => {
         const caretaker: CareTaker = req.body;
         if (caretaker.caretaker_status == 1) {
             await asyncQuery(caretaker_query.create_part_time_ct, [
-                caretaker.email,
+                caretaker.email
             ]);
         } else if (caretaker.caretaker_status == 2) {
             await asyncQuery(caretaker_query.create_full_time_ct, [
-                caretaker.email,
+                caretaker.email
             ]);
         }
         const response: StringResponse = {
             data: `${caretaker.email} created as caretaker`,
-            error: "",
+            error: ""
         };
         res.send(response);
     } catch (error) {
         const response: StringResponse = {
             data: "",
-            error: error,
+            error: error
         };
         res.status(400).send(response);
     }

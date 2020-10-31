@@ -1,8 +1,11 @@
 import { ApiResponse } from "./index";
+import { CaretakerStatus } from "./careTaker";
 
 export interface Schedule {
-    start_time: Date;
-    end_time: Date;
+    email: string;
+    caretaker_status: CaretakerStatus;
+    start_date: Date;
+    end_date: Date;
 }
 
 export type StringResponse = ApiResponse<string, string>;

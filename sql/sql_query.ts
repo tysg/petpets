@@ -33,7 +33,7 @@ export const sql_query = {
         'INSERT INTO person (email, username, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)',
 };
 
-const CARETAKER_DETAILS = 'username, phone, address, email, avatarUrl, caretaker_status';
+const CARETAKER_DETAILS = "username, phone, address, email, avatarUrl, caretaker_status";
 
 export const caretaker_query = {
     create_part_time_ct: `
@@ -70,7 +70,7 @@ export const caretaker_query = {
     DELETE FROM caretaker where email=$1
     UPDATE person SET (caretaker_status) VALUES (0);
    COMMIT TRANSACTION;
-   `,
+   `
 };
 
 export const schedule_query = {
@@ -79,7 +79,7 @@ export const schedule_query = {
     delete_pt_schedule: `DELETE FROM pt_free_schedule WHERE email = $1 AND start_date=$2 AND end_date=$3`,
     delete_ft_schedule: `DELETE FROM ft_leave_schedule WHERE email = $1 AND start_date=$2 AND end_date=$3`,
     create_pt_schedule: `INSERT INTO pt_free_schedule VALUES ($1, $2, $3)`,
-    create_ft_schedule: `INSERT INTO ft_leave_schedule VALUES ($1, $2, $3)`,
+    create_ft_schedule: `INSERT INTO ft_leave_schedule VALUES ($1, $2, $3)`
 };
 
 export default { user_query, pet_query, credit_card_query };
