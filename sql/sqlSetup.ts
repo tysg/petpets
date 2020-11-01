@@ -13,11 +13,17 @@ const pool = new pg.Pool({
 pool.query(schema + triggers + seed, (err, res) => {
     if (err) {
         console.log("Setup database failed: ", err);
-    } else console.log("Setup database succeeded.");
-});
-
-pool.end(() => {
-    console.log("pool has ended");
+        pool.end(() => {
+            console.log("pool has ended");
+            process.exit(1);
+        });
+    } else {
+        console.log("Setup database succeeded.");
+        pool.end(() => {
+            console.log("pool has ended");
+            process.exit(0);
+        });
+    }
 });
 
 // https://stackoverflow.com/questions/22636388/import-sql-file-in-node-js-and-execute-against-postgresql

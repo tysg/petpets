@@ -9,7 +9,7 @@
         "web"
     ],
     "scripts": {
-        "start": "yarn ts-node sql/sqlSetup.ts && nodemon index.ts --ignore web/",
+        "start": "ts-node sql/sqlSetup.ts && nodemon index.ts --ignore web/",
         "start-prod": "ts-node index.ts",
         "up": "docker-compose up -d --build",
         "logs": "docker-compose logs -f app",
