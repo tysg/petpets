@@ -35,12 +35,13 @@ export const index = async (req: Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => {
     try {
-        const { date, pet_category } = req.query;
+        const { start_date, end_date, pet_category } = req.query;
         const qr: QueryResult<CareTakerDetails> = await asyncQuery(
             caretaker_query.search_caretaker,
-            [`${date}`, `${pet_category}`]
+            [`${start_date}`, `${pet_category}`]
         );
         // TODO add check for no existing bookings
+        // TODO check end_date and not just start_date
         // TODO add check for PT for rating > some value and caring < 5
         const { rows } = qr;
         const response: IndexResponse = {
