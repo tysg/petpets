@@ -1,7 +1,7 @@
 import React, { ComponentProps, PropsWithChildren, useState } from "react";
 import { Layout, Menu, Button } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
-import { clearToken, clearUser, getUser } from "./token";
+import { clearSession, getUser } from "./token";
 import {
     Link,
     RouteChildrenProps,
@@ -41,8 +41,7 @@ interface SiteLayoutProps extends PropsWithChildren<RouteComponentProps> {
 
 const SiteLayout = (props: SiteLayoutProps) => {
     const logout = () => {
-        clearToken();
-        clearUser();
+        clearSession();
         props.history.push("/");
     };
     const { path } = useRouteMatch();

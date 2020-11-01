@@ -3,11 +3,8 @@ import User from "./models/user";
 const ACCESS_TOKEN = "accessToken";
 const USER = "user";
 
-export const clearToken = () => {
+export const clearSession = () => {
     localStorage.removeItem(ACCESS_TOKEN);
-};
-
-export const clearUser = () => {
     localStorage.removeItem(USER);
 };
 

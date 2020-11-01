@@ -7,7 +7,7 @@ import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import PublicRoute from "./auth/PublicRoute";
 import "./App.css";
 import { user as userApi } from "./common/api";
-import { getToken, clearToken, clearUser } from "./common/token";
+import { getToken, clearSession } from "./common/token";
 
 function Landing() {
     // unauthenticated request
@@ -28,8 +28,7 @@ const App = () => {
         if (!token) return;
         // verify token on page refresh
         userApi.verify().catch((err) => {
-            clearToken();
-            clearUser();
+            clearSession();
             console.log(err);
         });
     });
