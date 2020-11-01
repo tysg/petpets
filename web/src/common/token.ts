@@ -1,4 +1,5 @@
-import type { User, UserInterface } from "../../../models/user";
+import type { UserInterface } from "../../../models/user";
+import User from "./models/user";
 const ACCESS_TOKEN = "accessToken";
 const USER = "user";
 

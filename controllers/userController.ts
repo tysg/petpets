@@ -65,6 +65,7 @@ const signIn = async (req: Request, res: Response) => {
         if (!qr || qr.rows.length < 1) {
             return res.status(404).send(errorResponse("User Not found."));
         }
+        log.db_query("Query result:", qr.rows);
         const {
             email,
             fullname,

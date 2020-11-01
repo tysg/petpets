@@ -38,7 +38,7 @@ const App = () => {
                 <PublicRoute exact path="/" component={Landing} />
                 <PublicRoute path="/login" component={LoginOrSignUp} />
                 <AuthenticatedRoute path="/dashboard" component={Dashboard} />
-                <Route path="/denied">
+                <Route exact path="/denied">
                     Oops you don't have permission to access this page
                 </Route>
                 <Route>Oops this page does not exist</Route>

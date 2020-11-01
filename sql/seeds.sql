@@ -9,6 +9,7 @@ VALUES (
     '$2b$10$yHkpPyW2w/xqIeO4Efi2teHkkG4ZK8p64MWo0M6jJfcjwkNfBjcte',
     '123 Clementi Rd',
     '82792172',
+    'admin',
     'gravatar.com'
   );
 INSERT INTO person
@@ -17,7 +18,8 @@ VALUES (
     'p',
     '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy',
     '101 Johor Rd',
-    '81003333'
+    '81003333',
+    'user'
   );
 INSERT INTO person
 VALUES (
@@ -25,7 +27,8 @@ VALUES (
     'Bran Bong',
     '$2b$10$JUPcABQnf.k8qqW44CHAnuNK4ieRo6YOlZXw/db8ecl6PM/Q3aNEO',
     'php',
-    '91231233'
+    '91231233',
+    'admin'
   );
 -- credit cards
 -- Postgresql uses the yyyy-mm-dd format

@@ -31,6 +31,9 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
                     <Menu.Item key="2">
                         <Link to="/dashboard/sitter">Pet Sitter</Link>
                     </Menu.Item>
+                    <Menu.Item key="3">
+                        <Link to="/dashboard/admin">Admin</Link>
+                    </Menu.Item>
                     <Button onClick={logout}>
                         <LogoutOutlined />
                         Logout
