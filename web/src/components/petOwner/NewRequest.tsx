@@ -14,34 +14,39 @@ import {
 } from "antd";
 
 import { PetCategory } from "../../../../models/pet";
+
+type SelectOptions = Record<"value" | "label", string>;
+function petCategoriesFormOptions(categories: PetCategory[]): SelectOptions[] {
+    return categories.map((category) => {
+        const capitalizedName = category.typeName.replace(/^\w/, (c) =>
+            c.toUpperCase()
+        );
+
+        return {
+            value: category.typeName,
+            label: capitalizedName
+        };
+    });
+}
+
 const NewRequest = () => {
-    const [petCategories, setPetCategories] = useState<PetCategory[]>([]);
+    const [petCategoriesOptions, setPetCategoriesOptions] = useState<
+        SelectOptions[]
+    >([]);
 
     // live fetch pet categories
     useEffect(() => {
         const fetchPetCategories = async () => {
             try {
-                const categories = await pets.getPetCategories();
-                setPetCategories(categories.data.data);
+                const categories = (await pets.getPetCategories()).data.data;
+                setPetCategoriesOptions(petCategoriesFormOptions(categories));
             } catch (err) {
                 console.log("fetchPetCategories err", err);
             }
         };
-
         fetchPetCategories();
     }, []); // execute only once
 
-    const petCategoriesFormOptions: Record<
-        "value" | "label",
-        string
-    >[] = petCategories.map((category) => {
-        const nameCopy = category.typeName;
-        nameCopy.replace(/^\w/, (c) => c.toUpperCase());
-        return {
-            value: category.typeName,
-            label: nameCopy
-        };
-    });
     return (
         <>
             <Form
@@ -49,11 +54,11 @@ const NewRequest = () => {
                 wrapperCol={{ span: 14 }}
                 layout="horizontal"
             >
-                <Form.Item label="Input">
+                {/* <Form.Item label="Input">
                     <Input />
-                </Form.Item>
-                <Form.Item label="Select">
-                    <Select options={petCategoriesFormOptions} />
+                </Form.Item> */}
+                <Form.Item label="Pet Category">
+                    <Select options={petCategoriesOptions} />
                 </Form.Item>
                 <Form.Item label="TreeSelect">
                     <TreeSelect

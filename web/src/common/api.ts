@@ -19,23 +19,6 @@ export const user = {
 };
 
 export const pets = {
-    getPetCategories: (): Promise<AxiosResponse<PetCategoriesResponse>> => {
-        const mock: any = {
-            data: {
-                data: [
-                    {
-                        base_daily_price: 4,
-                        typeName: "dog"
-                    },
-                    {
-                        base_daily_price: 5,
-                        type_name: "cat"
-                    }
-                ]
-            }
-        };
-
-        return Promise.resolve(mock);
-        // return get("/api/pets/categories");
-    }
+    getPetCategories: (): Promise<AxiosResponse<PetCategoriesResponse>> =>
+        get("/api/pets/categories")
 };
