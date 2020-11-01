@@ -27,25 +27,19 @@ export const credit_card_query = {
         "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 };
 
-const CARETAKER_DETAILS =
-    "username, phone, address, email, avatarUrl, caretaker_status";
+const CARETAKER_DETAILS = `username, phone, address, email, avatarUrl, caretaker_status`;
 
 export const caretaker_query = {
-    create_part_time_ct: `
-    BEGIN TRANSACTION;
-      WITH data (email) as (values ($1))
-      UPDATE person SET (caretaker_status) = (1) WHERE email=d.email FROM data d;
-      INSERT INTO caretaker (email) VALUES (d.email) FROM data d;
-      INSERT INTO part_time_ct (email) VALUES (d.email) FROM data d;
-    COMMIT TRANSACTION;
-    `,
-    create_full_time_ct: `
-    BEGIN;
-      UPDATE person SET (caretaker_status) = (2) WHERE email=$1;
-      INSERT INTO caretaker (email) VALUES ($1);
-      INSERT INTO full_time_ct (email) VALUES ($1);
-    COMMIT;
-  `,
+    create_part_time_ct: [
+        `UPDATE person SET caretaker_status=1 WHERE email=$1`,
+        `INSERT INTO caretaker (email) VALUES ($1)`,
+        `INSERT INTO part_time_ct (email) VALUES ($1)`
+    ],
+    create_full_time_ct: [
+        `UPDATE person SET caretaker_status=2 WHERE email=$1`,
+        `INSERT INTO caretaker (email) VALUES ($1)`,
+        `INSERT INTO full_time_ct (email) VALUES ($1)`
+    ],
     get_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person WHERE email=$1`,
     index_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person`,
     search_caretaker: `
@@ -61,12 +55,10 @@ export const caretaker_query = {
       )
       NATURAL JOIN person
     `,
-    delete_caretaker: `
-   BEGIN TRANSACTION;
-    DELETE FROM caretaker where email=$1
-    UPDATE person SET (caretaker_status) VALUES (0);
-   COMMIT TRANSACTION;
-   `
+    delete_caretaker: [
+        `DELETE FROM caretaker where email=$1`,
+        `UPDATE person SET caretaker_status=0`
+    ]
 };
 
 export const schedule_query = {

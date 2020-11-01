@@ -7,7 +7,7 @@ import {
     GetResponse,
     StringResponse
 } from "../models/careTaker";
-import { asyncQuery } from "./../utils/db";
+import { asyncQuery, asyncTransaction } from "./../utils/db";
 import { caretaker_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
 
@@ -84,7 +84,7 @@ export const get = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
     try {
         const { email } = req.params;
-        await asyncQuery(caretaker_query.delete_caretaker, [email]);
+        await asyncTransaction(caretaker_query.delete_caretaker, [[email], []]);
         const response: StringResponse = {
             data: `${email} is no longer a caretaker`,
             error: ""
@@ -102,21 +102,24 @@ export const remove = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
+        let queryMethod: string[];
         if (caretaker.caretaker_status == 1) {
-            await asyncQuery(caretaker_query.create_part_time_ct, [
-                caretaker.email
-            ]);
-        } else if (caretaker.caretaker_status == 2) {
-            await asyncQuery(caretaker_query.create_full_time_ct, [
-                caretaker.email
-            ]);
+            queryMethod = caretaker_query.create_part_time_ct;
+        } else {
+            queryMethod = caretaker_query.create_full_time_ct;
         }
+        await asyncTransaction(queryMethod, [
+            [caretaker.email],
+            [caretaker.email],
+            [caretaker.email]
+        ]);
         const response: StringResponse = {
             data: `${caretaker.email} created as caretaker`,
             error: ""
         };
         res.send(response);
     } catch (error) {
+        await asyncQuery("ROLLBACK");
         const response: StringResponse = {
             data: "",
             error: error
