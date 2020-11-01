@@ -6,7 +6,8 @@ export const router = Router();
 router.get("/", careTakersController.index);
 router.get("/search", careTakersController.search);
 router.get("/:email", careTakersController.get);
-router.post("/", careTakersController.create);
 router.delete("/:email", careTakersController.remove);
+router.post("/part_timer", careTakersController.createPartTimer);
+router.post("/full_timer", careTakersController.createFullTimer);
 
 export default router;

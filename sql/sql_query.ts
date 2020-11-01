@@ -55,6 +55,10 @@ export const caretaker_query = {
 export const schedule_query = {
     index_pt_schedule: `SELECT * FROM pt_free_schedule WHERE email = $1`,
     index_ft_schedule: `SELECT * FROM ft_leave_schedule WHERE email = $1`,
+    delete_schedule: [
+        `DELETE FROM pt_free_schedule WHERE email = $1 AND start_date=$2 AND end_date=$3`,
+        `DELETE FROM ft_leave_schedule WHERE email = $1 AND start_date=$2 AND end_date=$3`
+    ],
     delete_pt_schedule: `DELETE FROM pt_free_schedule WHERE email = $1 AND start_date=$2 AND end_date=$3`,
     delete_ft_schedule: `DELETE FROM ft_leave_schedule WHERE email = $1 AND start_date=$2 AND end_date=$3`,
     create_pt_schedule: `INSERT INTO pt_free_schedule VALUES ($1, $2, $3)`,

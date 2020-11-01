@@ -3,7 +3,6 @@ import { CaretakerStatus } from "./careTaker";
 
 export interface Schedule {
     email: string;
-    caretaker_status: CaretakerStatus;
     start_date: Date;
     end_date: Date;
 }
