@@ -1,6 +1,9 @@
 import { ApiResponse } from "./index";
-import { CaretakerStatus } from "./careTaker";
 
+/**
+ * POST api/full_timer/
+ * POST api/full_timer/
+ */
 export interface Schedule {
     email: string;
     start_date: Date;
@@ -8,5 +11,10 @@ export interface Schedule {
 }
 
 export type StringResponse = ApiResponse<string, string>;
+
+/**
+ * GET api/part_timer/:email
+ * GET api/full_timer/:email
+ */
 export type IndexResponse = ApiResponse<Schedule[], string>;
 export type GetResponse = ApiResponse<Schedule, string>;
