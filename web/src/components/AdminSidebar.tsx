@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Layout, Menu, Button } from "antd";
+import React from "react";
+import { Menu } from "antd";
 import { LaptopOutlined } from "@ant-design/icons";
 import { Link, RouteComponentProps, useRouteMatch } from "react-router-dom";
 import ResponsiveSidebar from "./ResponsiveSidebar";
@@ -15,7 +15,10 @@ const AdminSidebar = (props: RouteComponentProps) => {
                     <Link to={`${path}/`}>Welcome</Link>
                 </Menu.Item>
                 <Menu.Item key="settings">
-                    <Link to={`${path}/settings`}>Settings</Link>
+                    <Link to={`${path}/settings`}>Daily Price</Link>
+                </Menu.Item>
+                <Menu.Item key="summary">
+                    <Link to={`${path}/summary`}>Summary</Link>
                 </Menu.Item>
             </SubMenu>
         </ResponsiveSidebar>
