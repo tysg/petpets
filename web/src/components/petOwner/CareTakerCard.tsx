@@ -29,7 +29,8 @@ const NameAndRating = (props: CareTakerDetails) => {
 
 const CareTakerCard = (props: CareTakerDetails) => {
     return (
-        <Card>
+        // TODO: bind onClick to the next stage
+        <Card hoverable onClick={console.log}>
             <Meta
                 avatar={
                     <Avatar
@@ -39,7 +40,7 @@ const CareTakerCard = (props: CareTakerDetails) => {
                         }}
                         size="large"
                     >
-                        {props.fullname.charAt(0)}
+                        {props.fullname.charAt(0).toUpperCase()}
                     </Avatar>
                 }
                 title={<NameAndRating {...props} />}

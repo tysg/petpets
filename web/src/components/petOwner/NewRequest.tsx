@@ -102,7 +102,13 @@ const NewRequest = () => {
             ) : careTakers.length === 0 ? (
                 <Empty />
             ) : (
-                careTakers.map((c) => <CareTakerCard {...c} />)
+                <Row gutter={8}>
+                    {careTakers.map((c) => (
+                        <Col span={8}>
+                            <CareTakerCard {...c} />
+                        </Col>
+                    ))}
+                </Row>
             )}
         </>
     );
