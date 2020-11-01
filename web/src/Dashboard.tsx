@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-    BrowserRouter,
-    Route,
-    RouteComponentProps,
-    Switch,
-    useRouteMatch
-} from "react-router-dom";
+import { RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import SiteLayout from "./common/SiteLayout";
 import AdminRoute from "./auth/AdminRoute";
 import { user as userApi } from "./common/api";
+import AuthenticatedRoute from "./auth/AuthenticatedRoute";
+import Admin from "./components/Admin";
 
 const PetOwnerStub = (props: RouteComponentProps) => {
     return <div>Oops, this page is still under construction</div>;
@@ -23,19 +19,25 @@ const AdminStub = (props: RouteComponentProps) => (
 );
 
 const Dashboard = (props: RouteComponentProps) => {
-    const { path, url } = useRouteMatch();
+    useEffect(() => {
+        userApi.get("/ping");
+    });
+    const { path } = useRouteMatch();
     // console.log(path, url);
     // path = '/dashboard' url = '/dashboard'
     return (
-        <SiteLayout {...props}>
+        <SiteLayout {...props} path={path}>
             {/* <div> This is the landing page for Dashboard </div> */}
             <Switch>
-                <Route path={`${path}/owner`} component={PetOwnerStub}></Route>
-                <Route
+                <AuthenticatedRoute
+                    path={`${path}/owner`}
+                    component={PetOwnerStub}
+                />
+                <AuthenticatedRoute
                     path={`${path}/sitter`}
                     component={CareTakerStub}
-                ></Route>
-                <AdminRoute path={`${path}/admin`} component={AdminStub} />
+                />
+                <AdminRoute path={`${path}/admin`} component={Admin} />
             </Switch>
         </SiteLayout>
     );

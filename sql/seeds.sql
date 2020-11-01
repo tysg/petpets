@@ -9,7 +9,7 @@ VALUES (
     '$2b$10$yHkpPyW2w/xqIeO4Efi2teHkkG4ZK8p64MWo0M6jJfcjwkNfBjcte',
     '123 Clementi Rd',
     '82792172',
-    'admin',
+    'user',
     'gravatar.com'
   );
 INSERT INTO person

@@ -7,6 +7,10 @@ export const clearToken = () => {
     localStorage.removeItem(ACCESS_TOKEN);
 };
 
+export const clearUser = () => {
+    localStorage.removeItem(USER);
+};
+
 export const setTokenAndUser = (accessToken: string, user: UserInterface) => {
     localStorage.setItem(ACCESS_TOKEN, accessToken);
     localStorage.setItem(USER, JSON.stringify(user));

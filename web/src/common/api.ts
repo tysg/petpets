@@ -9,6 +9,6 @@ const authHeaderConfig: AxiosRequestConfig = {
 export const user = {
     verify: () => axios.post("/api/verifyToken", token, authHeaderConfig),
     post: (endpoint: string, data: any) =>
-        axios.post(endpoint, data, authHeaderConfig),
-    get: (endpoint: string) => axios.get(endpoint, authHeaderConfig)
+        axios.post("/api" + endpoint, data, authHeaderConfig),
+    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
 };
