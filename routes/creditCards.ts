@@ -9,5 +9,4 @@ router.delete("/:cardholder/:cardNumber", creditCardsController.remove);
 router.get("/:cardholder", creditCardsController.index);
 router.get("/:cardholder/:cardNumber", creditCardsController.get);
 
-
 export default router;

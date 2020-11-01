@@ -4,10 +4,10 @@ import { getToken } from "./../common/token";
 
 // handle the private routes
 const PublicRoute = ({ component, ...rest }: RouteProps) => {
-  if (!getToken()) {
-    return <Route {...rest} component={component} />;
-  }
-  return <Redirect to="/dashboard" />;
+    if (!getToken()) {
+        return <Route {...rest} component={component} />;
+    }
+    return <Redirect to="/dashboard" />;
 };
 
 export default PublicRoute;
