@@ -3,6 +3,8 @@ import userController from "./../controllers/userController";
 import pets from "./pets";
 import credit_cards from "./creditCards";
 import { verifyToken } from "./../middleware/auth";
+import schedules from "./schedules";
+import careTakers from "./careTakers";
 
 export const apiRouter = Router();
 
@@ -21,3 +23,5 @@ apiRouter.post("/verifyToken", verifyToken, (req, res) =>
 
 apiRouter.use("/pets", pets);
 apiRouter.use("/credit_cards", credit_cards);
+apiRouter.use("/caretakers", careTakers);
+apiRouter.use("/schedules", schedules);

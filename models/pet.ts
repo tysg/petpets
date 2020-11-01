@@ -7,7 +7,7 @@ import { ApiResponse } from "./index";
 export interface Pet {
     name: string;
     owner: string;
-    category: number;
+    category: string;
     requirements: string;
     description: string;
 }
