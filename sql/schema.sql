@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS credit_card;
 DROP TABLE IF EXISTS pet;
 DROP TABLE IF EXISTS pet_category;
 DROP TABLE IF EXISTS person;
-DROP TYPE IF EXISTS role;
+DROP TYPE IF EXISTS user_role;
 CREATE TYPE user_role AS ENUM ('admin', 'user');
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,
