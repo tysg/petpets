@@ -25,8 +25,10 @@ function createOption(value: string): SelectOption {
     };
 }
 
-function petCategoriesFormOptions(categories: PetCategory[]): SelectOption[] {
-    return categories.map((category) => createOption(category.typeName));
+function petCategoriesFormOptions(pets: Pet[]): SelectOption[] {
+    return Array.from(new Set(pets.map((p) => p.category)))
+        .sort()
+        .map((category) => createOption(category));
 }
 
 function getPetsForCategory(category: string, pets: Pet[]): SelectOption[] {
@@ -47,10 +49,9 @@ const NewRequest = () => {
     useEffect(() => {
         const liveFetch = async () => {
             try {
-                const categories = (await PetsApi.getPetCategories()).data.data;
-                setPetCategoriesOptions(petCategoriesFormOptions(categories));
                 const fetchedPets = (await PetsApi.getUserPets()).data.data;
                 setUserPets(fetchedPets);
+                setPetCategoriesOptions(petCategoriesFormOptions(fetchedPets));
             } catch (err) {
                 console.log("fetchPetCategories err", err);
             }

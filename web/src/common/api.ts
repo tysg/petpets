@@ -1,10 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { getToken } from "./token";
+import { getToken, getUser } from "./token";
 import { IndexResponse, PetCategoriesResponse } from "./../../../models/pet";
 
 const token = getToken();
-// HACK: hardcode user waiting for another PR
-const email = "jan@gmail.com";
+const email = getUser()?.email;
 const authHeaderConfig: AxiosRequestConfig = {
     headers: { "x-access-token": token }
 };
