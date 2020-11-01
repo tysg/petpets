@@ -6,18 +6,31 @@ const pool = new Pool({
 });
 
 // Returns a Promise and lets the call site decide what to do
-export function asyncQuery(text: string, params?: (string | number | undefined | Date)[]) {
+export function asyncQuery(
+    text: string,
+    params?: (string | number | undefined | Date)[]
+) {
     const start = Date.now();
     return pool
         .query(text, params)
-        .then(data => {
+        .then((data) => {
             const duration = Date.now() - start;
-            log.db_query('Executed query', { text, params, duration, rows: data.rowCount });
+            log.db_query("Executed query", {
+                text,
+                params,
+                duration,
+                rows: data.rowCount
+            });
             return data;
         })
-        .catch(err => {
+        .catch((err) => {
             const duration = Date.now() - start;
-            log.error('Error while executing async query', { text, params, duration, err });
+            log.error("Error while executing async query", {
+                text,
+                params,
+                duration,
+                err
+            });
             throw err;
         });
 }

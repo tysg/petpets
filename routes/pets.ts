@@ -9,5 +9,4 @@ router.delete("/:owner/:name", petsController.remove);
 router.get("/:owner", petsController.index);
 router.get("/:owner/:name", petsController.get);
 
-
 export default router;

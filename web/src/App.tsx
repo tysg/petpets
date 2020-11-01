@@ -10,38 +10,38 @@ import { user as userApi } from "./common/api";
 import { getToken, clearToken } from "./common/token";
 
 function Landing() {
-  // unauthenticated request
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={puppies} className="App-background" alt="" />
-        <p>Welcome to Petpets!</p>
-        <Link to="/login">Login</Link>
-      </header>
-    </div>
-  );
+    // unauthenticated request
+    return (
+        <div className="App">
+            <header className="App-header">
+                <img src={puppies} className="App-background" alt="" />
+                <p>Welcome to Petpets!</p>
+                <Link to="/login">Login</Link>
+            </header>
+        </div>
+    );
 }
 
 const App = () => {
-  useEffect(() => {
-    const token = getToken();
-    if (!token) return;
-    // verify token on page refresh
-    userApi.verify().catch((err) => {
-      clearToken();
-      console.log(err);
+    useEffect(() => {
+        const token = getToken();
+        if (!token) return;
+        // verify token on page refresh
+        userApi.verify().catch((err) => {
+            clearToken();
+            console.log(err);
+        });
     });
-  });
-  return (
-    <Router>
-      <Switch>
-        <PublicRoute exact path="/" component={Landing} />
-        <PublicRoute path="/login" component={LoginOrSignUp} />
-        <AuthenticatedRoute path="/dashboard" component={Dashboard} />
-        <Route>Oops this page does not exist</Route>
-      </Switch>
-    </Router>
-  );
+    return (
+        <Router>
+            <Switch>
+                <PublicRoute exact path="/" component={Landing} />
+                <PublicRoute path="/login" component={LoginOrSignUp} />
+                <AuthenticatedRoute path="/dashboard" component={Dashboard} />
+                <Route>Oops this page does not exist</Route>
+            </Switch>
+        </Router>
+    );
 };
 
 export default App;

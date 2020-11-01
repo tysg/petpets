@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
-import { Pet, IndexResponse, PetResponse, StringResponse, sqlify } from "../models/pet";
+import {
+    Pet,
+    IndexResponse,
+    PetResponse,
+    StringResponse,
+    sqlify
+} from "../models/pet";
 import { asyncQuery } from "./../utils/db";
 import { pet_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
@@ -9,7 +15,9 @@ import { assert } from "console";
 export const index = async (req: Request, res: Response) => {
     try {
         const { owner } = req.params;
-        const qr: QueryResult<Pet> = await asyncQuery(pet_query.index_owner, [owner]);
+        const qr: QueryResult<Pet> = await asyncQuery(pet_query.index_owner, [
+            owner
+        ]);
         const { rows } = qr;
         const response: IndexResponse = {
             data: rows,
@@ -30,7 +38,10 @@ export const index = async (req: Request, res: Response) => {
 export const get = async (req: Request, res: Response) => {
     try {
         const { name, owner } = req.params;
-        const qr: QueryResult<Pet> = await asyncQuery(pet_query.get_pet, [name, owner]);
+        const qr: QueryResult<Pet> = await asyncQuery(pet_query.get_pet, [
+            name,
+            owner
+        ]);
         const { rows } = qr;
         assert(rows.length == 1, "PK somehow unenforced!"); // By right if PK has been enforced
         const response: PetResponse = {
@@ -87,7 +98,7 @@ export const create = async (req: Request, res: Response) => {
         };
         res.status(400).send(response);
     }
-}
+};
 
 export const update = async (req: Request, res: Response) => {
     try {
@@ -107,7 +118,4 @@ export const update = async (req: Request, res: Response) => {
         };
         res.status(400).send(response);
     }
-}
-
-
-
+};

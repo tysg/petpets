@@ -7,8 +7,8 @@ import { verifyToken } from "./../middleware/auth";
 export const apiRouter = Router();
 
 apiRouter.get("/", (req, res) => {
-  res.send("Expressss + TypeScript Server");
-  console.log("hi");
+    res.send("Expressss + TypeScript Server");
+    console.log("hi");
 });
 
 apiRouter.get("/ping", verifyToken, (req, res) => res.send("PONG"));
@@ -16,7 +16,7 @@ apiRouter.get("/ping", verifyToken, (req, res) => res.send("PONG"));
 apiRouter.post("/login", userController.signIn);
 apiRouter.post("/signup", userController.signUp);
 apiRouter.post("/verifyToken", verifyToken, (req, res) =>
-  res.status(200).send("OK")
+    res.status(200).send("OK")
 );
 
 apiRouter.use("/pets", pets);
