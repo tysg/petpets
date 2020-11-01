@@ -8,6 +8,7 @@ export enum CaretakerStatus {
 
 export interface CareTaker {
     email: string;
+    specializesIn: string[];
 }
 
 export interface CareTakerDetails {
@@ -15,8 +16,8 @@ export interface CareTakerDetails {
     phone: number;
     address: string;
     email: string;
-    avatar_link?: string;
-    caretaker_status: CaretakerStatus;
+    avatarUrl?: string;
+    caretakerStatus: CaretakerStatus;
 }
 
 export type IndexResponse = ApiResponse<CareTakerDetails[], string>;

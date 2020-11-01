@@ -35,15 +35,13 @@ export const index = async (req: Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => {
     try {
-        const { date } = req.query;
+        const { date, pet_category } = req.query;
         const qr: QueryResult<CareTakerDetails> = await asyncQuery(
             caretaker_query.search_caretaker,
-            [`${date}`]
+            [`${date}`, `${pet_category}`]
         );
-        // TODO add check for specialization
         // TODO add check for no existing bookings
         // TODO add check for PT for rating > some value and caring < 5
-        // TODO check for
         const { rows } = qr;
         const response: IndexResponse = {
             data: rows,
@@ -109,6 +107,14 @@ export const createPartTimer = async (req: Request, res: Response) => {
         await asyncQuery(caretaker_query.create_part_time_ct, [
             caretaker.email
         ]);
+        const specializesParams = caretaker.specializesIn.map((petCategory) => [
+            caretaker.email,
+            petCategory
+        ]);
+        await asyncQuery(caretaker_query.delete_specializes, [caretaker.email]);
+        await specializesParams.map((params) =>
+            asyncQuery(caretaker_query.set_specializes, params)
+        );
         const response: StringResponse = {
             data: `${caretaker.email} created as caretaker`,
             error: ""
@@ -129,8 +135,40 @@ export const createFullTimer = async (req: Request, res: Response) => {
         await asyncQuery(caretaker_query.create_full_time_ct, [
             caretaker.email
         ]);
+        const specializesParams = caretaker.specializesIn.map((petCategory) => [
+            caretaker.email,
+            petCategory
+        ]);
+        await specializesParams.map((params) =>
+            asyncQuery(caretaker_query.set_specializes, params)
+        );
         const response: StringResponse = {
             data: `${caretaker.email} created as caretaker`,
+            error: ""
+        };
+        res.send(response);
+    } catch (error) {
+        const response: StringResponse = {
+            data: "",
+            error: "User is already a part timer" + error
+        };
+        res.status(400).send(response);
+    }
+};
+
+export const update = async (req: Request, res: Response) => {
+    try {
+        const caretaker: CareTaker = req.body;
+        const specializesParams = caretaker.specializesIn.map((petCategory) => [
+            caretaker.email,
+            petCategory
+        ]);
+        await asyncQuery(caretaker_query.delete_specializes, [caretaker.email]);
+        await specializesParams.map((params) =>
+            asyncQuery(caretaker_query.set_specializes, params)
+        );
+        const response: StringResponse = {
+            data: `${caretaker.email} specializations updated`,
             error: ""
         };
         res.send(response);

@@ -37,23 +37,45 @@ export const caretaker_query = {
     index_caretaker: `SELECT ${CARETAKER_DETAILS} FROM (caretaker NATURAL JOIN person)`,
     search_caretaker: `
         SELECT ${CARETAKER_DETAILS} FROM (
-            SELECT DISTINCT email 
-            FROM pt_free_schedule 
-            WHERE start_date <= $1 AND end_date >= $1
-            UNION
-            SELECT email from full_time_ct ftct
-            WHERE NOT EXISTS (
-                SELECT 1 from ft_leave_schedule fts
-                WHERE fts.email = ftct.email
-                AND start_date <= $1
-                AND end_date >= $1
+            SELECT email FROM 
+            (SELECT DISTINCT email 
+                FROM pt_free_schedule 
+                WHERE start_date <= $1 AND end_date >= $1
+                UNION
+                SELECT email from full_time_ct ftct
+                WHERE NOT EXISTS (
+                    SELECT 1 from ft_leave_schedule fts
+                    WHERE fts.email = ftct.email
+                    AND start_date <= $1
+                    AND end_date >= $1
+                    )
+            ) as fs
+            WHERE EXISTS (
+                SELECT 1 FROM specializes_in s WHERE type_name = $2 AND s.email=fs.email
             )
-        ) as free_schedules NATURAL JOIN person
+        ) as specializes NATURAL JOIN person NATURAL JOIN caretaker
     `,
+    // search_caretaker: `
+    //     SELECT ${CARETAKER_DETAILS} FROM (
+    //         SELECT DISTINCT email
+    //         FROM pt_free_schedule
+    //         WHERE start_date <= $1 AND end_date >= $1
+    //         UNION
+    //         SELECT email from full_time_ct ftct
+    //         WHERE NOT EXISTS (
+    //             SELECT 1 from ft_leave_schedule fts
+    //             WHERE fts.email = ftct.email
+    //             AND start_date <= $1
+    //             AND end_date >= $1
+    //         )
+    //     ) as free_schedules NATURAL JOIN person
+    // `,
     delete_caretaker: [
         `DELETE FROM part_time_ct where email=$1`,
         `DELETE FROM full_time_ct where email=$1`
-    ]
+    ],
+    delete_specializes: `DELETE FROM specializes_in WHERE email=$1`,
+    set_specializes: `INSERT INTO specializes_in VALUES ($1, $2)`
 };
 
 export const schedule_query = {

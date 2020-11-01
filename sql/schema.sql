@@ -1,5 +1,5 @@
 DROP TABLE IF EXISTS credit_card;
-DROP TABLE IF EXISTS specialised_for;
+DROP TABLE IF EXISTS specializes_in;
 DROP TABLE IF EXISTS pet;
 DROP TABLE IF EXISTS pet_category;
 DROP TABLE IF EXISTS pt_free_schedule;
@@ -40,10 +40,10 @@ CREATE TABLE credit_card(
 	CONSTRAINT credit_card_id PRIMARY KEY (cardNumber, cardholder)
 );
 
-CREATE TABLE specialised_for (
+CREATE TABLE specializes_in (
 	email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
 	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
-	CONSTRAINT specialied_for_id PRIMARY KEY (email, type_name)
+	CONSTRAINT specializes_in_id PRIMARY KEY (email, type_name)
 );
 
 CREATE TABLE part_time_ct (

@@ -7,6 +7,7 @@ router.get("/", careTakersController.index);
 router.get("/search", careTakersController.search);
 router.get("/:email", careTakersController.get);
 router.delete("/:email", careTakersController.remove);
+router.patch("/:email", careTakersController.update);
 router.post("/part_timer", careTakersController.createPartTimer);
 router.post("/full_timer", careTakersController.createFullTimer);
 
