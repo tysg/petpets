@@ -31,12 +31,12 @@ const Dashboard = (props: RouteComponentProps) => {
             <Switch>
                 <AuthenticatedRoute
                     exact
-                    path={`${path}`}
+                    path={path}
                     component={PetOwnerStub}
                 />
                 <AuthenticatedRoute
                     // path={[`${path}/`, `${path}/owner`]}
-                    // path={`${path}/owner`}
+                    path={`${path}/owner`}
                     component={PetOwnerStub}
                 />
                 <AuthenticatedRoute

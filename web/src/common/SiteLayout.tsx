@@ -18,7 +18,6 @@ import AdminSidebar from "../components/AdminSidebar";
 import OwnerSidebar from "../components/OwnerSidebar";
 import SitterSidebar from "../components/SitterSidebar";
 
-const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
 const NavItem = (path: string) => {
@@ -72,7 +71,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
                         <AuthenticatedRoute
                             // path={[`${path}/`, `${path}/owner`]}
                             exact
-                            path={`${path}`}
+                            path={path}
                         >
                             <OwnerSidebar />
                         </AuthenticatedRoute>
