@@ -1,9 +1,6 @@
 import React from "react";
 import { Avatar, Card } from "antd";
-import {
-    CareTakerDetails,
-    CaretakerStatus
-} from "../../../../models/careTaker";
+import { CareTakerDetails } from "../../../../models/careTaker";
 
 const { Meta } = Card;
 
@@ -23,7 +20,6 @@ const getCareTakerStatus = (s: number) => {
 
 const CareTakerCard = (props: CareTakerDetails) => {
     return (
-        // <Card style={{ width: 300, marginTop: 16 }} loading={loading}>
         <Card>
             <Meta
                 avatar={

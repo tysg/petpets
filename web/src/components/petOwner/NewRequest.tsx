@@ -1,31 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { pets as PetsApi } from "./../../common/api";
-import {
-    Form,
-    Input,
-    Button,
-    Radio,
-    Select,
-    Cascader,
-    DatePicker,
-    InputNumber,
-    TreeSelect,
-    Switch,
-    Col,
-    Row,
-    AutoComplete,
-    Empty,
-    Spin
-} from "antd";
+import { Input, Select, DatePicker, Col, Row, Empty, Spin } from "antd";
 import moment from "moment";
-import { Pet, PetCategory } from "../../../../models/pet";
-import { use } from "passport";
-import { CareTaker, CareTakerDetails } from "../../../../models/careTaker";
+import { Pet } from "../../../../models/pet";
+import { CareTakerDetails } from "../../../../models/careTaker";
 import CareTakerCard from "./CareTakerCard";
 
 const { Option, OptGroup } = Select;
 const { RangePicker } = DatePicker;
-type SelectOption = Record<"value" | "label", string>;
 
 function petOptions(pets: Pet[]) {
     const categories = Array.from(new Set(pets.map((p) => p.category))).sort();
