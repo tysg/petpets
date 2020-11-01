@@ -48,10 +48,10 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
               <Menu.Item key="4">Arrangements</Menu.Item>
             </SubMenu>
             <SubMenu key="sub2" icon={<LaptopOutlined />} title="Pet Sitter">
-              <Menu.Item key="5">option5</Menu.Item>
-              <Menu.Item key="6">option6</Menu.Item>
-              <Menu.Item key="7">option7</Menu.Item>
-              <Menu.Item key="8">option8</Menu.Item>
+              <Menu.Item key="5">Availability</Menu.Item>
+              <Menu.Item key="6">
+                <Link to="/dashboard/pastjobs">Past Jobs</Link>
+                </Menu.Item>
             </SubMenu>
           </Menu>
         </Sider>
