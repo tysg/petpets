@@ -12,7 +12,7 @@ export default class User {
         this.fullname = user.fullname;
         this.phone = user.phone;
         this.address = user.address;
-        this.email = user.address;
+        this.email = user.email;
         this.role = user.role;
         this.avatarUrl = user.avatarUrl || "";
     }

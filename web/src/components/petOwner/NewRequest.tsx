@@ -10,11 +10,17 @@ import {
     DatePicker,
     InputNumber,
     TreeSelect,
-    Switch
+    Switch,
+    Col,
+    Row,
+    AutoComplete
 } from "antd";
-
+import moment from "moment";
 import { Pet, PetCategory } from "../../../../models/pet";
+import { use } from "passport";
 
+const { Option, OptGroup } = Select;
+const { RangePicker } = DatePicker;
 type SelectOption = Record<"value" | "label", string>;
 
 function createOption(value: string): SelectOption {
@@ -25,25 +31,44 @@ function createOption(value: string): SelectOption {
     };
 }
 
-function petCategoriesFormOptions(pets: Pet[]): SelectOption[] {
-    return Array.from(new Set(pets.map((p) => p.category)))
-        .sort()
-        .map((category) => createOption(category));
-}
+// function handleChange(value) {
+//     console.log(`selected ${value}`);
+// }
 
-function getPetsForCategory(category: string, pets: Pet[]): SelectOption[] {
-    return pets
-        .filter((p) => p.category == category)
-        .map((p) => createOption(p.name));
+// ReactDOM.render(
+//     <Select defaultValue="lucy" style={{ width: 200 }} onChange={handleChange}>
+//         <OptGroup label="Manager">
+//             <Option value="jack">Jack</Option>
+//             <Option value="lucy">Lucy</Option>
+//         </OptGroup>
+//         <OptGroup label="Engineer">
+//             <Option value="Yiminghe">yiminghe</Option>
+//         </OptGroup>
+//     </Select>,
+//     mountNode
+// );
+
+function petOptions(pets: Pet[]) {
+    const categories = Array.from(new Set(pets.map((p) => p.category))).sort();
+    return categories.map((category) => (
+        <OptGroup label={category} key={category}>
+            {pets
+                .filter((p) => p.category === category)
+                .map((p) => (
+                    <Option value={p.name} key={p.name}>
+                        {p.name}
+                    </Option>
+                ))}
+        </OptGroup>
+    ));
 }
 
 const NewRequest = () => {
-    const [form] = Form.useForm();
-    const [petCategoriesOptions, setPetCategoriesOptions] = useState<
-        SelectOption[]
-    >([]);
-
     const [userPets, setUserPets] = useState<Pet[]>([]);
+    const [selectedPet, setSelectedPet] = useState<Pet>();
+    const [selectedDates, setSelectedDates] = useState<
+        [moment.Moment, moment.Moment]
+    >();
 
     // fetch only once
     useEffect(() => {
@@ -51,7 +76,6 @@ const NewRequest = () => {
             try {
                 const fetchedPets = (await PetsApi.getUserPets()).data.data;
                 setUserPets(fetchedPets);
-                setPetCategoriesOptions(petCategoriesFormOptions(fetchedPets));
             } catch (err) {
                 console.log("fetchPetCategories err", err);
             }
@@ -59,67 +83,32 @@ const NewRequest = () => {
         liveFetch();
     }, []);
 
+    const onSelectPet = (value: string, option: any) => {
+        setSelectedPet(userPets.find((p) => p.name === value));
+    };
+
+    const onSelectDates = (dates: any, dateStrings: any) => {
+        setSelectedDates(dates);
+    };
+
     return (
         <>
-            <Form
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 14 }}
-                layout="horizontal"
-            >
-                {/* <Form.Item label="Input">
-                    <Input />
-                </Form.Item> */}
-                <Form.Item label="Pet Category">
-                    <Select options={petCategoriesOptions} />
-                </Form.Item>
-                <Form.Item label="Pet Name">
-                    <Select
-                        options={getPetsForCategory(
-                            form.getFieldValue("Pet Category"),
-                            userPets
-                        )}
-                    />
-                </Form.Item>
-                <Form.Item label="TreeSelect">
-                    <TreeSelect
-                        treeData={[
-                            {
-                                title: "Light",
-                                value: "light",
-                                children: [{ title: "Bamboo", value: "bamboo" }]
-                            }
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item label="Cascader">
-                    <Cascader
-                        options={[
-                            {
-                                value: "zhejiang",
-                                label: "Zhejiang",
-                                children: [
-                                    {
-                                        value: "hangzhou",
-                                        label: "Hangzhou"
-                                    }
-                                ]
-                            }
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item label="DatePicker">
-                    <DatePicker />
-                </Form.Item>
-                <Form.Item label="InputNumber">
-                    <InputNumber />
-                </Form.Item>
-                <Form.Item label="Switch">
-                    <Switch />
-                </Form.Item>
-                <Form.Item label="Button">
-                    <Button>Button</Button>
-                </Form.Item>
-            </Form>
+            <Input.Group>
+                <Row gutter={8}>
+                    <Col span={4}>
+                        <Select
+                            style={{ width: "100%" }}
+                            placeholder="Choose pet"
+                            onChange={onSelectPet}
+                        >
+                            {petOptions(userPets)}
+                        </Select>
+                    </Col>
+                    <Col span={8}>
+                        <RangePicker onChange={onSelectDates} />
+                    </Col>
+                </Row>
+            </Input.Group>
         </>
     );
 };
