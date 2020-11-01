@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Card } from "antd";
+import { Avatar, Space, Card, Rate } from "antd";
 import { CareTakerDetails } from "../../../../models/careTaker";
 
 const { Meta } = Card;
@@ -18,6 +18,15 @@ const getCareTakerStatus = (s: number) => {
     }
 };
 
+const NameAndRating = (props: CareTakerDetails) => {
+    return (
+        <Space>
+            <>{props.fullname}</>
+            <Rate disabled defaultValue={4} />
+        </Space>
+    );
+};
+
 const CareTakerCard = (props: CareTakerDetails) => {
     return (
         <Card>
@@ -33,7 +42,7 @@ const CareTakerCard = (props: CareTakerDetails) => {
                         {props.fullname.charAt(0)}
                     </Avatar>
                 }
-                title={props.fullname}
+                title={<NameAndRating {...props} />}
                 description={getCareTakerStatus(props.caretaker_status)}
             />
         </Card>

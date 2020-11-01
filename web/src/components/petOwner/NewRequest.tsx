@@ -81,22 +81,21 @@ const NewRequest = () => {
 
     return (
         <>
-            <Input.Group>
-                <Row gutter={8}>
-                    <Col span={4}>
-                        <Select
-                            style={{ width: "100%" }}
-                            placeholder="Choose pet"
-                            onChange={onSelectPet}
-                        >
-                            {petOptions(userPets)}
-                        </Select>
-                    </Col>
-                    <Col span={8}>
-                        <RangePicker onChange={onSelectDates} />
-                    </Col>
-                </Row>
-            </Input.Group>
+            <Row gutter={8}>
+                <Col span={4}>
+                    <Select
+                        style={{ width: "100%" }}
+                        placeholder="Choose pet"
+                        onChange={onSelectPet}
+                        size="large"
+                    >
+                        {petOptions(userPets)}
+                    </Select>
+                </Col>
+                <Col span={8}>
+                    <RangePicker onChange={onSelectDates} size="large" />
+                </Col>
+            </Row>
             <br />
             {isLoading ? (
                 <Spin />
