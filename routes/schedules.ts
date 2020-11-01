@@ -5,6 +5,6 @@ export const router = Router();
 
 router.get("/:email/:caretaker_status", schedulesController.index);
 router.post("/", schedulesController.create);
-router.delete("/:email", schedulesController.remove);
+router.delete("/", schedulesController.remove);
 
 export default router;

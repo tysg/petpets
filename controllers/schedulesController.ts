@@ -1,4 +1,4 @@
-import { query, Request, Response } from "express";
+import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import { Schedule, IndexResponse, StringResponse } from "../models/schedule";
 import { asyncQuery } from "./../utils/db";
@@ -12,6 +12,7 @@ export const index = async (req: Request, res: Response) => {
             caretaker_status == "1"
                 ? schedule_query.index_pt_schedule
                 : schedule_query.index_ft_schedule;
+        // TODO throw error if no result shown cos maybe caretaker_status is wrong
         const qr: QueryResult<Schedule> = await asyncQuery(query_method, [
             email
         ]);
@@ -60,6 +61,8 @@ export const remove = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
     try {
         // TODO alterntively we can check database for this status
+        // TODO sanitize date input? If typescript doesn't do a good job already
+        // TODO check that schedules don't overlap, or should frontend enforce this?
         const schedule: Schedule = req.body;
         if (schedule.caretaker_status == 1) {
             await asyncQuery(schedule_query.create_pt_schedule, [
