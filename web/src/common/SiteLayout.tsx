@@ -46,7 +46,8 @@ const SiteLayout = (props: SiteLayoutProps) => {
     };
     const { path } = useRouteMatch();
     const paths = props.location.pathname.split("/");
-    const [selected, setSelected] = useState(paths[2]);
+    const selected =
+        paths[2] === "" || paths[2] === undefined ? "owner" : paths[2];
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className="header">
@@ -55,7 +56,6 @@ const SiteLayout = (props: SiteLayoutProps) => {
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={[selected]}
-                    // defaultSelectedKeys={[ ]}
                 >
                     {NavItem(props.path)}
                     <Button onClick={logout}>
@@ -72,16 +72,16 @@ const SiteLayout = (props: SiteLayoutProps) => {
                             exact
                             path={path}
                         >
-                            <OwnerSidebar />
+                            <OwnerSidebar {...props} />
                         </AuthenticatedRoute>
                         <AuthenticatedRoute
                             // path={[`${path}/`, `${path}/owner`]}
                             path={`${path}/owner`}
                         >
-                            <OwnerSidebar />
+                            <OwnerSidebar {...props} />
                         </AuthenticatedRoute>
                         <AuthenticatedRoute path={`${path}/sitter`}>
-                            <SitterSidebar />
+                            <SitterSidebar {...props} />
                         </AuthenticatedRoute>
                         <AdminRoute path={`${path}/admin`}>
                             <AdminSidebar {...props} />

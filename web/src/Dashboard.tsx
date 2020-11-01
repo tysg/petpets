@@ -19,9 +19,9 @@ const AdminStub = (props: RouteComponentProps) => (
 );
 
 const Dashboard = (props: RouteComponentProps) => {
-    useEffect(() => {
-        userApi.get("/ping");
-    });
+    // useEffect(() => {
+    //     userApi.get("/ping");
+    // });
     const { path } = useRouteMatch();
     // console.log(path, url);
     // path = '/dashboard' url = '/dashboard'
