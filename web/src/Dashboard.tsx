@@ -36,6 +36,11 @@ const Dashboard = (props: RouteComponentProps) => {
                     component={PetOwnerStub}
                 />
                 <AuthenticatedRoute
+                    exact
+                    path={`${path}/owner/new-request`}
+                    component={NewRequest}
+                />
+                <AuthenticatedRoute
                     // path={[`${path}/`, `${path}/owner`]}
                     path={`${path}/owner`}
                     component={PetOwnerStub}
