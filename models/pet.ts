@@ -1,5 +1,9 @@
 import { ApiResponse } from "./index";
 
+/**
+ * POST api/pets, request;
+ * PATCH api/pets/:owner/:name, request;
+ */
 export interface Pet {
     name: string;
     owner: string;
@@ -28,6 +32,6 @@ export type IndexResponse = ApiResponse<Pet[], string>;
 export type PetResponse = ApiResponse<Pet, string>;
 
 /**
- *
+ * DELETE api/pets/:owner/:name, response;
  */
 export type StringResponse = ApiResponse<string, string>;
