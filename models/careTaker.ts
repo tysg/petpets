@@ -8,7 +8,6 @@ export enum CaretakerStatus {
 
 export interface CareTaker {
     email: string;
-    caretaker_status: CaretakerStatus;
 }
 
 export interface CareTakerDetails {
@@ -16,7 +15,7 @@ export interface CareTakerDetails {
     phone: number;
     address: string;
     email: string;
-    avatarUrl?: string;
+    avatar_link?: string;
     caretaker_status: CaretakerStatus;
 }
 

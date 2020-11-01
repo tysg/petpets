@@ -15,8 +15,7 @@ CREATE TABLE person(
 	password varchar(64) NOT NULL,
 	address varchar(64) NOT NULL,
 	phone int NOT NULL,
-	avatar_link varchar,
-	caretaker_status smallint DEFAULT 0 CHECK (caretaker_status IN (0,1,2))
+	avatar_link varchar
 );
 
 CREATE TABLE pet_category(
