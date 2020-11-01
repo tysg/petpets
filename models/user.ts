@@ -25,6 +25,7 @@ export interface User {
     phone: number;
     address: string;
     email: string;
+    role: string;
     avatarUrl?: string;
 }
 export interface SignInRequest {
