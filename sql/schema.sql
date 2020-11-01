@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS ft_leave_schedule;
 DROP TABLE IF EXISTS full_time_ct;
 DROP TABLE IF EXISTS part_time_ct;
 DROP TABLE IF EXISTS caretaker;
+DROP TABLE IF EXISTS care_taker;
 DROP TABLE IF EXISTS person;
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,

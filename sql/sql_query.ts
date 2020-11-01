@@ -1,54 +1,50 @@
 export const user_query = {
-  userpass:
-    "SELECT email, fullname, password, avatar_link FROM person WHERE email=$1 LIMIT 1",
-  add_user:
-    "INSERT INTO person (email, fullname, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)",
+    userpass:
+        "SELECT email, fullname, password, avatar_link FROM person WHERE email=$1 LIMIT 1",
+    add_user:
+        "INSERT INTO person (email, fullname, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)"
 };
 
 export const pet_query = {
-  get_pet: "SELECT * FROM pet WHERE name=$1 AND owner=$2",
-  index_owner: "SELECT * FROM pet WHERE owner=$1",
-  delete_pet: "DELETE FROM pet WHERE name=$1 AND owner=$2",
-  create_pet:
-    "INSERT INTO pet (name, owner, category, requirements, description) VALUES ($1, $2, $3, $4, $5)",
-  update_pet:
-    "UPDATE pet SET (name, owner, category, requirements, description) = ($1, $2, $3, $4, $5) WHERE name=$1 AND email=$2",
+    get_pet: "SELECT * FROM pet WHERE name=$1 AND owner=$2",
+    index_owner: "SELECT * FROM pet WHERE owner=$1",
+    delete_pet: "DELETE FROM pet WHERE name=$1 AND owner=$2",
+    create_pet:
+        "INSERT INTO pet (name, owner, category, requirements, description) VALUES ($1, $2, $3, $4, $5)",
+    update_pet:
+        "UPDATE pet SET (name, owner, category, requirements, description) = ($1, $2, $3, $4, $5) WHERE name=$1 AND email=$2"
 };
 
 export const credit_card_query = {
-  get_credit_card:
-    "SELECT * FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
-  index_cardholder: "SELECT * FROM credit_card WHERE cardholder=$1",
-  delete_credit_card:
-    "DELETE FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
-  create_credit_card:
-    "INSERT INTO credit_card (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
-  update_credit_card:
-    "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2",
-export const sql_query = {
-    // TODO: change this to using the Person table
-    userpass:
-        'SELECT email, username, password, avatar_link FROM person WHERE email=$1 LIMIT 1',
-    add_user:
-        'INSERT INTO person (email, username, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)',
+    get_credit_card:
+        "SELECT * FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+    index_cardholder: "SELECT * FROM credit_card WHERE cardholder=$1",
+    delete_credit_card:
+        "DELETE FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+    create_credit_card:
+        "INSERT INTO credit_card (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
+    update_credit_card:
+        "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 };
 
-const CARETAKER_DETAILS = "username, phone, address, email, avatarUrl, caretaker_status";
+const CARETAKER_DETAILS =
+    "username, phone, address, email, avatarUrl, caretaker_status";
 
 export const caretaker_query = {
     create_part_time_ct: `
     BEGIN TRANSACTION;
-      UPDATE person SET (caretaker_status) VALUES (1);
-      INSERT INTO caretaker (email) VALUES ($1);
-      INSERT INTO part_time_ct (email) VALUES ($1);
+      WITH data (email) as (values ($1))
+      UPDATE person SET (caretaker_status) = (1) WHERE email=d.email FROM data d;
+      INSERT INTO caretaker (email) VALUES (d.email) FROM data d;
+      INSERT INTO part_time_ct (email) VALUES (d.email) FROM data d;
     COMMIT TRANSACTION;
     `,
     create_full_time_ct: `
-    BEGIN TRANSACTION;
-      UPDATE person SET (caretaker_status) VALUES (2);
+    BEGIN;
+      UPDATE person SET (caretaker_status) = (2) WHERE email=$1;
       INSERT INTO caretaker (email) VALUES ($1);
       INSERT INTO full_time_ct (email) VALUES ($1);
-    COMMIT TRANSACTION;
+    COMMIT;
   `,
     get_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person WHERE email=$1`,
     index_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person`,
