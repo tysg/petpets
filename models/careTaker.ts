@@ -18,7 +18,7 @@ export interface CareTaker {
 }
 
 export interface CareTakerDetails {
-    username: string;
+    fullname: string;
     phone: number;
     address: string;
     email: string;

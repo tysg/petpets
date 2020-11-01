@@ -32,7 +32,7 @@ export const pets = {
         petCategory: string
     ): Promise<AxiosResponse<CareTakerIndexResponse>> =>
         get(
-            `api/caretakers/search?start_date=${formatDate(
+            `/api/caretakers/search?start_date=${formatDate(
                 startDate
             )}&end_date=${formatDate(endDate)}&pet_category=${petCategory}`
         )

@@ -13,40 +13,19 @@ import {
     Switch,
     Col,
     Row,
-    AutoComplete
+    AutoComplete,
+    Empty,
+    Spin
 } from "antd";
 import moment from "moment";
 import { Pet, PetCategory } from "../../../../models/pet";
 import { use } from "passport";
+import { CareTaker, CareTakerDetails } from "../../../../models/careTaker";
+import CareTakerCard from "./CareTakerCard";
 
 const { Option, OptGroup } = Select;
 const { RangePicker } = DatePicker;
 type SelectOption = Record<"value" | "label", string>;
-
-function createOption(value: string): SelectOption {
-    const capitalizedName = value.replace(/^\w/, (c) => c.toUpperCase());
-    return {
-        value: value,
-        label: capitalizedName
-    };
-}
-
-// function handleChange(value) {
-//     console.log(`selected ${value}`);
-// }
-
-// ReactDOM.render(
-//     <Select defaultValue="lucy" style={{ width: 200 }} onChange={handleChange}>
-//         <OptGroup label="Manager">
-//             <Option value="jack">Jack</Option>
-//             <Option value="lucy">Lucy</Option>
-//         </OptGroup>
-//         <OptGroup label="Engineer">
-//             <Option value="Yiminghe">yiminghe</Option>
-//         </OptGroup>
-//     </Select>,
-//     mountNode
-// );
 
 function petOptions(pets: Pet[]) {
     const categories = Array.from(new Set(pets.map((p) => p.category))).sort();
@@ -64,8 +43,10 @@ function petOptions(pets: Pet[]) {
 }
 
 const NewRequest = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [userPets, setUserPets] = useState<Pet[]>([]);
     const [selectedPet, setSelectedPet] = useState<Pet>();
+    const [careTakers, setCareTakers] = useState<CareTakerDetails[]>([]);
     const [selectedDates, setSelectedDates] = useState<
         [moment.Moment, moment.Moment]
     >();
@@ -82,6 +63,31 @@ const NewRequest = () => {
         };
         liveFetch();
     }, []);
+
+    // fetch upon pet and date update
+    useEffect(() => {
+        setIsLoading(true);
+        const fetchCareTakers = async () => {
+            if (!selectedPet || !selectedDates) {
+                // fetch only when both exists
+                return;
+            }
+            try {
+                const fetchedCareTakers = (
+                    await PetsApi.getAvailableCareTakers(
+                        selectedDates[0],
+                        selectedDates[1],
+                        selectedPet.category
+                    )
+                ).data.data;
+                setCareTakers(fetchedCareTakers);
+            } catch (err) {
+                console.log("fetching caretaker err", err);
+            }
+        };
+        fetchCareTakers();
+        setIsLoading(false);
+    }, [selectedPet, selectedDates]);
 
     const onSelectPet = (value: string, option: any) => {
         setSelectedPet(userPets.find((p) => p.name === value));
@@ -109,6 +115,14 @@ const NewRequest = () => {
                     </Col>
                 </Row>
             </Input.Group>
+            <br />
+            {isLoading ? (
+                <Spin />
+            ) : careTakers.length === 0 ? (
+                <Empty />
+            ) : (
+                careTakers.map((c) => <CareTakerCard {...c} />)
+            )}
         </>
     );
 };
