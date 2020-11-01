@@ -6,12 +6,12 @@ INSERT INTO person VALUES ('p@gmail.com', 'p', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkH
 -- care takers
 
 -- FULL TIME
-INSERT INTO person VALUES ('ftct@gmail.com', 'ftct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '81 pgp Rd', '62353535', '', 2);
+INSERT INTO person VALUES ('ftct@gmail.com', 'ftct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '81 pgp Rd', '62353535', '');
 INSERT INTO full_time_ct VALUES ('ftct@gmail.com');
 INSERT INTO specialised_for VALUES ('ftct@gmail.com', 'cat');
 
 -- PART TIME
-INSERT INTO person VALUES ('ptct@gmail.com', 'ptct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '101 Johor Rd', '81003333', '', 1);
+INSERT INTO person VALUES ('ptct@gmail.com', 'ptct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '101 Johor Rd', '81003333', '');
 INSERT INTO part_time_ct VALUES ('ptct@gmail.com');
 INSERT INTO specialised_for VALUES ('ptct@gmail.com', 'dog');
 
