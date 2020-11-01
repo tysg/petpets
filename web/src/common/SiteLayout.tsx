@@ -1,14 +1,11 @@
 import React, { ComponentProps, PropsWithChildren, useState } from "react";
 import { Layout, Menu, Button } from "antd";
-import {
-    UserOutlined,
-    LaptopOutlined,
-    LogoutOutlined
-} from "@ant-design/icons";
+import { LogoutOutlined } from "@ant-design/icons";
 import { clearToken, clearUser, getUser } from "./token";
 import {
     Link,
     RouteChildrenProps,
+    RouteComponentProps,
     Switch,
     useRouteMatch
 } from "react-router-dom";
@@ -38,7 +35,7 @@ const NavItem = (path: string) => {
     );
 };
 
-interface SiteLayoutProps extends PropsWithChildren<RouteChildrenProps> {
+interface SiteLayoutProps extends PropsWithChildren<RouteComponentProps> {
     path: string;
 }
 
@@ -49,6 +46,8 @@ const SiteLayout = (props: SiteLayoutProps) => {
         props.history.push("/");
     };
     const { path } = useRouteMatch();
+    const paths = props.location.pathname.split("/");
+    const [selected, setSelected] = useState(paths[2]);
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className="header">
@@ -56,6 +55,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
                 <Menu
                     theme="dark"
                     mode="horizontal"
+                    defaultSelectedKeys={[selected]}
                     // defaultSelectedKeys={[ ]}
                 >
                     {NavItem(props.path)}
@@ -85,7 +85,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
                             <SitterSidebar />
                         </AuthenticatedRoute>
                         <AdminRoute path={`${path}/admin`}>
-                            <AdminSidebar />
+                            <AdminSidebar {...props} />
                         </AdminRoute>
                     </Switch>
                 </Sider>
