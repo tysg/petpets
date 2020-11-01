@@ -6,19 +6,18 @@ INSERT INTO person VALUES ('p@gmail.com', 'p', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkH
 -- care takers
 -- FULL TIME
 INSERT INTO person VALUES ('ftct@gmail.com', 'ftct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '81 pgp Rd', '62353535', '', 2);
-INSERT INTO caretaker VALUES ('ftct@gmail.com');
+-- INSERT INTO caretaker VALUES ('ftct@gmail.com');
 INSERT INTO full_time_ct VALUES ('ftct@gmail.com');
 INSERT INTO specialised_for VALUES ('ftct@gmail.com', 'cat');
 -- PART TIME
 INSERT INTO person VALUES ('ptct@gmail.com', 'ptct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '101 Johor Rd', '81003333', '', 1);
-INSERT INTO caretaker VALUES ('ptct@gmail.com');
+-- INSERT INTO caretaker VALUES ('ptct@gmail.com');
 INSERT INTO part_time_ct VALUES ('ptct@gmail.com');
 INSERT INTO specialised_for VALUES ('ptct@gmail.com', 'dog');
 
-
 -- schedules
-INSERT INTO pt_free_schedule VALUES ('ptct@gmail.com', '2020-11-05', '2020-11-10');
-INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-11-05', '2020-11-10');
+-- INSERT INTO pt_free_schedule VALUES ('ptct@gmail.com', '2020-11-05', '2020-11-10');
+-- INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-11-05', '2020-11-10');
 
 -- credit cards
 -- Postgresql uses the yyyy-mm-dd format

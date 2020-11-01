@@ -30,16 +30,8 @@ export const credit_card_query = {
 const CARETAKER_DETAILS = `fullname, phone, address, email, avatar_link, caretaker_status`;
 
 export const caretaker_query = {
-    create_part_time_ct: [
-        `UPDATE person SET caretaker_status=1 WHERE email=$1`,
-        `INSERT INTO caretaker (email) VALUES ($1)`,
-        `INSERT INTO part_time_ct (email) VALUES ($1)`
-    ],
-    create_full_time_ct: [
-        `UPDATE person SET caretaker_status=2 WHERE email=$1`,
-        `INSERT INTO caretaker (email) VALUES ($1)`,
-        `INSERT INTO full_time_ct (email) VALUES ($1)`
-    ],
+    create_part_time_ct: `INSERT INTO part_time_ct (email) VALUES ($1)`,
+    create_full_time_ct: `INSERT INTO full_time_ct (email) VALUES ($1)`,
     get_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person WHERE email=$1`,
     index_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person`,
     search_caretaker: `
@@ -55,8 +47,8 @@ export const caretaker_query = {
         ))) as free_schedules NATURAL JOIN person
     `,
     delete_caretaker: [
-        `DELETE FROM caretaker where email=$1`,
-        `UPDATE person SET caretaker_status=0`
+        `DELETE FROM part_time_ct where email=$1`,
+        `DELETE FROM full_time_ct where email=$1`
     ]
 };
 

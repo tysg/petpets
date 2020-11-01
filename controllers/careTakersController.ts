@@ -43,6 +43,7 @@ export const search = async (req: Request, res: Response) => {
         // TODO add check for specialization
         // TODO add check for no existing bookings
         // TODO add check for PT for rating > some value and caring < 5
+        // TODO check for
         const { rows } = qr;
         const response: IndexResponse = {
             data: rows,
@@ -84,7 +85,10 @@ export const get = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
     try {
         const { email } = req.params;
-        await asyncTransaction(caretaker_query.delete_caretaker, [[email], []]);
+        await asyncTransaction(caretaker_query.delete_caretaker, [
+            [email],
+            [email]
+        ]);
         const response: StringResponse = {
             data: `${email} is no longer a caretaker`,
             error: ""
@@ -102,17 +106,13 @@ export const remove = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
-        let queryMethod: string[];
+        let queryMethod: string;
         if (caretaker.caretaker_status == 1) {
             queryMethod = caretaker_query.create_part_time_ct;
         } else {
             queryMethod = caretaker_query.create_full_time_ct;
         }
-        await asyncTransaction(queryMethod, [
-            [caretaker.email],
-            [caretaker.email],
-            [caretaker.email]
-        ]);
+        await asyncQuery(queryMethod, [caretaker.email]);
         const response: StringResponse = {
             data: `${caretaker.email} created as caretaker`,
             error: ""
