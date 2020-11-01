@@ -125,12 +125,16 @@ export const update = async (req: Request, res: Response) => {
 
 export const getCategories = async (req: Request, res: Response) => {
     try {
-        const qr: QueryResult<PetCategory> = await asyncQuery(
-            pet_query.get_pet_categories
-        );
+        const qr = await asyncQuery(pet_query.get_pet_categories);
         const { rows } = qr;
+
+        const data: PetCategory[] = rows.map((value) => ({
+            typeName: value.type_name,
+            baseDailyPrice: value.base_daily_price
+        }));
+
         const response: PetCategoriesResponse = {
-            data: rows,
+            data,
             error: ""
         };
         res.send(response);
