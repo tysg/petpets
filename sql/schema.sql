@@ -16,7 +16,7 @@ CREATE TABLE person(
 	address varchar(64) NOT NULL,
 	phone int NOT NULL,
 	avatar_link varchar,
-	caretaker_status smallint DEFAULT 0 CHECK (caretaker_status IN (0,1,2)) 
+	caretaker_status smallint DEFAULT 0 CHECK (caretaker_status IN (0,1,2))
 );
 
 CREATE TABLE pet_category(
@@ -56,7 +56,11 @@ CREATE TABLE full_time_ct (
 );
 
 
-CREATE VIEW caretaker (email) AS (SELECT * FROM part_time_ct UNION select * FROM full_time_ct);
+CREATE VIEW caretaker (email) AS (
+	SELECT email, 1 as caretaker_status FROM part_time_ct 
+	UNION 
+	SELECT email, 2 as caretaker_status FROM full_time_ct
+);
 
 CREATE TABLE pt_free_schedule (
 	email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
