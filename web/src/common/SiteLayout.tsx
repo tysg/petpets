@@ -53,7 +53,9 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
                             <Menu.Item key="1">My Pets</Menu.Item>
                             <Menu.Item key="2">My Profile</Menu.Item>
                             <Menu.Item key="3">New Request</Menu.Item>
-                            <Menu.Item key="4">Arrangements</Menu.Item>
+                            <Menu.Item key="4">
+                              <Link to="/dashboard/pastorders">Past Orders</Link>
+                            </Menu.Item>
                         </SubMenu>
                         <SubMenu
                             key="sub2"
@@ -81,7 +83,6 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
                     </Content>
                 </Layout>
             </Layout>
->>>>>>> master
         </Layout>
     );
 };

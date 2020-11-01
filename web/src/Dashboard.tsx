@@ -7,12 +7,21 @@ import {
     useRouteMatch
 } from "react-router-dom";
 import SiteLayout from "./common/SiteLayout";
+import PastOrdersTable from "./PastOrdersTable";
 import { user as userApi } from "./common/api";
 import { Input, Popconfirm, Form, Space, Table, Button, Card } from "antd";
 import { isPropertyName, parseIsolatedEntityName } from 'typescript';
 
 const PetOwnerStub = (props: RouteComponentProps) => {
     return <div>Oops, this page is still under construction</div>;
+};
+
+const PastOrders = (props: RouteComponentProps) => {
+  return (
+  <Space direction='vertical'>
+    <PastOrdersTable></PastOrdersTable>
+  </Space>
+  );
 };
 
 const CareTakerStub = (props: RouteComponentProps) => (
@@ -48,6 +57,10 @@ const Dashboard = (props: RouteComponentProps) => {
                     <Route
                         path={`${path}/owner`}
                         component={PetOwnerStub}
+                    ></Route>
+                    <Route
+                        path={`${path}/pastorders`}
+                        component={PastOrders}
                     ></Route>
                     <Route
                         path={`${path}/sitter`}
