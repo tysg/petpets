@@ -34,7 +34,7 @@ const NavItem = (path: string) => {
     );
 };
 
-const subMenus = {
+const subMenus: { [key: string]: JSX.Element } = {
     owner: (
         <SubMenu key="owner" icon={<UserOutlined />} title="Pet Owner">
             <Menu.Item key="1">My Pets</Menu.Item>
