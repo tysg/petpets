@@ -27,7 +27,7 @@ export const credit_card_query = {
         "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 };
 
-const CARETAKER_DETAILS = `username, phone, address, email, avatarUrl, caretaker_status`;
+const CARETAKER_DETAILS = `fullname, phone, address, email, avatar_link, caretaker_status`;
 
 export const caretaker_query = {
     create_part_time_ct: [
@@ -43,17 +43,16 @@ export const caretaker_query = {
     get_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person WHERE email=$1`,
     index_caretaker: `SELECT ${CARETAKER_DETAILS} FROM caretaker NATURAL JOIN person`,
     search_caretaker: `
-    SELECT ${CARETAKER_DETAILS} FROM 
-    (SELECT DISTINCT email FROM part_time_ct NATURAL JOIN pt_free_schedule 
-      WHERE start_date <= $1 AND end_date >= $1)
-    UNION
-    (SELECT email from full_time_ct ftct
-      WHERE NOT EXISTS (
-        SELECT 1 from ft_leave_schedule fts
-          WHERE fts.email = ftct.email AND
-          start_date <= $1 AND end_date >= $1
-      )
-      NATURAL JOIN person
+        SELECT ${CARETAKER_DETAILS} FROM (
+        (SELECT DISTINCT email FROM pt_free_schedule 
+        WHERE start_date <= $1 AND end_date >= $1)
+        UNION
+        (SELECT email from full_time_ct ftct
+        WHERE NOT EXISTS (
+            SELECT 1 from ft_leave_schedule fts
+            WHERE fts.email = ftct.email AND
+            start_date <= $1 AND end_date >= $1
+        ))) as free_schedules NATURAL JOIN person
     `,
     delete_caretaker: [
         `DELETE FROM caretaker where email=$1`,
