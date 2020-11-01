@@ -20,7 +20,7 @@ const getCareTakerStatus = (s: number) => {
 
 const NameAndRating = (props: CareTakerDetails) => {
     return (
-        <Space>
+        <Space size="middle">
             <>{props.fullname}</>
             <Rate disabled defaultValue={4} />
         </Space>
