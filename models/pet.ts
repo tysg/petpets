@@ -15,6 +15,19 @@ export const sqlify = (pet: Pet) => [
     pet.requirements,
     pet.description
 ];
+
+/**
+ * GET api/pets/:owner
+ */
 export type IndexResponse = ApiResponse<Pet[], string>;
+
+/**
+ * GET api/pets/:owner/:name;
+ * POST api/pets/:owner/:name, response;
+ */
 export type PetResponse = ApiResponse<Pet, string>;
+
+/**
+ *
+ */
 export type StringResponse = ApiResponse<string, string>;
