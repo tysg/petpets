@@ -6,7 +6,7 @@ INSERT INTO person VALUES ( 'admin@email.com', 'Bran Bong', '$2b$10$JUPcABQnf.k8
 -- care takers
 
 -- FULL TIME
-INSERT INTO person VALUES ('ftct@gmail.com', 'ftct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '81 pgp Rd', '62353535', '');
+INSERT INTO person VALUES ('ftct@gmail.com', 'ftct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '81 pgp Rd', '62353535', 'user');
 INSERT INTO full_time_ct VALUES ('ftct@gmail.com');
 INSERT INTO specializes_in VALUES ('ftct@gmail.com', 'cat');
 INSERT INTO specializes_in VALUES ('ftct@gmail.com', 'dog');
