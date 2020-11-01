@@ -20,6 +20,16 @@ export interface NewUser {
 /**
  * POST api/signin, request.
  */
+export interface UserInterface {
+    email: string;
+    fullname: string;
+    passwordHash: string;
+    address: string;
+    phone: number;
+    role: string;
+    avatarUrl?: string;
+}
+
 export interface SignInRequest {
     email: string;
     password: string;
@@ -28,8 +38,8 @@ export interface SignInRequest {
 /**
  * POST api/signin, response.
  */
-export type SignInPayload = Record<
-    "email" | "username" | "avatarUrl" | "accessToken",
-    string
->;
+interface SignInPayload {
+    accessToken: string;
+    user: UserInterface;
+}
 export type SignInResponse = ApiResponse<SignInPayload, string>;

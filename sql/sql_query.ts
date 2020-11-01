@@ -1,6 +1,6 @@
 export const user_query = {
     userpass:
-        "SELECT email, fullname, password, avatar_link FROM person WHERE email=$1 LIMIT 1",
+        "SELECT email, fullname, password, phone, address, role, avatar_link FROM person WHERE email=$1 LIMIT 1",
     add_user:
         "INSERT INTO person (email, fullname, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)"
 };

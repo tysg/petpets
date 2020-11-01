@@ -1,21 +1,52 @@
-import React, { ComponentProps, PropsWithChildren } from "react";
-import { Layout, Menu, Breadcrumb, Button } from "antd";
+import React, { ComponentProps, PropsWithChildren, useState } from "react";
+import { Layout, Menu, Button } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
+import { clearSession, getUser } from "./token";
 import {
-    UserOutlined,
-    LaptopOutlined,
-    LogoutOutlined
-} from "@ant-design/icons";
-import { clearToken } from "./token";
-import { Link, RouteChildrenProps } from "react-router-dom";
+    Link,
+    RouteChildrenProps,
+    RouteComponentProps,
+    Switch,
+    useRouteMatch
+} from "react-router-dom";
+import AuthenticatedRoute from "../auth/AuthenticatedRoute";
+import AdminRoute from "../auth/AdminRoute";
+import AdminSidebar from "../components/AdminSidebar";
+import OwnerSidebar from "../components/OwnerSidebar";
+import SitterSidebar from "../components/SitterSidebar";
 
-const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
 
-const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
+const NavItem = (path: string) => {
+    return (
+        <>
+            <Menu.Item key="owner">
+                <Link to={`${path}/owner`}>Pet Owner</Link>
+            </Menu.Item>
+            <Menu.Item key="sitter">
+                <Link to={`${path}/sitter`}>Pet Sitter</Link>
+            </Menu.Item>
+            {getUser()?.isAdmin() && (
+                <Menu.Item key="admin">
+                    <Link to="/dashboard/admin">Admin</Link>
+                </Menu.Item>
+            )}
+        </>
+    );
+};
+
+interface SiteLayoutProps extends PropsWithChildren<RouteComponentProps> {
+    path: string;
+}
+
+const SiteLayout = (props: SiteLayoutProps) => {
     const logout = () => {
-        clearToken();
+        clearSession();
         props.history.push("/");
     };
+    const { path } = useRouteMatch();
+    const paths = props.location.pathname.split("/");
+    const [selected, setSelected] = useState(paths[2]);
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className="header">
@@ -23,14 +54,10 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    defaultSelectedKeys={["1"]}
+                    defaultSelectedKeys={[selected]}
+                    // defaultSelectedKeys={[ ]}
                 >
-                    <Menu.Item key="1">
-                        <Link to="/dashboard/owner">Pet Owner</Link>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <Link to="/dashboard/sitter">Pet Sitter</Link>
-                    </Menu.Item>
+                    {NavItem(props.path)}
                     <Button onClick={logout}>
                         <LogoutOutlined />
                         Logout
@@ -39,33 +66,27 @@ const SiteLayout = (props: PropsWithChildren<RouteChildrenProps>) => {
             </Header>
             <Layout>
                 <Sider width={200} className="site-layout-background">
-                    <Menu
-                        mode="inline"
-                        defaultSelectedKeys={["1"]}
-                        defaultOpenKeys={["sub1"]}
-                        style={{ height: "100%", borderRight: 0 }}
-                    >
-                        <SubMenu
-                            key="sub1"
-                            icon={<UserOutlined />}
-                            title="Pet Owner"
+                    <Switch>
+                        <AuthenticatedRoute
+                            // path={[`${path}/`, `${path}/owner`]}
+                            exact
+                            path={path}
                         >
-                            <Menu.Item key="1">My Pets</Menu.Item>
-                            <Menu.Item key="2">My Profile</Menu.Item>
-                            <Menu.Item key="3">New Request</Menu.Item>
-                            <Menu.Item key="4">Arrangements</Menu.Item>
-                        </SubMenu>
-                        <SubMenu
-                            key="sub2"
-                            icon={<LaptopOutlined />}
-                            title="Pet Sitter"
+                            <OwnerSidebar />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute
+                            // path={[`${path}/`, `${path}/owner`]}
+                            path={`${path}/owner`}
                         >
-                            <Menu.Item key="5">option5</Menu.Item>
-                            <Menu.Item key="6">option6</Menu.Item>
-                            <Menu.Item key="7">option7</Menu.Item>
-                            <Menu.Item key="8">option8</Menu.Item>
-                        </SubMenu>
-                    </Menu>
+                            <OwnerSidebar />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute path={`${path}/sitter`}>
+                            <SitterSidebar />
+                        </AuthenticatedRoute>
+                        <AdminRoute path={`${path}/admin`}>
+                            <AdminSidebar {...props} />
+                        </AdminRoute>
+                    </Switch>
                 </Sider>
                 <Layout style={{ padding: "0 24px 24px" }}>
                     <Content
