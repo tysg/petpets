@@ -34,3 +34,36 @@ export function asyncQuery(
             throw err;
         });
 }
+
+export async function asyncTransaction(
+    queries: string[],
+    params: (string | number | undefined | Date)[][]
+) {
+    const start = Date.now();
+    await pool.query("BEGIN");
+    for (const i in queries) {
+        const qr = queries[i];
+        const currParam = params[i];
+        try {
+            const data = await pool.query(qr, currParam);
+            const duration = Date.now() - start;
+            log.db_query("Executed query", {
+                qr,
+                currParam,
+                duration,
+                rows: data.rowCount
+            });
+        } catch (err) {
+            const duration = Date.now() - start;
+            log.error("Error while executing transaction query", {
+                qr,
+                currParam,
+                duration,
+                err
+            });
+            throw err;
+        }
+    }
+    const commitStatus = await pool.query("COMMIT");
+    return commitStatus;
+}

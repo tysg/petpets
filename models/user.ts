@@ -20,13 +20,6 @@ export interface NewUser {
 /**
  * POST api/signin, request.
  */
-export interface User {
-    fullname: string;
-    phone: number;
-    address: string;
-    email: string;
-    avatarUrl?: string;
-}
 export interface SignInRequest {
     email: string;
     password: string;
