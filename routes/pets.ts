@@ -6,6 +6,7 @@ export const router = Router();
 router.post("/", petsController.create);
 router.patch("/:owner/:name", petsController.update);
 router.delete("/:owner/:name", petsController.remove);
+router.get("/categories", petsController.getCategories);
 router.get("/:owner", petsController.index);
 router.get("/:owner/:name", petsController.get);
 
