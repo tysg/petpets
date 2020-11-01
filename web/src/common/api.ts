@@ -1,7 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getToken, getUser } from "./token";
-import { IndexResponse, PetCategoriesResponse } from "./../../../models/pet";
+import { IndexResponse as PetIndexResponse } from "./../../../models/pet";
+import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
+import { Moment } from "moment";
 
+const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = getToken();
 const email = getUser()?.email;
 const authHeaderConfig: AxiosRequestConfig = {
@@ -20,8 +23,17 @@ export const user = {
 };
 
 export const pets = {
-    getPetCategories: (): Promise<AxiosResponse<PetCategoriesResponse>> =>
-        get("/api/pets/categories"),
-    getUserPets: (): Promise<AxiosResponse<IndexResponse>> =>
-        get(`/api/pets/${email}`)
+    getUserPets: (): Promise<AxiosResponse<PetIndexResponse>> =>
+        get(`/api/pets/${email}`),
+
+    getAvailableCareTakers: (
+        startDate: Moment,
+        endDate: Moment,
+        petCategory: string
+    ): Promise<AxiosResponse<CareTakerIndexResponse>> =>
+        get(
+            `api/caretakers/search?start_date=${formatDate(
+                startDate
+            )}&end_date=${formatDate(endDate)}&pet_category=${petCategory}`
+        )
 };
