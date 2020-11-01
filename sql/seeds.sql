@@ -1,4 +1,4 @@
-INSERT INTO pet_category VALUES ('dog', 4);
+INSERT INTO pet_category VALUES ('dog', "abcdex");
 INSERT INTO pet_category VALUES ('cat', 5);
 INSERT INTO person VALUES ('jan@gmail.com', 'jan', '$2b$10$yHkpPyW2w/xqIeO4Efi2teHkkG4ZK8p64MWo0M6jJfcjwkNfBjcte', '123 Clementi Rd', '82792172', 'user', 'gravatar.com');
 INSERT INTO person VALUES ('p@gmail.com', 'p', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '81 pgp Rd', '62353535', 'user');
