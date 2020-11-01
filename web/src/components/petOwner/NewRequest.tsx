@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { pets } from "./../../common/api";
+import { pets as PetsApi } from "./../../common/api";
 import {
     Form,
     Input,
@@ -13,39 +13,50 @@ import {
     Switch
 } from "antd";
 
-import { PetCategory } from "../../../../models/pet";
+import { Pet, PetCategory } from "../../../../models/pet";
 
-type SelectOptions = Record<"value" | "label", string>;
-function petCategoriesFormOptions(categories: PetCategory[]): SelectOptions[] {
-    return categories.map((category) => {
-        const capitalizedName = category.typeName.replace(/^\w/, (c) =>
-            c.toUpperCase()
-        );
+type SelectOption = Record<"value" | "label", string>;
 
-        return {
-            value: category.typeName,
-            label: capitalizedName
-        };
-    });
+function createOption(value: string): SelectOption {
+    const capitalizedName = value.replace(/^\w/, (c) => c.toUpperCase());
+    return {
+        value: value,
+        label: capitalizedName
+    };
+}
+
+function petCategoriesFormOptions(categories: PetCategory[]): SelectOption[] {
+    return categories.map((category) => createOption(category.typeName));
+}
+
+function getPetsForCategory(category: string, pets: Pet[]): SelectOption[] {
+    return pets
+        .filter((p) => p.category == category)
+        .map((p) => createOption(p.name));
 }
 
 const NewRequest = () => {
+    const [form] = Form.useForm();
     const [petCategoriesOptions, setPetCategoriesOptions] = useState<
-        SelectOptions[]
+        SelectOption[]
     >([]);
 
-    // live fetch pet categories
+    const [userPets, setUserPets] = useState<Pet[]>([]);
+
+    // fetch only once
     useEffect(() => {
-        const fetchPetCategories = async () => {
+        const liveFetch = async () => {
             try {
-                const categories = (await pets.getPetCategories()).data.data;
+                const categories = (await PetsApi.getPetCategories()).data.data;
                 setPetCategoriesOptions(petCategoriesFormOptions(categories));
+                const fetchedPets = (await PetsApi.getUserPets()).data.data;
+                setUserPets(fetchedPets);
             } catch (err) {
                 console.log("fetchPetCategories err", err);
             }
         };
-        fetchPetCategories();
-    }, []); // execute only once
+        liveFetch();
+    }, []);
 
     return (
         <>
@@ -59,6 +70,14 @@ const NewRequest = () => {
                 </Form.Item> */}
                 <Form.Item label="Pet Category">
                     <Select options={petCategoriesOptions} />
+                </Form.Item>
+                <Form.Item label="Pet Name">
+                    <Select
+                        options={getPetsForCategory(
+                            form.getFieldValue("Pet Category"),
+                            userPets
+                        )}
+                    />
                 </Form.Item>
                 <Form.Item label="TreeSelect">
                     <TreeSelect
