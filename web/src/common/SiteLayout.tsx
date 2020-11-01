@@ -19,14 +19,14 @@ const { Header, Content, Sider } = Layout;
 const NavItem = (path: string) => {
     return (
         <>
-            <Menu.Item key="1">
+            <Menu.Item key="owner">
                 <Link to={`${path}/owner`}>Pet Owner</Link>
             </Menu.Item>
-            <Menu.Item key="2">
+            <Menu.Item key="sitter">
                 <Link to={`${path}/sitter`}>Pet Sitter</Link>
             </Menu.Item>
             {getUser()?.isAdmin() && (
-                <Menu.Item key="3">
+                <Menu.Item key="admin">
                     <Link to="/dashboard/admin">Admin</Link>
                 </Menu.Item>
             )}
@@ -37,26 +37,26 @@ const NavItem = (path: string) => {
 const subMenus: { [key: string]: JSX.Element } = {
     owner: (
         <SubMenu key="owner" icon={<UserOutlined />} title="Pet Owner">
-            <Menu.Item key="1">My Pets</Menu.Item>
-            <Menu.Item key="2">My Profile</Menu.Item>
-            <Menu.Item key="3">New Request</Menu.Item>
-            <Menu.Item key="4">Arrangements</Menu.Item>
+            <Menu.Item key="owner-1">My Pets</Menu.Item>
+            <Menu.Item key="owner-2">My Profile</Menu.Item>
+            <Menu.Item key="owner-3">New Request</Menu.Item>
+            <Menu.Item key="owner-4">Arrangements</Menu.Item>
         </SubMenu>
     ),
     sitter: (
         <SubMenu key="sitter" icon={<LaptopOutlined />} title="Pet Sitter">
-            <Menu.Item key="1">option5</Menu.Item>
-            <Menu.Item key="2">option6</Menu.Item>
-            <Menu.Item key="3">option7</Menu.Item>
-            <Menu.Item key="4">option8</Menu.Item>
+            <Menu.Item key="sitter-1">option5</Menu.Item>
+            <Menu.Item key="sitter-2">option6</Menu.Item>
+            <Menu.Item key="sitter-3">option7</Menu.Item>
+            <Menu.Item key="sitter-4">option8</Menu.Item>
         </SubMenu>
     ),
     admin: (
         <SubMenu key="admin" icon={<LaptopOutlined />} title="Admin">
-            <Menu.Item key="1">option5</Menu.Item>
-            <Menu.Item key="2">option6</Menu.Item>
-            <Menu.Item key="3">option7</Menu.Item>
-            <Menu.Item key="4">option8</Menu.Item>
+            <Menu.Item key="admin-1">option5</Menu.Item>
+            <Menu.Item key="admin-2">option6</Menu.Item>
+            <Menu.Item key="admin-3">option7</Menu.Item>
+            <Menu.Item key="admin-4">option8</Menu.Item>
         </SubMenu>
     )
 };
@@ -71,7 +71,8 @@ const SiteLayout = (props: SiteLayoutProps) => {
         clearUser();
         props.history.push("/");
     };
-    const [selected, setSelected] = useState("1");
+    const [selected, setSelected] = useState<any>("owner");
+    const keys = ["owner", "sitter", "admin"];
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className="header">
@@ -80,6 +81,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={["1"]}
+                    onClick={({ key }) => setSelected(key)}
                 >
                     {NavItem(props.path)}
                     <Button onClick={logout}>
@@ -92,8 +94,8 @@ const SiteLayout = (props: SiteLayoutProps) => {
                 <Sider width={200} className="site-layout-background">
                     <Menu
                         mode="inline"
-                        defaultSelectedKeys={["1"]}
-                        defaultOpenKeys={["sub1"]}
+                        defaultSelectedKeys={keys.map((key) => key + "-1")}
+                        defaultOpenKeys={keys}
                         style={{ height: "100%", borderRight: 0 }}
                     >
                         {subMenus[selected]}
