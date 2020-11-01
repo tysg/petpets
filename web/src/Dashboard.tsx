@@ -30,7 +30,13 @@ const Dashboard = (props: RouteComponentProps) => {
             {/* <div> This is the landing page for Dashboard </div> */}
             <Switch>
                 <AuthenticatedRoute
-                    path={`${path}/owner`}
+                    exact
+                    path={`${path}`}
+                    component={PetOwnerStub}
+                />
+                <AuthenticatedRoute
+                    // path={[`${path}/`, `${path}/owner`]}
+                    // path={`${path}/owner`}
                     component={PetOwnerStub}
                 />
                 <AuthenticatedRoute

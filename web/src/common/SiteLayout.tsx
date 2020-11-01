@@ -1,5 +1,5 @@
 import React, { ComponentProps, PropsWithChildren, useState } from "react";
-import { Layout, Menu, Breadcrumb, Button } from "antd";
+import { Layout, Menu, Button } from "antd";
 import {
     UserOutlined,
     LaptopOutlined,
@@ -9,9 +9,14 @@ import { clearToken, clearUser, getUser } from "./token";
 import {
     Link,
     RouteChildrenProps,
-    RouteProps,
+    Switch,
     useRouteMatch
 } from "react-router-dom";
+import AuthenticatedRoute from "../auth/AuthenticatedRoute";
+import AdminRoute from "../auth/AdminRoute";
+import AdminSidebar from "../components/AdminSidebar";
+import OwnerSidebar from "../components/OwnerSidebar";
+import SitterSidebar from "../components/SitterSidebar";
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
@@ -34,33 +39,6 @@ const NavItem = (path: string) => {
     );
 };
 
-const subMenus: { [key: string]: JSX.Element } = {
-    owner: (
-        <SubMenu key="owner" icon={<UserOutlined />} title="Pet Owner">
-            <Menu.Item key="owner-1">My Pets</Menu.Item>
-            <Menu.Item key="owner-2">My Profile</Menu.Item>
-            <Menu.Item key="owner-3">New Request</Menu.Item>
-            <Menu.Item key="owner-4">Arrangements</Menu.Item>
-        </SubMenu>
-    ),
-    sitter: (
-        <SubMenu key="sitter" icon={<LaptopOutlined />} title="Pet Sitter">
-            <Menu.Item key="sitter-1">option5</Menu.Item>
-            <Menu.Item key="sitter-2">option6</Menu.Item>
-            <Menu.Item key="sitter-3">option7</Menu.Item>
-            <Menu.Item key="sitter-4">option8</Menu.Item>
-        </SubMenu>
-    ),
-    admin: (
-        <SubMenu key="admin" icon={<LaptopOutlined />} title="Admin">
-            <Menu.Item key="admin-1">option5</Menu.Item>
-            <Menu.Item key="admin-2">option6</Menu.Item>
-            <Menu.Item key="admin-3">option7</Menu.Item>
-            <Menu.Item key="admin-4">option8</Menu.Item>
-        </SubMenu>
-    )
-};
-
 interface SiteLayoutProps extends PropsWithChildren<RouteChildrenProps> {
     path: string;
 }
@@ -71,8 +49,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
         clearUser();
         props.history.push("/");
     };
-    const [selected, setSelected] = useState<any>("owner");
-    const keys = ["owner", "sitter", "admin"];
+    const { path } = useRouteMatch();
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className="header">
@@ -80,8 +57,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    defaultSelectedKeys={["1"]}
-                    onClick={({ key }) => setSelected(key)}
+                    // defaultSelectedKeys={[ ]}
                 >
                     {NavItem(props.path)}
                     <Button onClick={logout}>
@@ -92,14 +68,27 @@ const SiteLayout = (props: SiteLayoutProps) => {
             </Header>
             <Layout>
                 <Sider width={200} className="site-layout-background">
-                    <Menu
-                        mode="inline"
-                        defaultSelectedKeys={keys.map((key) => key + "-1")}
-                        defaultOpenKeys={keys}
-                        style={{ height: "100%", borderRight: 0 }}
-                    >
-                        {subMenus[selected]}
-                    </Menu>
+                    <Switch>
+                        <AuthenticatedRoute
+                            // path={[`${path}/`, `${path}/owner`]}
+                            exact
+                            path={`${path}`}
+                        >
+                            <OwnerSidebar />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute
+                            // path={[`${path}/`, `${path}/owner`]}
+                            path={`${path}/owner`}
+                        >
+                            <OwnerSidebar />
+                        </AuthenticatedRoute>
+                        <AuthenticatedRoute path={`${path}/sitter`}>
+                            <SitterSidebar />
+                        </AuthenticatedRoute>
+                        <AdminRoute path={`${path}/admin`}>
+                            <AdminSidebar />
+                        </AdminRoute>
+                    </Switch>
                 </Sider>
                 <Layout style={{ padding: "0 24px 24px" }}>
                     <Content
