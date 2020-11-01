@@ -35,3 +35,13 @@ export type PetResponse = ApiResponse<Pet, string>;
  * DELETE api/pets/:owner/:name, response;
  */
 export type StringResponse = ApiResponse<string, string>;
+
+export interface PetCategory {
+    typeName: string;
+    baseDailyPrice: number;
+}
+
+/**
+ * GET api/pets/categories
+ */
+export type PetCategoriesResponse = ApiResponse<PetCategory[], string>;

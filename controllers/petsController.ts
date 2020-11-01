@@ -5,12 +5,15 @@ import {
     IndexResponse,
     PetResponse,
     StringResponse,
-    sqlify
+    sqlify,
+    PetCategoriesResponse,
+    PetCategory
 } from "../models/pet";
 import { asyncQuery } from "./../utils/db";
 import { pet_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
 import { assert } from "console";
+import { errorResponse } from "../utils/errorFactory";
 
 export const index = async (req: Request, res: Response) => {
     try {
@@ -117,5 +120,22 @@ export const update = async (req: Request, res: Response) => {
             error: `Pet ${name} ${owner} cannot be updated:` + error
         };
         res.status(400).send(response);
+    }
+};
+
+export const getCategories = async (req: Request, res: Response) => {
+    try {
+        const qr: QueryResult<PetCategory> = await asyncQuery(
+            pet_query.get_pet_categories
+        );
+        const { rows } = qr;
+        const response: PetCategoriesResponse = {
+            data: rows,
+            error: ""
+        };
+        res.send(response);
+    } catch (error) {
+        log.error("get pet categories error: ", error);
+        res.status(400).send(errorResponse(`Error getting pet categories.`));
     }
 };
