@@ -3,7 +3,8 @@ import {
     SignUpResponse,
     NewUser,
     SignInRequest,
-    SignInResponse
+    SignInResponse,
+    UserInterface
 } from "./../models/user";
 import { asyncQuery } from "./../utils/db";
 import { user_query } from "./../sql/sql_query";
@@ -47,7 +48,13 @@ const signIn = async (req: Request, res: Response) => {
 
     try {
         type UserPass = Record<
-            "email" | "username" | "password" | "avatar_link",
+            | "email"
+            | "fullname"
+            | "role"
+            | "phone"
+            | "address"
+            | "password"
+            | "avatar_link",
             string
         >;
         const qr: QueryResult<UserPass> = await asyncQuery(
@@ -58,26 +65,41 @@ const signIn = async (req: Request, res: Response) => {
         if (!qr || qr.rows.length < 1) {
             return res.status(404).send(errorResponse("User Not found."));
         }
-        const userPass = qr.rows[0];
+        const {
+            email,
+            fullname,
+            password,
+            role,
+            phone,
+            address,
+            avatar_link
+        } = qr.rows[0];
+        const user: UserInterface = {
+            email,
+            fullname,
+            passwordHash: password,
+            role,
+            phone: parseInt(phone),
+            address,
+            avatarUrl: avatar_link
+        };
         const isValidPassword = bcrypt.compareSync(
             body.password,
-            userPass.password
+            user.passwordHash
         );
 
         if (!isValidPassword) {
             return res.status(401).send(errorResponse("Wrong password!"));
         }
 
-        const token = jwt.sign({ email: userPass.email }, SECRET, {
+        const token = jwt.sign({ email: user.email }, SECRET, {
             expiresIn: 86400 // 24 hours
         });
 
         const response: SignInResponse = {
             data: {
                 accessToken: token,
-                avatarUrl: userPass.avatar_link,
-                email: userPass.email,
-                username: userPass.username
+                user
             },
             error: ""
         };

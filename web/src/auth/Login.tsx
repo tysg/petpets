@@ -5,7 +5,7 @@ import axios, { AxiosResponse } from "axios";
 import { RouteComponentProps } from "react-router-dom";
 import SignUp from "./SignUp";
 import { SignInRequest, SignInResponse } from "./../../../models/user";
-import { setToken } from "./../common/token";
+import { setTokenAndUser } from "./../common/token";
 
 const Login = (props: RouteComponentProps) => {
     const onFinish = (values: Store) => {
@@ -14,8 +14,8 @@ const Login = (props: RouteComponentProps) => {
         axios
             .post("api/login", loginDetails)
             .then((res: AxiosResponse<SignInResponse>) => {
-                const token: string = res.data.data.accessToken;
-                setToken(token);
+                const { accessToken, user } = res.data.data;
+                setTokenAndUser(accessToken, user);
                 props.history.push("/dashboard");
             })
             .catch((err) => {
