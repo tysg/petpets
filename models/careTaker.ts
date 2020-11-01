@@ -3,7 +3,7 @@ import { ApiResponse } from "./index";
 export enum CaretakerStatus {
     not_ct = 0,
     part_time_ct = 1,
-    full_time_ct = 2,
+    full_time_ct = 2
 }
 
 export interface CareTaker {
