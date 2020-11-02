@@ -23,6 +23,7 @@ import { Pet } from "../../../../models/pet";
 import { CareTakerDetails } from "../../../../models/careTaker";
 import CareTakerCard from "./CareTakerCard";
 import SelectCareTaker from "./SelectCareTaker";
+import CreateOrder from "./CreateOrder";
 import "./NewRequest.css";
 
 const { Step } = Steps;
@@ -57,7 +58,7 @@ const reducer: Reducer<NewRequestState, Action> = (state, action) => {
 const Content = (state: NewRequestState, dispatch: Dispatch<Action>) => {
     const steps = [
         <SelectCareTaker state={state} dispatch={dispatch} />,
-        "Second-content",
+        <CreateOrder state={state} dispatch={dispatch} />,
         <Result
             status="success"
             title="You've successfully created a request!"

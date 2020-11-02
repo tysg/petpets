@@ -1,6 +1,6 @@
 import React, { Dispatch, useEffect, useState } from "react";
 import { pets as PetsApi } from "../../common/api";
-import { Select, DatePicker, Col, Row, Empty, Spin } from "antd";
+import { Select, DatePicker, Col, Row, Empty, Spin, Input, Space } from "antd";
 import moment from "moment";
 import { Pet } from "../../../../models/pet";
 import { CareTakerDetails } from "../../../../models/careTaker";
@@ -17,38 +17,19 @@ const CreateOrder = (props: CreateOrderProps) => {
 
     return (
         <>
-            {/* <Row gutter={8}>
-                <Col span={4}>
-                    <Select
-                        style={{ width: "100%" }}
-                        placeholder="Choose pet"
-                        onChange={onSelectPet}
-                    >
-                        {petOptions(userPets)}
-                    </Select>
+            <Row gutter={8}>
+                <Col span={6} />
+                <Col span={12}>
+                    <Space direction="vertical" style={{ width: "100%" }}>
+                        <Input placeholder="Transfer Mode" />
+                        <Input.TextArea
+                            placeholder="Note to Care Taker..."
+                            autoSize={{ minRows: 4 }}
+                        />
+                    </Space>
                 </Col>
-                <Col span={8}>
-                    <RangePicker onChange={onSelectDates} />
-                </Col>
+                <Col span={6} />
             </Row>
-            <br />
-            {isLoading ? (
-                <Spin />
-            ) : careTakers.length === 0 ? (
-                <Empty />
-            ) : (
-                <Row gutter={8}>
-                    {careTakers.map((c) => (
-                        <Col span={8}>
-                            <CareTakerCard
-                                ct={c}
-                                state={state}
-                                dispatch={dispatch}
-                            />
-                        </Col>
-                    ))}
-                </Row>
-            )} */}
         </>
     );
 };
