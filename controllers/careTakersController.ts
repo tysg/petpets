@@ -11,15 +11,40 @@ import { asyncQuery, asyncTransaction } from "./../utils/db";
 import { caretaker_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
 
+type CareTakerRow = Record<
+    | "fullname"
+    | "phone"
+    | "address"
+    | "email"
+    | "avatar_link"
+    | "caretaker_status"
+    | "rating",
+    any
+>;
+const careTakerRowToCareTakerDetails = (rows: CareTakerRow[]) =>
+    rows.map(
+        (r): CareTakerDetails => {
+            return {
+                fullname: r.fullname,
+                address: r.address,
+                caretakerStatus: r.caretaker_status,
+                email: r.email,
+                phone: r.phone,
+                rating: r.rating,
+                avatarUrl: r.avatar_link
+            };
+        }
+    );
+
 export const index = async (req: Request, res: Response) => {
     try {
-        const qr: QueryResult<CareTakerDetails> = await asyncQuery(
+        const qr: QueryResult<CareTakerRow> = await asyncQuery(
             caretaker_query.index_caretaker,
             []
         );
         const { rows } = qr;
         const response: IndexResponse = {
-            data: rows,
+            data: careTakerRowToCareTakerDetails(rows),
             error: ""
         };
         res.send(response);
@@ -36,7 +61,7 @@ export const index = async (req: Request, res: Response) => {
 export const search = async (req: Request, res: Response) => {
     try {
         const { start_date, end_date, pet_category } = req.query;
-        const qr: QueryResult<CareTakerDetails> = await asyncQuery(
+        const qr: QueryResult<CareTakerRow> = await asyncQuery(
             caretaker_query.search_caretaker,
             [`${start_date}`, `${pet_category}`]
         );
@@ -45,7 +70,7 @@ export const search = async (req: Request, res: Response) => {
         // TODO add check for PT for rating > some value and caring < 5
         const { rows } = qr;
         const response: IndexResponse = {
-            data: rows,
+            data: careTakerRowToCareTakerDetails(rows),
             error: ""
         };
         res.send(response);
@@ -62,12 +87,12 @@ export const search = async (req: Request, res: Response) => {
 export const get = async (req: Request, res: Response) => {
     try {
         const { email } = req.params;
-        const qr: QueryResult<CareTakerDetails> = await asyncQuery(
+        const qr: QueryResult<CareTakerRow> = await asyncQuery(
             caretaker_query.get_caretaker,
             [email]
         );
         const response: GetResponse = {
-            data: qr.rows[0],
+            data: careTakerRowToCareTakerDetails(qr.rows)[0],
             error: ""
         };
         res.send(response);
