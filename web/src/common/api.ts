@@ -1,6 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getToken, getUser } from "./token";
-import { IndexResponse as PetIndexResponse } from "./../../../models/pet";
+import {
+    IndexResponse as PetIndexResponse,
+    PetCategoriesResponse
+} from "./../../../models/pet";
 import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
 import { Moment } from "moment";
 
@@ -23,7 +26,8 @@ export const user = {
 };
 
 export const pets = {
-    getCategories: () => axios.get("/api/pets/categories", authHeaderConfig),
+    getCategories: (): Promise<AxiosResponse<PetCategoriesResponse>> =>
+        axios.get("/api/pets/categories", authHeaderConfig),
     getUserPets: (): Promise<AxiosResponse<PetIndexResponse>> =>
         get(`/api/pets/${email}`),
 

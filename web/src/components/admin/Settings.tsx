@@ -1,18 +1,19 @@
 import { AxiosResponse } from "axios";
-import React, { useEffect, useState } from "react";
+import React, { EffectCallback, useEffect, useState } from "react";
 import { PetCategoriesResponse, PetCategory } from "../../../../models/pet";
 import { pets as petsApi } from "../../common/api";
 
 const Settings = () => {
     const [petTypes, setPetTypes] = useState<PetCategory[]>([]);
-    useEffect(() => {
+    const pollCategories: EffectCallback = () => {
         petsApi
             .getCategories()
             .then((res: AxiosResponse<PetCategoriesResponse>) =>
                 setPetTypes(res.data.data)
             )
             .catch((err) => console.log(err));
-    });
+    };
+    useEffect(pollCategories, []);
     return (
         <div>
             {petTypes.map((type) => (
