@@ -123,8 +123,7 @@ BEGIN
 
 	IF NEW.end_date < NEW.start_date THEN
 		RAISE EXCEPTION 'dates are out of order!';
-	ELSIF overlap > 0 THEN
-		RAISE EXCEPTION 'New schedule overlaps!';
+	-- TODO add 2 * 150 constraint
 	ELSIF overlap > 0 THEN
 		RAISE EXCEPTION 'No Consecutive 2 x 150 days!';
 	ELSE
