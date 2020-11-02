@@ -13,7 +13,9 @@ const OwnerSidebar = (props: RouteComponentProps) => {
             <SubMenu key="owner" icon={<UserOutlined />} title="Pet Owner">
                 <Menu.Item key="default">My Pets</Menu.Item>
                 <Menu.Item key="owner-2">My Profile</Menu.Item>
-                <Menu.Item key="owner-3">New Request</Menu.Item>
+                <Menu.Item key="owner-3">
+                    <Link to={`${path}/new-request`}>New Request</Link>
+                </Menu.Item>
                 <Menu.Item key="owner-4">Arrangements</Menu.Item>
             </SubMenu>
         </ResponsiveSidebar>
