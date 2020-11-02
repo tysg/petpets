@@ -5,6 +5,7 @@ import AdminRoute from "./auth/AdminRoute";
 import { user as userApi } from "./common/api";
 import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import Admin from "./components/Admin";
+import NewRequest from "./components/petOwner/NewRequest";
 
 const PetOwnerStub = (props: RouteComponentProps) => {
     return <div>Oops, this page is still under construction</div>;
@@ -33,6 +34,11 @@ const Dashboard = (props: RouteComponentProps) => {
                     exact
                     path={path}
                     component={PetOwnerStub}
+                />
+                <AuthenticatedRoute
+                    exact
+                    path={`${path}/owner/new-request`}
+                    component={NewRequest}
                 />
                 <AuthenticatedRoute
                     // path={[`${path}/`, `${path}/owner`]}
