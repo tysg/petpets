@@ -19,10 +19,15 @@ const getCareTakerStatus = (s: number) => {
 };
 
 const NameAndRating = (props: CareTakerDetails) => {
+    // rating rounded the lower 0.5
     return (
         <Space size="middle">
             <>{props.fullname}</>
-            <Rate disabled defaultValue={4} />
+            <Rate
+                disabled
+                allowHalf
+                defaultValue={Math.floor(props.rating * 2) / 2}
+            />
         </Space>
     );
 };
@@ -44,7 +49,7 @@ const CareTakerCard = (props: CareTakerDetails) => {
                     </Avatar>
                 }
                 title={<NameAndRating {...props} />}
-                description={getCareTakerStatus(props.caretaker_status)}
+                description={getCareTakerStatus(props.caretakerStatus)}
             />
         </Card>
     );
