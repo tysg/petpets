@@ -79,7 +79,7 @@ FOR EACH ROW EXECUTE PROCEDURE not_in_ft_schedule();
 
 -- Schedule Overlap check
 -- part time
-CREATE OR REPLACE FUNCTION pt_schedule_overlap()
+CREATE OR REPLACE FUNCTION pt_constraints()
 RETURNS TRIGGER AS 
 $t$ 
 DECLARE overlap NUMERIC;
@@ -95,6 +95,8 @@ BEGIN
 		RAISE EXCEPTION 'dates are out of order!';
 	ELSIF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
+	ELSIF (SELECT extract(year FROM NEW.end_date) > (SELECT 1 + extract(year FROM CURRENT_DATE))) THEN
+		RAISE EXCEPTION 'Cannot set schedule beyond next year!';
 	ELSE
 		RETURN NEW;
 	END IF;
@@ -103,7 +105,7 @@ $t$ LANGUAGE PLpgSQL;
 
 CREATE TRIGGER check_pt_overlap
 BEFORE INSERT ON pt_free_schedule
-FOR EACH ROW EXECUTE PROCEDURE pt_schedule_overlap();
+FOR EACH ROW EXECUTE PROCEDURE pt_constraints();
 
 
 -- full tiem
@@ -123,6 +125,8 @@ BEGIN
 		RAISE EXCEPTION 'dates are out of order!';
 	ELSIF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
+	ELSIF overlap > 0 THEN
+		RAISE EXCEPTION 'No Consecutive 2 x 150 days!';
 	ELSE
 		RETURN NEW;
 	END IF;
