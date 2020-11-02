@@ -57,10 +57,10 @@ CREATE TABLE full_time_ct (
 );
 
 
-CREATE VIEW caretaker (email) AS (
-	SELECT email, 1 as caretaker_status FROM part_time_ct 
+CREATE VIEW caretaker (email, caretaker_status, rating) AS (
+	SELECT email, 1 as caretaker_status, 4.1 as rating FROM part_time_ct 
 	UNION 
-	SELECT email, 2 as caretaker_status FROM full_time_ct
+	SELECT email, 2 as caretaker_status, 4.2 as rating FROM full_time_ct
 );
 
 CREATE TABLE pt_free_schedule (

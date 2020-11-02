@@ -24,6 +24,7 @@ export interface CareTakerDetails {
     email: string;
     avatarUrl?: string;
     caretakerStatus: CaretakerStatus;
+    rating: number;
 }
 
 /**

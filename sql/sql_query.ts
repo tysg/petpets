@@ -28,7 +28,7 @@ export const credit_card_query = {
         "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 };
 
-const CARETAKER_DETAILS = `fullname, phone, address, email, avatar_link, caretaker_status`;
+const CARETAKER_DETAILS = `fullname, phone, address, email, avatar_link, caretaker_status, rating`;
 
 export const caretaker_query = {
     create_part_time_ct: `INSERT INTO part_time_ct (email) VALUES ($1)`,
