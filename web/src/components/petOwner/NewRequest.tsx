@@ -27,41 +27,14 @@ import "./NewRequest.css";
 
 const { Step } = Steps;
 
-const steps = [
-    {
-        title: "Find Caretaker",
-        content: <SelectCareTaker />
-    },
-    {
-        title: "Create Order",
-        content: "Second-content"
-    },
-    {
-        title: "Done",
-        content: (
-            <Result
-                status="success"
-                title="You've successfully created a request!"
-                subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
-                extra={[
-                    <Button type="primary" key="console">
-                        Go Console
-                    </Button>,
-                    <Button key="buy">Buy Again</Button>
-                ]}
-            />
-        )
-    }
-];
-
-type NewRequestState = {
+export type NewRequestState = {
     selectedPet?: Pet;
     selectedDates?: [moment.Moment, moment.Moment];
     selectedCareTaker?: CareTakerDetails;
     step: number;
 };
 
-type Action = {
+export type Action = {
     type: "next" | "prev" | "setDates" | "setCareTaker" | "setPet";
     param?: any;
 };
@@ -79,6 +52,25 @@ const reducer: Reducer<NewRequestState, Action> = (state, action) => {
         case "setCareTaker":
             return { ...state, selectedCareTaker: action.param! };
     }
+};
+
+const Content = (state: NewRequestState, dispatch: Dispatch<Action>) => {
+    const steps = [
+        <SelectCareTaker state={state} dispatch={dispatch} />,
+        "Second-content",
+        <Result
+            status="success"
+            title="You've successfully created a request!"
+            subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+            extra={[
+                <Button type="primary" key="console">
+                    Go Console
+                </Button>,
+                <Button key="buy">Buy Again</Button>
+            ]}
+        />
+    ];
+    return steps[state.step];
 };
 
 const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
@@ -131,11 +123,11 @@ const NewRequest = () => {
     return (
         <>
             <Steps current={state.step}>
-                {steps.map((item) => (
-                    <Step key={item.title} title={item.title} />
+                {["Find Caretaker", "Create Order", "Done"].map((item) => (
+                    <Step key={item} title={item} />
                 ))}
             </Steps>
-            <div className="steps-content">{steps[state.step].content}</div>
+            <div className="steps-content">{Content(state, dispatch)}</div>
             <div className="steps-action">{Controls(state, dispatch)}</div>
         </>
     );

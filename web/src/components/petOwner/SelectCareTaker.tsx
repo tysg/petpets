@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, useEffect, useState } from "react";
 import { pets as PetsApi } from "../../common/api";
 import { Select, DatePicker, Col, Row, Empty, Spin } from "antd";
 import moment from "moment";
 import { Pet } from "../../../../models/pet";
 import { CareTakerDetails } from "../../../../models/careTaker";
 import CareTakerCard from "./CareTakerCard";
+import { Action, NewRequestState } from "./NewRequest";
 
 const { Option, OptGroup } = Select;
 const { RangePicker } = DatePicker;
@@ -24,14 +25,16 @@ function petOptions(pets: Pet[]) {
     ));
 }
 
-const SelectCareTaker = () => {
+type SelectCareTakerProps = {
+    state: NewRequestState;
+    dispatch: Dispatch<Action>;
+};
+const SelectCareTaker = (props: SelectCareTakerProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [userPets, setUserPets] = useState<Pet[]>([]);
-    const [selectedPet, setSelectedPet] = useState<Pet>();
     const [careTakers, setCareTakers] = useState<CareTakerDetails[]>([]);
-    const [selectedDates, setSelectedDates] = useState<
-        [moment.Moment, moment.Moment]
-    >();
+    const { state, dispatch } = props;
+    const { selectedCareTaker, selectedDates, selectedPet } = state;
 
     // fetch only once
     useEffect(() => {
@@ -72,11 +75,17 @@ const SelectCareTaker = () => {
     }, [selectedPet, selectedDates]);
 
     const onSelectPet = (value: string, option: any) => {
-        setSelectedPet(userPets.find((p) => p.name === value));
+        dispatch({
+            type: "setPet",
+            param: userPets.find((p) => p.name === value)
+        });
     };
 
     const onSelectDates = (dates: any, dateStrings: any) => {
-        setSelectedDates(dates);
+        dispatch({
+            type: "setDates",
+            param: dates
+        });
     };
 
     return (
@@ -104,7 +113,11 @@ const SelectCareTaker = () => {
                 <Row gutter={8}>
                     {careTakers.map((c) => (
                         <Col span={8}>
-                            <CareTakerCard {...c} />
+                            <CareTakerCard
+                                ct={c}
+                                state={state}
+                                dispatch={dispatch}
+                            />
                         </Col>
                     ))}
                 </Row>
