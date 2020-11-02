@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Popconfirm, Form, Space, Table, Button, Card } from "antd";
+import { Space, Table } from "antd";
 
 const PastJobs = () => {
     const columns = [

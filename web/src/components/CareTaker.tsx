@@ -1,11 +1,10 @@
 import React from "react";
-import { RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import { Switch, useRouteMatch } from "react-router-dom";
 import AuthenticatedRoute from "../auth/AuthenticatedRoute";
 import PastJobs from "./caretaker/PastJobs";
 
 const CareTaker = () => {
     const { path } = useRouteMatch();
-    console.log("admin path", path);
     return (
         <Switch>
             <AuthenticatedRoute

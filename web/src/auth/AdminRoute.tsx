@@ -1,6 +1,6 @@
 import React from "react";
-import { Route, Redirect, RouteProps } from "react-router-dom";
-import { getToken, getUser } from "./../common/token";
+import { Redirect, RouteProps } from "react-router-dom";
+import { getUser } from "./../common/token";
 import AuthenticatedRoute from "./AuthenticatedRoute";
 
 // handle the private routes
