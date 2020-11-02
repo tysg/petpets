@@ -1,4 +1,10 @@
-import React, { Reducer, useEffect, useReducer, useState } from "react";
+import React, {
+    Dispatch,
+    Reducer,
+    useEffect,
+    useReducer,
+    useState
+} from "react";
 import { pets as PetsApi } from "./../../common/api";
 import {
     Select,
@@ -75,6 +81,50 @@ const reducer: Reducer<NewRequestState, Action> = (state, action) => {
     }
 };
 
+const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
+    const NextButton = () => {
+        switch (state.step) {
+            case 0: // first page
+                const showNextPage =
+                    state.selectedCareTaker &&
+                    state.selectedDates &&
+                    state.selectedPet;
+                return (
+                    <Button
+                        type="primary"
+                        onClick={() => dispatch({ type: "next" })}
+                        disabled={!showNextPage}
+                    >
+                        Next
+                    </Button>
+                );
+            case 2: // last page
+                return (
+                    <Button
+                        type="primary"
+                        onClick={() => message.success("Processing complete!")}
+                    >
+                        Done
+                    </Button>
+                );
+        }
+    };
+
+    return (
+        <>
+            {NextButton()}
+            {state.step > 0 && (
+                <Button
+                    style={{ margin: "0 8px" }}
+                    onClick={() => dispatch({ type: "prev" })}
+                >
+                    Previous
+                </Button>
+            )}
+        </>
+    );
+};
+
 const NewRequest = () => {
     const [state, dispatch] = useReducer(reducer, { step: 0 });
 
@@ -86,32 +136,7 @@ const NewRequest = () => {
                 ))}
             </Steps>
             <div className="steps-content">{steps[state.step].content}</div>
-            <div className="steps-action">
-                {state.step < steps.length - 1 && (
-                    <Button
-                        type="primary"
-                        onClick={() => dispatch({ type: "next" })}
-                    >
-                        Next
-                    </Button>
-                )}
-                {state.step === steps.length - 1 && (
-                    <Button
-                        type="primary"
-                        onClick={() => message.success("Processing complete!")}
-                    >
-                        Done
-                    </Button>
-                )}
-                {state.step > 0 && (
-                    <Button
-                        style={{ margin: "0 8px" }}
-                        onClick={() => dispatch({ type: "prev" })}
-                    >
-                        Previous
-                    </Button>
-                )}
-            </div>
+            <div className="steps-action">{Controls(state, dispatch)}</div>
         </>
     );
 };
