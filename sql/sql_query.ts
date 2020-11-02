@@ -40,14 +40,14 @@ export const caretaker_query = {
             SELECT email FROM 
             (SELECT DISTINCT email 
                 FROM pt_free_schedule 
-                WHERE start_date <= $1 AND end_date >= $1
+                WHERE start_date <= $1 AND end_date >= $2
                 UNION
-                SELECT email from full_time_ct ftct
+                SELECT email FROM full_time_ct ftct
                 WHERE NOT EXISTS (
-                    SELECT 1 from ft_leave_schedule fts
+                    SELECT 1 FROM ft_leave_schedule fts
                     WHERE fts.email = ftct.email
                     AND start_date <= $1
-                    AND end_date >= $1
+                    AND end_date >= $2
                     )
             ) as fs
             WHERE EXISTS (

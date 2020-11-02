@@ -76,3 +76,59 @@ $t$ LANGUAGE PLpgSQL;
 CREATE TRIGGER check_ft_schedule
 BEFORE INSERT ON pt_free_schedule
 FOR EACH ROW EXECUTE PROCEDURE not_in_ft_schedule();
+
+-- Schedule Overlap check
+-- part time
+CREATE OR REPLACE FUNCTION pt_schedule_overlap()
+RETURNS TRIGGER AS 
+$t$ 
+DECLARE overlap NUMERIC;
+BEGIN
+	SELECT COUNT(*) INTO overlap FROM 
+		pt_free_schedule p 
+		WHERE p.email=NEW.email 
+		AND 
+		((NEW.start_date >= p.start_date AND NEW.start_date <= p.end_date) 
+		OR (NEW.end_date >= p.start_date AND NEW.end_date <= p.end_date));
+
+	IF NEW.end_date < NEW.start_date THEN
+		RAISE EXCEPTION 'dates are out of order!';
+	ELSIF overlap > 0 THEN
+		RAISE EXCEPTION 'New schedule overlaps!';
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_pt_overlap
+BEFORE INSERT ON pt_free_schedule
+FOR EACH ROW EXECUTE PROCEDURE pt_schedule_overlap();
+
+
+-- full tiem
+CREATE OR REPLACE FUNCTION ft_schedule_overlap()
+RETURNS TRIGGER AS 
+$t$ 
+DECLARE overlap NUMERIC;
+BEGIN
+	SELECT COUNT(*) INTO overlap FROM 
+		ft_leave_schedule p 
+		WHERE p.email=NEW.email 
+		AND 
+		((NEW.start_date >= p.start_date AND NEW.start_date <= p.end_date) 
+		OR (NEW.end_date >= p.start_date AND NEW.end_date <= p.end_date));
+
+	IF NEW.end_date < NEW.start_date THEN
+		RAISE EXCEPTION 'dates are out of order!';
+	ELSIF overlap > 0 THEN
+		RAISE EXCEPTION 'New schedule overlaps!';
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_ft_overlap
+BEFORE INSERT ON ft_leave_schedule
+FOR EACH ROW EXECUTE PROCEDURE ft_schedule_overlap();
