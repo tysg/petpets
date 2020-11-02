@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
     BrowserRouter,
+    Redirect,
     Route,
     RouteComponentProps,
     Switch,
@@ -14,6 +15,7 @@ import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import Admin from "./components/Admin";
 import CareTaker from "./components/CareTaker";
 import NewRequest from "./components/petOwner/NewRequest";
+import Owner from "./components/Owner";
 
 const PetOwnerStub = (props: RouteComponentProps) => {
     return <div>Oops, this page is still under construction</div>;
@@ -38,25 +40,11 @@ const Dashboard = (props: RouteComponentProps) => {
         <SiteLayout {...props} path={path}>
             {/* <div> This is the landing page for Dashboard </div> */}
             <Switch>
-                <AuthenticatedRoute
-                    exact
-                    path={path}
-                    component={PetOwnerStub}
-                />
-                <AuthenticatedRoute
-                    exact
-                    path={`${path}/owner/new-request`}
-                    component={NewRequest}
-                />
-                <AuthenticatedRoute
-                    // path={[`${path}/`, `${path}/owner`]}
-                    path={`${path}/owner`}
-                    component={PetOwnerStub}
-                />
-                <AuthenticatedRoute
-                    path={`${path}/sitter`}
-                    component={CareTaker}
-                />
+                <Route exact path={path}>
+                    <Redirect to={`${path}/owner`} />
+                </Route>
+                <Route path={`${path}/owner`} component={Owner} />
+                <Route path={`${path}/sitter`} component={CareTaker} />
                 <AdminRoute path={`${path}/admin`} component={Admin} />
             </Switch>
         </SiteLayout>

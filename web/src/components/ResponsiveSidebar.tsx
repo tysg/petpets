@@ -1,15 +1,26 @@
 import React, { PropsWithChildren } from "react";
 import { Menu } from "antd";
-import { RouteComponentProps, useRouteMatch } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 
 const { SubMenu } = Menu;
 
-const ResponsiveSidebar = (props: PropsWithChildren<RouteComponentProps>) => {
+interface ResponsiveSidebarProps
+    extends PropsWithChildren<RouteComponentProps> {
+    defaultSelected: string;
+    defaultOpen: string;
+}
+
+const ResponsiveSidebar = (props: ResponsiveSidebarProps) => {
     const paths = props.location.pathname.split("/");
     const selected =
-        paths[3] === "" || paths[3] === undefined ? "default" : paths[3];
-    const open = paths[2] === "" || paths[2] === undefined ? "owner" : paths[2];
-    const { path } = useRouteMatch();
+        paths[3] === "" || paths[3] === undefined
+            ? props.defaultSelected
+            : paths[3];
+    const open =
+        paths[2] === "" || paths[2] === undefined
+            ? props.defaultOpen
+            : paths[2];
+    console.log("responsive sidebar", selected, open);
     return (
         <Menu
             mode="inline"

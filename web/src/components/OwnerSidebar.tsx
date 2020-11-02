@@ -9,11 +9,17 @@ const { SubMenu } = Menu;
 const OwnerSidebar = (props: RouteComponentProps) => {
     const { path } = useRouteMatch();
     return (
-        <ResponsiveSidebar {...props}>
+        <ResponsiveSidebar
+            {...props}
+            defaultOpen="owner"
+            defaultSelected="pets"
+        >
             <SubMenu key="owner" icon={<UserOutlined />} title="Pet Owner">
-                <Menu.Item key="default">My Pets</Menu.Item>
+                <Menu.Item key="pets">
+                    <Link to={`${path}/pets`}>My Pets</Link>
+                </Menu.Item>
                 <Menu.Item key="owner-2">My Profile</Menu.Item>
-                <Menu.Item key="owner-3">
+                <Menu.Item key="new-request">
                     <Link to={`${path}/new-request`}>New Request</Link>
                 </Menu.Item>
                 <Menu.Item key="owner-4">Arrangements</Menu.Item>

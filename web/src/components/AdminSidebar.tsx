@@ -9,11 +9,15 @@ const { SubMenu } = Menu;
 const AdminSidebar = (props: RouteComponentProps) => {
     const { path } = useRouteMatch();
     return (
-        <ResponsiveSidebar {...props}>
+        <ResponsiveSidebar
+            {...props}
+            defaultOpen="admin"
+            defaultSelected="settings"
+        >
             <SubMenu key="admin" icon={<LaptopOutlined />} title="Admin">
-                <Menu.Item key="default">
+                {/* <Menu.Item key="default">
                     <Link to={`${path}/`}>Welcome</Link>
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item key="settings">
                     <Link to={`${path}/settings`}>Daily Price</Link>
                 </Menu.Item>

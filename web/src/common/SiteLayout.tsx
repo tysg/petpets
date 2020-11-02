@@ -4,6 +4,8 @@ import { LogoutOutlined } from "@ant-design/icons";
 import { clearSession, getUser } from "./token";
 import {
     Link,
+    Redirect,
+    Route,
     RouteChildrenProps,
     RouteComponentProps,
     Switch,
@@ -28,7 +30,7 @@ const NavItem = (path: string) => {
             </Menu.Item>
             {getUser()?.isAdmin() && (
                 <Menu.Item key="admin">
-                    <Link to="/dashboard/admin">Admin</Link>
+                    <Link to={`${path}/admin`}>Admin</Link>
                 </Menu.Item>
             )}
         </>
@@ -67,22 +69,15 @@ const SiteLayout = (props: SiteLayoutProps) => {
             <Layout>
                 <Sider width={200} className="site-layout-background">
                     <Switch>
-                        <AuthenticatedRoute
-                            // path={[`${path}/`, `${path}/owner`]}
-                            exact
-                            path={path}
-                        >
+                        <Route exact path={path}>
+                            <Redirect to={`${path}/owner`} />
+                        </Route>
+                        <Route path={`${path}/owner`}>
                             <OwnerSidebar {...props} />
-                        </AuthenticatedRoute>
-                        <AuthenticatedRoute
-                            // path={[`${path}/`, `${path}/owner`]}
-                            path={`${path}/owner`}
-                        >
-                            <OwnerSidebar {...props} />
-                        </AuthenticatedRoute>
-                        <AuthenticatedRoute path={`${path}/sitter`}>
+                        </Route>
+                        <Route path={`${path}/sitter`}>
                             <SitterSidebar {...props} />
-                        </AuthenticatedRoute>
+                        </Route>
                         <AdminRoute path={`${path}/admin`}>
                             <AdminSidebar {...props} />
                         </AdminRoute>

@@ -5,7 +5,6 @@ import PastJobs from "./caretaker/PastJobs";
 
 const CareTaker = () => {
     const { path } = useRouteMatch();
-    console.log("admin path", path);
     return (
         <Switch>
             <AuthenticatedRoute
