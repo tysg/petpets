@@ -87,13 +87,12 @@ const SelectCareTaker = () => {
                         style={{ width: "100%" }}
                         placeholder="Choose pet"
                         onChange={onSelectPet}
-                        size="large"
                     >
                         {petOptions(userPets)}
                     </Select>
                 </Col>
                 <Col span={8}>
-                    <RangePicker onChange={onSelectDates} size="large" />
+                    <RangePicker onChange={onSelectDates} />
                 </Col>
             </Row>
             <br />

@@ -1,11 +1,21 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { Reducer, useEffect, useReducer, useState } from "react";
 import { pets as PetsApi } from "./../../common/api";
-import { Select, DatePicker, Col, Row, Empty, Spin } from "antd";
+import {
+    Select,
+    DatePicker,
+    Col,
+    Row,
+    Empty,
+    Spin,
+    Result,
+    Button,
+    Steps,
+    message
+} from "antd";
 import moment from "moment";
 import { Pet } from "../../../../models/pet";
 import { CareTakerDetails } from "../../../../models/careTaker";
 import CareTakerCard from "./CareTakerCard";
-import { Steps, Button, message } from "antd";
 import SelectCareTaker from "./SelectCareTaker";
 import "./NewRequest.css";
 
@@ -22,36 +32,70 @@ const steps = [
     },
     {
         title: "Done",
-        content: "Last-content"
+        content: (
+            <Result
+                status="success"
+                title="You've successfully created a request!"
+                subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
+                extra={[
+                    <Button type="primary" key="console">
+                        Go Console
+                    </Button>,
+                    <Button key="buy">Buy Again</Button>
+                ]}
+            />
+        )
     }
 ];
 
-const NewRequest = () => {
-    const [selectedPet, setSelectedPet] = useState<Pet>();
-    const [selectedDates, setSelectedDates] = useState<
-        [moment.Moment, moment.Moment]
-    >();
+type NewRequestState = {
+    selectedPet?: Pet;
+    selectedDates?: [moment.Moment, moment.Moment];
+    selectedCareTaker?: CareTakerDetails;
+    step: number;
+};
 
-    const [currentStep, setCurrentStep] = useState(0);
+type Action = {
+    type: "next" | "prev" | "setDates" | "setCareTaker" | "setPet";
+    param?: any;
+};
+
+const reducer: Reducer<NewRequestState, Action> = (state, action) => {
+    switch (action.type) {
+        case "next":
+            return { ...state, step: state.step + 1 };
+        case "prev":
+            return { ...state, step: state.step - 1 };
+        case "setDates":
+            return { ...state, selectedDates: action.param! };
+        case "setPet":
+            return { ...state, selectedPet: action.param! };
+        case "setCareTaker":
+            return { ...state, selectedCareTaker: action.param! };
+    }
+};
+
+const NewRequest = () => {
+    const [state, dispatch] = useReducer(reducer, { step: 0 });
 
     return (
         <>
-            <Steps current={currentStep}>
+            <Steps current={state.step}>
                 {steps.map((item) => (
                     <Step key={item.title} title={item.title} />
                 ))}
             </Steps>
-            <div className="steps-content">{steps[currentStep].content}</div>
+            <div className="steps-content">{steps[state.step].content}</div>
             <div className="steps-action">
-                {currentStep < steps.length - 1 && (
+                {state.step < steps.length - 1 && (
                     <Button
                         type="primary"
-                        onClick={() => setCurrentStep((n) => n + 1)}
+                        onClick={() => dispatch({ type: "next" })}
                     >
                         Next
                     </Button>
                 )}
-                {currentStep === steps.length - 1 && (
+                {state.step === steps.length - 1 && (
                     <Button
                         type="primary"
                         onClick={() => message.success("Processing complete!")}
@@ -59,10 +103,10 @@ const NewRequest = () => {
                         Done
                     </Button>
                 )}
-                {currentStep > 0 && (
+                {state.step > 0 && (
                     <Button
                         style={{ margin: "0 8px" }}
-                        onClick={() => setCurrentStep((n) => n - 1)}
+                        onClick={() => dispatch({ type: "prev" })}
                     >
                         Previous
                     </Button>
