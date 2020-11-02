@@ -1,26 +1,26 @@
 import React from "react";
-import { Layout, Menu, Button } from "antd";
+import { Menu } from "antd";
 import { LaptopOutlined } from "@ant-design/icons";
-import { Link, useRouteMatch } from "react-router-dom";
+import { RouteComponentProps, useRouteMatch } from "react-router-dom";
+import ResponsiveSidebar from "./ResponsiveSidebar";
 
 const { SubMenu } = Menu;
 
-const SitterSidebar = () => {
+const SitterSidebar = (props: RouteComponentProps) => {
     const { path } = useRouteMatch();
     return (
-        <Menu
-            mode="inline"
-            defaultSelectedKeys={["sitter-1"]}
-            defaultOpenKeys={["sitter"]}
-            style={{ height: "100%", borderRight: 0 }}
+        <ResponsiveSidebar
+            {...props}
+            defaultOpen="sitter"
+            defaultSelected="pastjobs"
         >
             <SubMenu key="sitter" icon={<LaptopOutlined />} title="Pet Sitter">
-                <Menu.Item key="sitter-1">option5</Menu.Item>
+                <Menu.Item key="pastjobs">Past Jobs</Menu.Item>
                 <Menu.Item key="sitter-2">option6</Menu.Item>
                 <Menu.Item key="sitter-3">option7</Menu.Item>
                 <Menu.Item key="sitter-4">option8</Menu.Item>
             </SubMenu>
-        </Menu>
+        </ResponsiveSidebar>
     );
 };
 

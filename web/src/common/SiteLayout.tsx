@@ -1,15 +1,15 @@
-import React, { ComponentProps, PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren } from "react";
 import { Layout, Menu, Button } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 import { clearSession, getUser } from "./token";
 import {
     Link,
-    RouteChildrenProps,
+    Redirect,
+    Route,
     RouteComponentProps,
     Switch,
     useRouteMatch
 } from "react-router-dom";
-import AuthenticatedRoute from "../auth/AuthenticatedRoute";
 import AdminRoute from "../auth/AdminRoute";
 import AdminSidebar from "../components/AdminSidebar";
 import OwnerSidebar from "../components/OwnerSidebar";
@@ -28,7 +28,7 @@ const NavItem = (path: string) => {
             </Menu.Item>
             {getUser()?.isAdmin() && (
                 <Menu.Item key="admin">
-                    <Link to="/dashboard/admin">Admin</Link>
+                    <Link to={`${path}/admin`}>Admin</Link>
                 </Menu.Item>
             )}
         </>
@@ -46,7 +46,8 @@ const SiteLayout = (props: SiteLayoutProps) => {
     };
     const { path } = useRouteMatch();
     const paths = props.location.pathname.split("/");
-    const [selected, setSelected] = useState(paths[2]);
+    const selected =
+        paths[2] === "" || paths[2] === undefined ? "owner" : paths[2];
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className="header">
@@ -55,7 +56,6 @@ const SiteLayout = (props: SiteLayoutProps) => {
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={[selected]}
-                    // defaultSelectedKeys={[ ]}
                 >
                     {NavItem(props.path)}
                     <Button onClick={logout}>
@@ -67,22 +67,15 @@ const SiteLayout = (props: SiteLayoutProps) => {
             <Layout>
                 <Sider width={200} className="site-layout-background">
                     <Switch>
-                        <AuthenticatedRoute
-                            // path={[`${path}/`, `${path}/owner`]}
-                            exact
-                            path={path}
-                        >
-                            <OwnerSidebar />
-                        </AuthenticatedRoute>
-                        <AuthenticatedRoute
-                            // path={[`${path}/`, `${path}/owner`]}
-                            path={`${path}/owner`}
-                        >
-                            <OwnerSidebar />
-                        </AuthenticatedRoute>
-                        <AuthenticatedRoute path={`${path}/sitter`}>
-                            <SitterSidebar />
-                        </AuthenticatedRoute>
+                        <Route exact path={path}>
+                            <Redirect to={`${path}/owner`} />
+                        </Route>
+                        <Route path={`${path}/owner`}>
+                            <OwnerSidebar {...props} />
+                        </Route>
+                        <Route path={`${path}/sitter`}>
+                            <SitterSidebar {...props} />
+                        </Route>
                         <AdminRoute path={`${path}/admin`}>
                             <AdminSidebar {...props} />
                         </AdminRoute>
