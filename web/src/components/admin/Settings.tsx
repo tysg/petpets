@@ -138,13 +138,33 @@ const Settings = () => {
     // petTypes[0].
     const onSubmit = (values: PetCategory) => {
         // TODO:axios here
-        console.log(values);
-        pollCategories();
-        hideModal();
+        petsApi
+            .putCategory(values)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                pollCategories();
+                hideModal();
+            });
     };
     const onDelete = (values: PetCategory) => {
         // TODO:axios here
-        hideModal();
+        petsApi
+            .removeCategory(values)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                pollCategories();
+                hideModal();
+            });
     };
     const newModal = () => {
         setTitle("New Pet Category");
