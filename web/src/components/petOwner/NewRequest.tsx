@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { pets as PetsApi } from "./../../common/api";
-import { Input, Select, DatePicker, Col, Row, Empty, Spin } from "antd";
+import { Select, DatePicker, Col, Row, Empty, Spin } from "antd";
 import moment from "moment";
 import { Pet } from "../../../../models/pet";
 import { CareTakerDetails } from "../../../../models/careTaker";

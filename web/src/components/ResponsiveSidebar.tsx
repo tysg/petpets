@@ -2,8 +2,6 @@ import React, { PropsWithChildren } from "react";
 import { Menu } from "antd";
 import { RouteComponentProps } from "react-router-dom";
 
-const { SubMenu } = Menu;
-
 interface ResponsiveSidebarProps
     extends PropsWithChildren<RouteComponentProps> {
     defaultSelected: string;

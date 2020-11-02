@@ -1,4 +1,3 @@
-import { Layout } from "antd";
 import React, { PropsWithChildren } from "react";
 import {
     Redirect,
@@ -7,9 +6,8 @@ import {
     Switch,
     useRouteMatch
 } from "react-router-dom";
-import OwnerSidebar from "./OwnerSidebar";
 import NewRequest from "./petOwner/NewRequest";
-const { Content } = Layout;
+
 const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
     const { path } = useRouteMatch();
     return (

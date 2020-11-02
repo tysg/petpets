@@ -1,4 +1,4 @@
-import React, { ComponentProps, PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren } from "react";
 import { Layout, Menu, Button } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 import { clearSession, getUser } from "./token";
@@ -6,12 +6,10 @@ import {
     Link,
     Redirect,
     Route,
-    RouteChildrenProps,
     RouteComponentProps,
     Switch,
     useRouteMatch
 } from "react-router-dom";
-import AuthenticatedRoute from "../auth/AuthenticatedRoute";
 import AdminRoute from "../auth/AdminRoute";
 import AdminSidebar from "../components/AdminSidebar";
 import OwnerSidebar from "../components/OwnerSidebar";
