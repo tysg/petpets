@@ -1,10 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
+import React, { useContext, useState, useEffect, useRef } from "react";
+import {
+    BrowserRouter,
+    Route,
+    RouteComponentProps,
+    Switch,
+    useRouteMatch
+} from "react-router-dom";
 import SiteLayout from "./common/SiteLayout";
 import AdminRoute from "./auth/AdminRoute";
 import { user as userApi } from "./common/api";
 import AuthenticatedRoute from "./auth/AuthenticatedRoute";
 import Admin from "./components/Admin";
+import CareTaker from "./components/CareTaker";
 
 const PetOwnerStub = (props: RouteComponentProps) => {
     return <div>Oops, this page is still under construction</div>;
@@ -41,7 +48,7 @@ const Dashboard = (props: RouteComponentProps) => {
                 />
                 <AuthenticatedRoute
                     path={`${path}/sitter`}
-                    component={CareTakerStub}
+                    component={CareTaker}
                 />
                 <AdminRoute path={`${path}/admin`} component={Admin} />
             </Switch>
