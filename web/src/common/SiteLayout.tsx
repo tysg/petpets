@@ -72,25 +72,11 @@ const SiteLayout = (props: SiteLayoutProps) => {
                             exact
                             path={path}
                         >
-<<<<<<< HEAD
                             <OwnerSidebar />
                         </AuthenticatedRoute>
                         <AuthenticatedRoute
                             // path={[`${path}/`, `${path}/owner`]}
                             path={`${path}/owner`}
-=======
-                            <Menu.Item key="1">My Pets</Menu.Item>
-                            <Menu.Item key="2">My Profile</Menu.Item>
-                            <Menu.Item key="3">New Request</Menu.Item>
-                            <Menu.Item key="4">
-                              <Link to="/dashboard/pastorders">Past Orders</Link>
-                            </Menu.Item>
-                        </SubMenu>
-                        <SubMenu
-                            key="sub2"
-                            icon={<LaptopOutlined />}
-                            title="Pet Sitter"
->>>>>>> add front end for pet owner past orders
                         >
                             <OwnerSidebar />
                         </AuthenticatedRoute>
