@@ -77,19 +77,20 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
     const NextButton = () => {
         switch (state.step) {
             case 0: // first page
-                const showNextPage =
-                    state.selectedCareTaker &&
-                    state.selectedDates &&
-                    state.selectedPet;
-                return (
-                    <Button
-                        type="primary"
-                        onClick={() => dispatch({ type: "next" })}
-                        disabled={!showNextPage}
-                    >
-                        Next
-                    </Button>
-                );
+                // const showNextPage =
+                //     state.selectedCareTaker &&
+                //     state.selectedDates &&
+                //     state.selectedPet;
+                // return (
+                //     <Button
+                //         type="primary"
+                //         onClick={() => dispatch({ type: "next" })}
+                //         disabled={!showNextPage}
+                //     >
+                //         Next
+                //     </Button>
+                // );
+                return;
             case 2: // last page
                 return (
                     <Button

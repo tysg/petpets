@@ -44,7 +44,10 @@ const CareTakerCard = (props: CareTakerCardProps) => {
     return (
         <Card
             hoverable
-            onClick={() => dispatch({ type: "setCareTaker", param: ct })}
+            onClick={() => {
+                dispatch({ type: "setCareTaker", param: ct });
+                dispatch({ type: "next" });
+            }}
         >
             <Meta
                 avatar={
@@ -61,7 +64,6 @@ const CareTakerCard = (props: CareTakerCardProps) => {
                 title={<NameAndRating {...ct} />}
                 description={getCareTakerStatus(ct.caretakerStatus)}
             />
-            <Switch checked={state.selectedCareTaker?.email === ct.email} />
         </Card>
     );
 };
