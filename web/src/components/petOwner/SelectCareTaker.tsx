@@ -96,12 +96,16 @@ const SelectCareTaker = (props: SelectCareTakerProps) => {
                         style={{ width: "100%" }}
                         placeholder="Choose pet"
                         onChange={onSelectPet}
+                        value={state.selectedPet?.name}
                     >
                         {petOptions(userPets)}
                     </Select>
                 </Col>
                 <Col span={8}>
-                    <RangePicker onChange={onSelectDates} />
+                    <RangePicker
+                        onChange={onSelectDates}
+                        value={state.selectedDates}
+                    />
                 </Col>
             </Row>
             <br />
