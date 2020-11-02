@@ -12,3 +12,7 @@ export const user = {
         axios.post("/api" + endpoint, data, authHeaderConfig),
     get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
 };
+
+export const pets = {
+    getCategories: () => axios.get("/api/pets/categories", authHeaderConfig)
+};
