@@ -129,7 +129,7 @@ export const update = async (req: Request, res: Response) => {
         res.send(response);
     } catch (error) {
         const { ct_email, owner_email, pet_name, start_date } = req.body;
-        log.error("update card error", error);
+        log.error("update bid error", error);
         const response: StringResponse = {
             data: "",
             error:

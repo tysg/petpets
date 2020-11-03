@@ -100,7 +100,7 @@ CREATE TABLE bid (
 	pet_owner varchar(64),
 	pet_name varchar(64),
 	pet_category varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
-	bid_status int NOT NULL,
+	bid_status varchar(64) NOT NULL,
 	feedback text,
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number) ON DELETE CASCADE,
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name) ON DELETE CASCADE,
