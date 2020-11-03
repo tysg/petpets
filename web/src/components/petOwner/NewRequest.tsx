@@ -25,6 +25,7 @@ import CareTakerCard from "./CareTakerCard";
 import SelectCareTaker from "./SelectCareTaker";
 import CreateOrder from "./CreateOrder";
 import "./NewRequest.css";
+import { Bid } from "../../../../models";
 
 const { Step } = Steps;
 
@@ -32,11 +33,24 @@ export type NewRequestState = {
     selectedPet?: Pet;
     selectedDates?: [moment.Moment, moment.Moment];
     selectedCareTaker?: CareTakerDetails;
+    transportMethod?: Pick<Bid, "transport_method">;
+    notes?: string;
+    isCash?: boolean;
+    creditCardNumber?: string;
     step: number;
 };
 
 export type Action = {
-    type: "next" | "prev" | "setDates" | "setCareTaker" | "setPet";
+    type:
+        | "next"
+        | "prev"
+        | "setDates"
+        | "setCareTaker"
+        | "setPet"
+        | "setTransportMethod"
+        | "setNotes"
+        | "setCash"
+        | "setCreditCard";
     param?: any;
 };
 
@@ -52,6 +66,14 @@ const reducer: Reducer<NewRequestState, Action> = (state, action) => {
             return { ...state, selectedPet: action.param! };
         case "setCareTaker":
             return { ...state, selectedCareTaker: action.param! };
+        case "setTransportMethod":
+            return { ...state, transportMethod: action.param! };
+        case "setNotes":
+            return { ...state, notes: action.param! };
+        case "setCash":
+            return { ...state, isCash: true };
+        case "setCreditCard":
+            return { ...state, isCash: false, creditCardNumber: action.param! };
     }
 };
 
