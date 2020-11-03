@@ -9,6 +9,9 @@ DROP TABLE IF EXISTS full_time_ct;
 DROP TABLE IF EXISTS part_time_ct;
 DROP TABLE IF EXISTS person;
 DROP TYPE IF EXISTS user_role;
+DROP VIEW IF EXISTS pet_owner;
+DROP TABLE IF EXISTS bid;
+DROP TYPE IF EXISTS transport_method;
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
 CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'PCS');
@@ -48,7 +51,7 @@ CREATE TABLE credit_card(
 CREATE TABLE specializes_in (
 	email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
 	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
-	daily_price int NOT NULL,
+	daily_price int,
 	CONSTRAINT specializes_in_id PRIMARY KEY (email, type_name)
 );
 
@@ -82,21 +85,26 @@ CREATE TABLE ft_leave_schedule (
 	CONSTRAINT end_after_start CHECK (end_date >= start_date)
 );
 
-CREATE VIEW pet_owner (email, pet_name) (
+CREATE VIEW pet_owner (email, pet_name) AS (
 	SELECT email, name as pet_name
 	FROM person NATURAL JOIN pet
 );
 
 CREATE TABLE bid (
+	ct_email varchar(64) REFERENCES person(email),
+	ct_price int NOT NULL,
 	start_date DATE,
-	is_cash boolean NOT NULL,
-	credit_card bigint REFERENCES credit_card(card_number,cardholder),
-	ct_email varchar(64) REFERENCES caretaker(email),
-	pet_category varchar(64) REFERENCES pet_category(type_name),
 	end_date DATE NOT NULL,
+	is_cash boolean NOT NULL,
+	credit_card bigint,
 	transport_method transport_method NOT NULL,
-	FOREIGN KEY (pet, pet_owner) REFERENCES pet(name, owner),
-	CONSTRAINT bid_id PRIMARY KEY (pet, pet_owner, start_date),
-	CONSTRAINT valid_credit_card CHECK (is_cash AND credit_card IS NULL) OR (!is_cash AND credit_card IS NOT NULL)
+	pet_owner varchar(64),
+	pet_name varchar(64),
+	pet_category varchar(64) REFERENCES pet_category(type_name),
+	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number),
+	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name),
+	CONSTRAINT bid_id PRIMARY KEY (pet_name, pet_owner, start_date),
+	CONSTRAINT valid_date CHECK(end_date > start_date),
+	CONSTRAINT valid_credit_card CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
 );
 
