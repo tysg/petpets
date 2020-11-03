@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { pets as PetsApi } from "./../../common/api";
-import { Select, DatePicker, Col, Row, Empty, Spin } from "antd";
+import { Select, DatePicker, Col, Row, Empty, Spin, Button, Space, List } from "antd";
 import moment from "moment";
 import { Pet } from "../../../../models/pet";
 import PetsCard from "./PetCard";
@@ -83,13 +83,20 @@ const PetPage = () => {
             ) : userPets.length === 0 ? (
                 <Empty />
             ) : (
+                <Space>
                 <Row gutter={8}>
+                    <List itemLayout="vertical">
+                    <List.Item>
                     {userPets.map((c) => (
                         <Col span={8}>
-                            <PetsCard {...c} />
+                            <PetsCard {...c} />                    
                         </Col>
                     ))}
+                    </List.Item>
+                    </List>                  
+                         <Button type="primary">Add Pet</Button>
                 </Row>
+                </Space>   
             )}
         </>
     );

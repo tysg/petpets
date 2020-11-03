@@ -1,5 +1,5 @@
 //import React from "react";
-import { Avatar, Space, Card, Rate, Descriptions } from "antd";
+import { Avatar, Space, Card, Rate, Descriptions, Button, Col } from "antd";
 import { CareTakerDetails } from "../../../../models/careTaker";
 import { Pet } from "../../../../models/pet";
 import {
@@ -11,6 +11,9 @@ import {
     useRouteMatch
 } from "react-router-dom";
 import React, { PropsWithChildren } from "react";
+import ProfilePage from "./ProfilePage";
+import { createIndexedAccessTypeNode } from "typescript";
+
 
 const { Meta } = Card;
 
@@ -28,15 +31,11 @@ const NameAndRating = (props: CareTakerDetails) => {
     );
 };
 
-function ProfilePage(props: Pet) {
-    return (
-        <Descriptions title="Pet Info" bordered>
-            <Descriptions.Item label="Pet Name">{props.name}</Descriptions.Item>
-            <Descriptions.Item label="Pet Category">{props.category}</Descriptions.Item>
-            <Descriptions.Item label="Pet Description">{props.description}</Descriptions.Item>
-            <Descriptions.Item label="Pet Requirements">{props.requirements}</Descriptions.Item>
-        </Descriptions>
-    );
+const cardStyle = {
+    display: 'block',
+    width: '50vw',
+    transitionDuration: '0.3s',
+    height: '12vw'
 }
 
 const PetCard = (props: Pet) => {
@@ -53,7 +52,7 @@ const PetCard = (props: Pet) => {
             />
           )} />
         </Switch>
-            <Card>
+            <Card style={cardStyle}>
                 <Meta
                     avatar={<Avatar
                         style={{
@@ -66,7 +65,10 @@ const PetCard = (props: Pet) => {
                     </Avatar>}
                     title={props.name}
                     description={props.description} />
-                <p><Link to={`/dashboard/owner/pets/${props.name}`}>view profile</Link></p>
+                    <Col span={8} offset={18}>
+                        <Button type="primary">Delete</Button>  
+                    </Col>
+                    <p><Link to={`/dashboard/owner/pets/${props.name}`}>view profile</Link></p>           
             </Card></>
     );
 };
