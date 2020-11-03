@@ -1,15 +1,15 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import { Descriptions} from 'antd';
+import { CareTakerDetails } from "../../../../models/careTaker";
 
-const SitterProfile = () => {
+const SitterProfile = (props: CareTakerDetails) => {
     return (
             <Descriptions title="User Information" layout="vertical" bordered>
-                <Descriptions.Item label="Name">Alice</Descriptions.Item>
-                <Descriptions.Item label="Email">alice@gmail.com</Descriptions.Item>
-                <Descriptions.Item label="Phone Number">81339234</Descriptions.Item>
-                <Descriptions.Item label="Address">None</Descriptions.Item>
+                <Descriptions.Item label="Name">{props.fullname}</Descriptions.Item>
+                <Descriptions.Item label="Email">{props.email}</Descriptions.Item>
+                <Descriptions.Item label="Phone Number">{props.phone}</Descriptions.Item>
+                <Descriptions.Item label="Address">{props.address}</Descriptions.Item>
                 <Descriptions.Item label="Role" span={3}>
                     Pet Sitter
                 </Descriptions.Item>
