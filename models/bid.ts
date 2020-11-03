@@ -1,11 +1,7 @@
 import { ApiResponse } from "./index";
 
 
-export enum BidStatus {
-    success = 0,
-    failure = 1,
-    pending = 2
-}
+type BidStatus = 'submitted' | 'confirmed' | 'reviewed' | 'closed';
 
 /**
  * POST api/bids, request;
@@ -22,6 +18,7 @@ export interface Bid {
     pet_name: string;
     pet_category: string;
     bid_status: BidStatus;
+    feedback: Text;
 }
 
 export const sqlify = (bid: Bid) => [
@@ -34,7 +31,9 @@ export const sqlify = (bid: Bid) => [
     bid.transport_method,
     bid.pet_owner,
     bid.pet_name,
-    bid.pet_category
+    bid.pet_category,
+    bid.bid_status,
+    bid.feedback
 ];
 
 /**

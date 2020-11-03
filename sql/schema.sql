@@ -51,7 +51,6 @@ CREATE TABLE credit_card(
 CREATE TABLE specializes_in (
 	email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
 	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
-	daily_price int,
 	CONSTRAINT specializes_in_id PRIMARY KEY (email, type_name)
 );
 
@@ -102,9 +101,10 @@ CREATE TABLE bid (
 	pet_name varchar(64),
 	pet_category varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
 	bid_status int NOT NULL,
+	feedback text,
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number) ON DELETE CASCADE,
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name) ON DELETE CASCADE,
-	CONSTRAINT bid_id PRIMARY KEY (pet_name, pet_owner, start_date),
+	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date),
 	CONSTRAINT valid_date CHECK(end_date > start_date),
 	CONSTRAINT valid_credit_card CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
 );
