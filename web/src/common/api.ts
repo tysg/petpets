@@ -2,7 +2,9 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getToken, getUser } from "./token";
 import {
     IndexResponse as PetIndexResponse,
-    PetCategoriesResponse
+    PetCategoriesResponse,
+    PetCategory,
+    StringResponse
 } from "./../../../models/pet";
 import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
 import { Moment } from "moment";
@@ -25,9 +27,18 @@ export const user = {
     get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
 };
 
+const PET_CATEGORY_ENDPOINT = "/api/petCategories";
 export const pets = {
     getCategories: (): Promise<AxiosResponse<PetCategoriesResponse>> =>
-        axios.get("/api/pets/categories", authHeaderConfig),
+        axios.get(PET_CATEGORY_ENDPOINT, authHeaderConfig),
+    putCategory: (
+        data: PetCategory
+    ): Promise<AxiosResponse<PetCategoriesResponse>> =>
+        axios.put(PET_CATEGORY_ENDPOINT, data, authHeaderConfig),
+    removeCategory: ({
+        typeName
+    }: PetCategory): Promise<AxiosResponse<StringResponse>> =>
+        axios.delete(`${PET_CATEGORY_ENDPOINT}/${typeName}`),
     getUserPets: (): Promise<AxiosResponse<PetIndexResponse>> =>
         get(`/api/pets/${email}`),
 
