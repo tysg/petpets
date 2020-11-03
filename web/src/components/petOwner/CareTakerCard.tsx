@@ -64,6 +64,7 @@ const CareTakerCard = (props: CareTakerCardProps) => {
                 title={<NameAndRating {...ct} />}
                 description={getCareTakerStatus(ct.caretakerStatus)}
             />
+            {`$${ct.ctPriceDaily}/day`}
         </Card>
     );
 };
