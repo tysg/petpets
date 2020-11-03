@@ -20,6 +20,7 @@ import { CreditCard } from "../../../../models/creditCard";
 import { bid as BidApi } from "./../../common/api";
 import { user as UserApi } from "./../../common/api";
 import { useParams } from "react-router-dom";
+import Moment from "moment";
 
 type CreateOrderProps = {
     state: NewRequestState;
@@ -50,7 +51,6 @@ const CreateOrder = (props: CreateOrderProps) => {
                 <Col span={6} />
                 <Col span={12}>
                     <Space direction="vertical" style={{ width: "100%" }}>
-                        <Input placeholder="Transfer Mode" />
                         <Select
                             placeholder="Select Transfer Mode"
                             style={{ width: 200 }}
@@ -96,8 +96,8 @@ const CreateOrder = (props: CreateOrderProps) => {
 
                         {payment === "credit-card" && (
                             <Select
-                                placeholder="Select Transfer Model"
-                                style={{ width: 250 }}
+                                placeholder="Choose your credit card"
+                                style={{ width: "100%" }}
                                 onChange={(value) =>
                                     dispatch({
                                         type: "setCreditCard",
@@ -106,8 +106,12 @@ const CreateOrder = (props: CreateOrderProps) => {
                                 }
                             >
                                 {creditCards?.map((c) => (
-                                    <Select.Option value={c.cardNumber}>
-                                        {c.cardNumber + "  EXP:" + c.expiryDate}
+                                    <Select.Option value={c.cardnumber}>
+                                        {c.cardnumber +
+                                            "  EXP:" +
+                                            moment(c.expirydate).format(
+                                                "MM/YYYY"
+                                            )}
                                     </Select.Option>
                                 ))}
                             </Select>

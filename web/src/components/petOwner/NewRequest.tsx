@@ -71,7 +71,7 @@ const reducer: Reducer<NewRequestState, Action> = (state, action) => {
         case "setNotes":
             return { ...state, notes: action.param! };
         case "setCash":
-            return { ...state, isCash: true };
+            return { ...state, isCash: true, creditCardNumber: undefined };
         case "setCreditCard":
             return { ...state, isCash: false, creditCardNumber: action.param! };
     }
