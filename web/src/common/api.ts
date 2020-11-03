@@ -7,6 +7,8 @@ import {
     StringResponse
 } from "./../../../models/pet";
 import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
+import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
+import { Bid } from "./../../../models/index";
 import { Moment } from "moment";
 
 const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
@@ -24,7 +26,9 @@ export const user = {
     verify: () => axios.post("/api/verifyToken", token, authHeaderConfig),
     post: (endpoint: string, data: any) =>
         axios.post("/api" + endpoint, data, authHeaderConfig),
-    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
+    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig),
+    getCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
+        axios.get(`/api/credit_cards/${email}`)
 };
 
 const PET_CATEGORY_ENDPOINT = "/api/petCategories";
@@ -52,4 +56,10 @@ export const pets = {
                 startDate
             )}&end_date=${formatDate(endDate)}&pet_category=${petCategory}`
         )
+};
+
+export const bid = {
+    createBid: (body: Bid) => {
+        post(`/api/bids`, body);
+    }
 };
