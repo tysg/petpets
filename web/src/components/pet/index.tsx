@@ -14,12 +14,12 @@ import {
 } from "antd";
 import { Pet } from "../../../../models/pet";
 import PetsCard from "./PetCard";
+import PetModalForm from "./Modal";
 
 const { Option, OptGroup } = Select;
 
 const PetPage = () => {
     const [userPets, setUserPets] = useState<Pet[]>([]);
-
     // fetch only once
     useEffect(() => {
         const liveFetch = async () => {
@@ -33,11 +33,27 @@ const PetPage = () => {
         liveFetch();
     }, []);
 
+    // modal settings
+    const [visibleModal, setVisibleModal] = useState(false);
+    const showModal = () => setVisibleModal(true);
+    const hideModal = () => setVisibleModal(false);
+    const [record, setRecord] = useState<Pet>({});
+    const [title, setTitle] = useState("");
+
     return (
         <PageHeader
             title="Manage Pets"
             extra={<Button type="primary">Add Pet</Button>}
         >
+            {visibleModal && (
+                <PetModalForm
+                    visible={visibleModal}
+                    title={title}
+                    onCancel={hideModal}
+                    onSubmit={onSubmit}
+                    defaultPet={record}
+                ></PetModalForm>
+            )}
             {userPets.length === 0 ? (
                 <Empty />
             ) : (
