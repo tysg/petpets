@@ -63,10 +63,9 @@ export const search = async (req: Request, res: Response) => {
         const { start_date, end_date, pet_category } = req.query;
         const qr: QueryResult<CareTakerRow> = await asyncQuery(
             caretaker_query.search_caretaker,
-            [`${start_date}`, `${pet_category}`]
+            [`${start_date}`, `${end_date}`, `${pet_category}`]
         );
         // TODO add check for no existing bookings
-        // TODO check end_date and not just start_date
         // TODO add check for PT for rating > some value and caring < 5
         const { rows } = qr;
         const response: IndexResponse = {
@@ -161,6 +160,7 @@ export const createFullTimer = async (req: Request, res: Response) => {
         await asyncQuery(caretaker_query.create_full_time_ct, [
             caretaker.email
         ]);
+        console.log(await asyncQuery("SELECT * FROM count_sched", []));
         const specializesParams = caretaker.specializesIn.map((petCategory) => [
             caretaker.email,
             petCategory
