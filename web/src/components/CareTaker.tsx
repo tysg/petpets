@@ -1,9 +1,10 @@
-import React from "react";
-import { Switch, useRouteMatch } from "react-router-dom";
+import React, { PropsWithChildren } from "react";
+import { Route, RouteComponentProps, Switch, useRouteMatch } from "react-router-dom";
 import AuthenticatedRoute from "../auth/AuthenticatedRoute";
 import PastJobs from "./caretaker/PastJobs";
+import SitterProfile from "./caretaker/Profile";
 
-const CareTaker = () => {
+const CareTakerStub = () => {
     const { path } = useRouteMatch();
     return (
         <Switch>
@@ -16,6 +17,17 @@ const CareTaker = () => {
                 path={`${path}/pastjobs`}
                 component={PastJobs}
             ></AuthenticatedRoute>
+        </Switch>
+    );
+};
+
+const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
+    const { path } = useRouteMatch();
+    return (
+        <Switch>
+            <Route exact path={`${path}/`}></Route>
+            <Route path={`${path}/pastjobs`} component={PastJobs}></Route>
+            <Route path={`${path}/profile`} component={SitterProfile}></Route>
         </Switch>
     );
 };
