@@ -60,7 +60,9 @@ export const pets = {
 
 export const bid = {
     createBid: (body: Bid) => {
+        console.log(body);
         return Promise.resolve();
+        // return Promise.reject();
         // return post(`/api/bids`, body);
     }
 };

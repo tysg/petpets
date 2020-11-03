@@ -78,7 +78,7 @@ const reducer: Reducer<NewRequestState, Action> = (state, action) => {
         case "setCash":
             return { ...state, isCash: true, creditCardNumber: undefined };
         case "setCreditCard":
-            return { ...state, isCash: false, creditCardNumber: action.param! };
+            return { ...state, isCash: false, creditCardNumber: action.param };
         case "setIsOrderSuccessful":
             return {
                 ...state,
@@ -125,7 +125,7 @@ const Content = (state: NewRequestState, dispatch: Dispatch<Action>) => {
 
 const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
     async function submitOrder() {
-        dispatch({ type: "setProcessingOrder" });
+        // dispatch({ type: "setProcessingOrder" });
         try {
             // TODO: do something about the response
             await BidApi.createBid({
@@ -144,6 +144,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
             dispatch({ type: "setIsOrderSuccessful", param: true });
             message.success("Successfully submitted request");
         } catch (err) {
+            console.log(err);
             dispatch({ type: "setIsOrderSuccessful", param: false });
             message.error("Failed to submit order: " + err);
         }
@@ -163,18 +164,17 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
                 return (
                     <Button
                         type="primary"
-                        onClick={() => dispatch({ type: "next" })}
+                        onClick={() => {
+                            submitOrder();
+                            dispatch({ type: "next" });
+                        }}
                         disabled={!showSubmit}
                     >
                         Submit
                     </Button>
                 );
             case 2: // last page
-                return (
-                    <Button type="primary" onClick={() => submitOrder()}>
-                        Done
-                    </Button>
-                );
+                return <Button type="primary">Done</Button>;
         }
     };
 
@@ -194,7 +194,10 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
 };
 
 const NewRequest = () => {
-    const [state, dispatch] = useReducer(reducer, { step: 0 });
+    const [state, dispatch] = useReducer(reducer, {
+        step: 0,
+        isProcessingOrder: true
+    });
 
     return (
         <>

@@ -89,7 +89,12 @@ const CreateOrder = (props: CreateOrderProps) => {
                             >
                                 Cash
                             </Radio.Button>
-                            <Radio.Button value="credit-card">
+                            <Radio.Button
+                                value="credit-card"
+                                onChange={(_) =>
+                                    dispatch({ type: "setCreditCard" })
+                                }
+                            >
                                 Credit Card
                             </Radio.Button>
                         </Radio.Group>
