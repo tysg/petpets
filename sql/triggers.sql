@@ -91,14 +91,8 @@ BEGIN
 		((NEW.start_date >= p.start_date AND NEW.start_date <= p.end_date) 
 		OR (NEW.end_date >= p.start_date AND NEW.end_date <= p.end_date));
 
-	IF NEW.end_date < NEW.start_date THEN
-		RAISE EXCEPTION 'dates are out of order!';
-	ELSIF overlap > 0 THEN
+	IF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
-	ELSIF (extract(year FROM NEW.end_date) > (1 + extract(year FROM CURRENT_DATE))) THEN
-		RAISE EXCEPTION 'Cannot set schedule beyond next year!';
-	-- TODO add CHECK for NEW.start_date > CURRENT_DATE
-	-- TODO relay exceptions, can't seem to extract it from psql error
 	ELSE
 		RETURN NEW;
 	END IF;
@@ -123,9 +117,7 @@ BEGIN
 		AND 
 		((NEW.start_date >= ft.start_date AND NEW.start_date <= ft.end_date) 
 		OR (NEW.end_date >= ft.start_date AND NEW.end_date <= ft.end_date));
-	IF NEW.end_date < NEW.start_date THEN
-		RAISE EXCEPTION 'dates are out of order!';
-	ELSIF overlap > 0 THEN
+	IF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
 	ELSE
 		RETURN NEW;
@@ -158,6 +150,9 @@ BEGIN
 	SELECT extract(year from NEW.end_date) into end_y;
 	SELECT extract(year from NEW.start_date) into start_y;
 
+	-- somehow can't create view with NEW.end_date inside the WHERE clause, 
+	-- so we expanded the view into the queries used for checking constraint
+	
 	-- CREATE VIEW start_year (email, start_date, end_date) AS (
 	-- 	SELECT * FROM ft_leave_schedule ft
 	-- 	WHERE (SELECT extract(year from new.end_date)) = (select extract(year FROM ft.start_date))
