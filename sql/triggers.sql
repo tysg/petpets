@@ -79,7 +79,7 @@ FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 
 -- Schedule Overlap check
 -- part time
-CREATE OR REPLACE FUNCTION pt_schedule_constraints()
+CREATE OR REPLACE FUNCTION date_non_overlap_pt_schedule()
 RETURNS TRIGGER AS 
 $t$ 
 DECLARE overlap NUMERIC;
@@ -99,13 +99,13 @@ BEGIN
 END;
 $t$ LANGUAGE PLpgSQL;
 
-CREATE TRIGGER check_pt_overlap
+CREATE TRIGGER check_pt_schedule_no_date_overlap
 BEFORE INSERT ON pt_free_schedule
-FOR EACH ROW EXECUTE PROCEDURE pt_schedule_constraints();
+FOR EACH ROW EXECUTE PROCEDURE date_non_overlap_pt_schedule();
 
 
 -- full tiem
-CREATE OR REPLACE FUNCTION ft_schedule_cosntraints()
+CREATE OR REPLACE FUNCTION date_non_overlap_ft_schedule()
 RETURNS TRIGGER AS 
 $t$ 
 DECLARE overlap NUMERIC;
@@ -125,15 +125,16 @@ BEGIN
 END;
 $t$ LANGUAGE PLpgSQL;
 
-CREATE TRIGGER check_ft_overlap
+CREATE TRIGGER check_ft_schedule_no_date_overlap
 BEFORE INSERT ON ft_leave_schedule
-FOR EACH ROW EXECUTE PROCEDURE ft_schedule_cosntraints();
+FOR EACH ROW EXECUTE PROCEDURE date_non_overlap_ft_schedule();
 
-DROP TABLE IF EXISTS count_sched;
+-- for debuggin
+-- DROP TABLE IF EXISTS count_sched;
 
-CREATE TABLE count_sched (
-	c1 int
-);
+-- CREATE TABLE count_sched (
+-- 	c1 int
+-- );
 
 CREATE OR REPLACE FUNCTION ft_150_constraint()
 RETURNS TRIGGER AS 
@@ -204,7 +205,8 @@ BEGIN
 		AND s2.end_date > s1.end_date
 	);
 
-	INSERT INTO count_sched VALUES (stretch_start + stretch_start2 + stretch_end + stretch_end2);
+	-- INSERT INTO count_sched VALUES (stretch_start + stretch_start2 + stretch_end + stretch_end2);
+
 	IF start_y = end_y THEN
 		IF stretch_start + stretch_start2 + stretch_end + stretch_end2 < 2 THEN
 			RAISE EXCEPTION 'Not enough consecutive working days! %', stretch_start + stretch_start2 + stretch_end + stretch_end2;
