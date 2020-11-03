@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS person;
 DROP TYPE IF EXISTS user_role;
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
+CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'PCS');
 
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,
@@ -37,16 +38,17 @@ CREATE TABLE pet(
 );
 
 CREATE TABLE credit_card(
-	cardNumber bigint,
+	card_number bigint,
 	cardholder varchar(64) REFERENCES person(email),
 	expiryDate Date,
 	securityCode smallint,
-	CONSTRAINT credit_card_id PRIMARY KEY (cardNumber, cardholder)
+	CONSTRAINT credit_card_id PRIMARY KEY (card_number, cardholder)
 );
 
 CREATE TABLE specializes_in (
 	email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
 	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
+	daily_price int NOT NULL,
 	CONSTRAINT specializes_in_id PRIMARY KEY (email, type_name)
 );
 
@@ -79,3 +81,23 @@ CREATE TABLE ft_leave_schedule (
 	end_date date NOT NULL,
 	CONSTRAINT end_after_start CHECK (end_date >= start_date)
 );
+
+CREATE VIEW pet_owner (email, pet_name) (
+	SELECT email, name as pet_name
+	FROM person NATURAL JOIN pet
+);
+
+
+CREATE TABLE bid (
+	amount int NOT NULL,
+	is_cash boolean NOT NULL,
+	credit_card bigint REFERENCES credit_card(card_number,cardholder)
+	start_date DATE,
+	end_date DATE NOT NULL,
+	transport_method transport_method NOT NULL,
+	FOREIGN KEY (pet, pet_owner, pet_category) REFERENCES pet(name, owner, category),
+	FOREIGN KEY (ct_email, ct_price) REFERENCES specializes_in(email, daily_price),
+	PRIMARY KEY (pet, pet_owner, start_date),
+	CONSTRAINT credit_card CHECK (is_cash AND credit_card IS NULL) OR (!is_cash AND credit_card IS NOT NULL)
+)
+
