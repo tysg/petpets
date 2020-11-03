@@ -79,7 +79,7 @@ FOR EACH ROW EXECUTE PROCEDURE not_in_ft_schedule();
 
 -- Schedule Overlap check
 -- part time
-CREATE OR REPLACE FUNCTION pt_constraints()
+CREATE OR REPLACE FUNCTION pt_schedule_constraints()
 RETURNS TRIGGER AS 
 $t$ 
 DECLARE overlap NUMERIC;
@@ -95,8 +95,10 @@ BEGIN
 		RAISE EXCEPTION 'dates are out of order!';
 	ELSIF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
-	ELSIF (SELECT extract(year FROM NEW.end_date) > (SELECT 1 + extract(year FROM CURRENT_DATE))) THEN
+	ELSIF (extract(year FROM NEW.end_date) > (1 + extract(year FROM CURRENT_DATE))) THEN
 		RAISE EXCEPTION 'Cannot set schedule beyond next year!';
+	-- TODO add CHECK for NEW.start_date > CURRENT_DATE
+	-- TODO relay exceptions, can't seem to extract it from psql error
 	ELSE
 		RETURN NEW;
 	END IF;
@@ -105,27 +107,26 @@ $t$ LANGUAGE PLpgSQL;
 
 CREATE TRIGGER check_pt_overlap
 BEFORE INSERT ON pt_free_schedule
-FOR EACH ROW EXECUTE PROCEDURE pt_constraints();
+FOR EACH ROW EXECUTE PROCEDURE pt_schedule_constraints();
 
 
 -- full tiem
-CREATE OR REPLACE FUNCTION ft_schedule_overlap()
+CREATE OR REPLACE FUNCTION ft_schedule_cosntraints()
 RETURNS TRIGGER AS 
 $t$ 
 DECLARE overlap NUMERIC;
+DECLARE stretch NUMERIC;
 BEGIN
 	SELECT COUNT(*) INTO overlap FROM 
-		ft_leave_schedule p 
-		WHERE p.email=NEW.email 
+		ft_leave_schedule ft 
+		WHERE ft.email=NEW.email 
 		AND 
-		((NEW.start_date >= p.start_date AND NEW.start_date <= p.end_date) 
-		OR (NEW.end_date >= p.start_date AND NEW.end_date <= p.end_date));
-
+		((NEW.start_date >= ft.start_date AND NEW.start_date <= ft.end_date) 
+		OR (NEW.end_date >= ft.start_date AND NEW.end_date <= ft.end_date));
 	IF NEW.end_date < NEW.start_date THEN
 		RAISE EXCEPTION 'dates are out of order!';
-	-- TODO add 2 * 150 constraint
 	ELSIF overlap > 0 THEN
-		RAISE EXCEPTION 'No Consecutive 2 x 150 days!';
+		RAISE EXCEPTION 'New schedule overlaps!';
 	ELSE
 		RETURN NEW;
 	END IF;
@@ -134,4 +135,89 @@ $t$ LANGUAGE PLpgSQL;
 
 CREATE TRIGGER check_ft_overlap
 BEFORE INSERT ON ft_leave_schedule
-FOR EACH ROW EXECUTE PROCEDURE ft_schedule_overlap();
+FOR EACH ROW EXECUTE PROCEDURE ft_schedule_cosntraints();
+
+DROP TABLE IF EXISTS count_sched;
+
+CREATE TABLE count_sched (
+	c1 int
+);
+
+CREATE OR REPLACE FUNCTION ft_150_constraint()
+RETURNS TRIGGER AS 
+$t$ 
+DECLARE 
+	stretch_end NUMERIC;
+	stretch_end2 NUMERIC;
+	stretch_start NUMERIC;
+	stretch_start2 NUMERIC;
+	start_y DOUBLE PRECISION;
+	end_y DOUBLE PRECISION;
+
+BEGIN
+	SELECT extract(year from NEW.end_date) into end_y;
+	SELECT extract(year from NEW.start_date) into start_y;
+
+	-- CREATE VIEW start_year (email, start_date, end_date) AS (
+	-- 	SELECT * FROM ft_leave_schedule ft
+	-- 	WHERE (SELECT extract(year from new.end_date)) = (select extract(year FROM ft.start_date))
+	-- );
+
+	-- CREATE VIEW end_year (email, start_date, end_date) AS (
+	-- 	SELECT * FROM ft_leave_schedule ft
+	-- 	WHERE (select extract(year FROM ft.end_date)) = (select extract(year FROM NEW.end_date))
+	-- );
+
+	SELECT COUNT(*) INTO stretch_start FROM ft_leave_schedule s1
+		WHERE extract(year from (s1.start_date - '150 day'::interval)) = extract(year from NEW.start_date)
+		AND extract(year FROM s1.start_date) = (start_y)
+		AND NOT EXISTS (
+			SELECT 1 FROM ft_leave_schedule s2
+				WHERE extract(year FROM s2.start_date) = (start_y)
+				AND (s1.start_date - '150 day'::interval) <= s2.end_date
+				AND s2.start_date < s1.start_date
+		);
+
+	SELECT COUNT(*) INTO stretch_start2 FROM ft_leave_schedule s1
+	WHERE extract(year from (s1.start_date - '300 day'::interval)) = extract(year from NEW.start_date)
+	AND extract(year FROM s1.start_date) = (start_y)
+	AND NOT EXISTS (
+		SELECT 1 FROM ft_leave_schedule s2
+		WHERE extract(year FROM s2.start_date) = (start_y)
+		AND (s1.start_date - '300 day'::interval) <= s2.end_date
+		AND s2.start_date < s1.start_date
+	);
+
+	
+	SELECT COUNT(*) INTO stretch_end FROM ft_leave_schedule s1
+	WHERE extract(year from (s1.end_date + '150 day'::interval)) = extract(year from NEW.end_date)
+	AND extract(year FROM s1.end_date) = (end_y)
+	AND NOT EXISTS (
+		SELECT 1 FROM ft_leave_schedule s2
+		WHERE  (s1.end_date + '150 day'::interval) >= s2.start_date
+		AND extract(year FROM s2.end_date) = (end_y)
+		AND s2.end_date > s1.end_date
+	);
+
+	SELECT COUNT(*) INTO stretch_end2 FROM ft_leave_schedule s1
+	WHERE  extract(year from (s1.end_date + '300 day'::interval)) = extract(year from NEW.end_date)
+	AND extract(year FROM s1.end_date) = (end_y)
+	AND NOT EXISTS (
+		SELECT 1 FROM ft_leave_schedule s2
+		WHERE (s1.end_date + '300 day'::interval) >= s2.start_date
+		AND extract(year FROM s2.end_date) = (end_y)
+		AND s2.end_date > s1.end_date
+	);
+
+	INSERT INTO count_sched VALUES (stretch_start + stretch_start2 + stretch_end + stretch_end2);
+
+	IF stretch_start + stretch_start2 + stretch_end + stretch_end2 < 3 THEN
+		RAISE EXCEPTION 'Not enough consecutive working days! %', stretch_start + stretch_start2 + stretch_end + stretch_end2;
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$t$ LANGUAGE PLpgSQL;
+CREATE TRIGGER check_ft_150
+AFTER INSERT ON ft_leave_schedule
+FOR EACH ROW EXECUTE PROCEDURE ft_150_constraint();

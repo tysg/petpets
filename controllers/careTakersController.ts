@@ -160,6 +160,7 @@ export const createFullTimer = async (req: Request, res: Response) => {
         await asyncQuery(caretaker_query.create_full_time_ct, [
             caretaker.email
         ]);
+        console.log(await asyncQuery("SELECT * FROM count_sched", []));
         const specializesParams = caretaker.specializesIn.map((petCategory) => [
             caretaker.email,
             petCategory

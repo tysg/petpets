@@ -9,7 +9,9 @@ DROP TABLE IF EXISTS full_time_ct;
 DROP TABLE IF EXISTS part_time_ct;
 DROP TABLE IF EXISTS person;
 DROP TYPE IF EXISTS user_role;
+
 CREATE TYPE user_role AS ENUM ('admin', 'user');
+
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,
 	fullname varchar(64) NOT NULL,
