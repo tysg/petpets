@@ -103,12 +103,12 @@ export const create = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { card_number, cardholder } = req.body;
+        const { ct_email, owner_email, pet_name, start_date } = req.body;
         log.error("create bid error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${card_number} of ${cardholder} cannot be created: ` +
+            `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} cannot be created: ` +
                 error
         };
         res.status(400).send(response);
@@ -117,23 +117,23 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
     try {
-        const credit_card: CreditCard = req.body;
+        const bid: Bid = req.body;
         await asyncQuery(
-            bid_query.update_credit_card,
-            sqlify(credit_card)
+            bid_query.update_bid,
+            sqlify(bid)
         );
-        const response: CreditCardResponse = {
-            data: credit_card,
+        const response: BidResponse = {
+            data: bid,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { credit_card, cardholder } = req.body;
+        const { ct_email, owner_email, pet_name, start_date } = req.body;
         log.error("update card error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit Card ${credit_card} of ${cardholder} cannot be updated:` +
+                `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} cannot be updated:` +
                 error
         };
         res.status(400).send(response);
