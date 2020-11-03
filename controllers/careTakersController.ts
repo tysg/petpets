@@ -63,7 +63,6 @@ export const index = async (req: Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => {
     try {
-        console.log("asdf");
         const { start_date, end_date, pet_category } = req.query;
         const qr: QueryResult<CareTakerRow> = await asyncQuery(
             caretaker_query.search_caretaker,
