@@ -13,7 +13,14 @@ export const pet_query = {
         "INSERT INTO pet (name, owner, category, requirements, description) VALUES ($1, $2, $3, $4, $5)",
     update_pet:
         "UPDATE pet SET (name, owner, category, requirements, description) = ($1, $2, $3, $4, $5) WHERE name=$1 AND email=$2",
-    get_pet_categories: "SELECT type_name, base_daily_price FROM pet_category"
+    get_pet_categories: "SELECT type_name, base_daily_price FROM pet_category",
+    select_pet_category:
+        "SELECT type_name, base_daily_price FROM pet_category WHERE type_name=$1",
+    update_pet_category:
+        "UPDATE pet_category SET (type_name, base_daily_price) = ($1, $2) WHERE type_name=$1",
+    create_pet_category:
+        "INSERT INTO pet_category (type_name, base_daily_price) VALUES ($1, $2)",
+    delete_pet_category: "DELETE FROM pet_category WHERE type_name=$1"
 };
 
 export const credit_card_query = {
@@ -28,32 +35,32 @@ export const credit_card_query = {
         "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 };
 
-const CARETAKER_DETAILS = `fullname, phone, address, email, avatar_link, caretaker_status, rating`;
+const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link, caretaker_status, rating, ct_price_daily`;
 
 export const caretaker_query = {
     create_part_time_ct: `INSERT INTO part_time_ct (email) VALUES ($1)`,
     create_full_time_ct: `INSERT INTO full_time_ct (email) VALUES ($1)`,
-    get_caretaker: `SELECT ${CARETAKER_DETAILS} FROM (caretaker NATURAL JOIN person) WHERE email=$1`,
-    index_caretaker: `SELECT ${CARETAKER_DETAILS} FROM (caretaker NATURAL JOIN person)`,
+    get_caretaker: `SELECT ${CARETAKER_ATTR} FROM (caretaker NATURAL JOIN person) WHERE email=$1`,
+    index_caretaker: `SELECT ${CARETAKER_ATTR} FROM (caretaker NATURAL JOIN person)`,
     search_caretaker: `
-        SELECT ${CARETAKER_DETAILS} FROM (
-            SELECT email FROM 
+        SELECT ${CARETAKER_ATTR} FROM (
+            SELECT email, $3 as type_name FROM 
             (SELECT DISTINCT email 
                 FROM pt_free_schedule 
-                WHERE start_date <= $1 AND end_date >= $1
+                WHERE start_date <= $1 AND end_date >= $2
                 UNION
-                SELECT email from full_time_ct ftct
+                SELECT email FROM full_time_ct ftct
                 WHERE NOT EXISTS (
-                    SELECT 1 from ft_leave_schedule fts
+                    SELECT 1 FROM ft_leave_schedule fts
                     WHERE fts.email = ftct.email
                     AND start_date <= $1
-                    AND end_date >= $1
+                    AND end_date >= $2
                     )
             ) as fs
             WHERE EXISTS (
-                SELECT 1 FROM specializes_in s WHERE type_name = $2 AND s.email=fs.email
+                SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=fs.email
             )
-        ) as specializes NATURAL JOIN person NATURAL JOIN caretaker
+        ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
     `,
     // search_caretaker: `
     //     SELECT ${CARETAKER_DETAILS} FROM (
