@@ -1,21 +1,24 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import 'antd/dist/antd.css';
-import { Descriptions} from 'antd';
+import React from "react";
+import { Descriptions } from "antd";
+import { getUser } from "./../../common/token";
 
 const PetOwnerProfile = () => {
+    const user = getUser()!;
     return (
-            <Descriptions title="User Information" layout="vertical" bordered>
-                <Descriptions.Item label="Name">Alice</Descriptions.Item>
-                <Descriptions.Item label="Email">alice@gmail.com</Descriptions.Item>
-                <Descriptions.Item label="Phone Number">81339234</Descriptions.Item>
-                <Descriptions.Item label="Address">None</Descriptions.Item>
-                <Descriptions.Item label="Role" span={3}>
-                    Pet Owner
-                </Descriptions.Item>
-                <Descriptions.Item label="Stored Payment">
-                </Descriptions.Item>
-            </Descriptions>
+        <Descriptions title="User Information" bordered column={2}>
+            <Descriptions.Item label="Name">{user.fullname}</Descriptions.Item>
+            <Descriptions.Item label="Email">{user.email}</Descriptions.Item>
+            <Descriptions.Item label="Phone Number">
+                {user.phone}
+            </Descriptions.Item>
+            <Descriptions.Item label="Address">
+                {user.address}
+            </Descriptions.Item>
+            <Descriptions.Item label="Role" span={3}>
+                Pet Owner
+            </Descriptions.Item>
+            {/* <Descriptions.Item label="Stored Payment"></Descriptions.Item> */}
+        </Descriptions>
     );
-  }
+};
 export default PetOwnerProfile;
