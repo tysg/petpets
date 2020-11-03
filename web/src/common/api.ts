@@ -11,7 +11,7 @@ import { IndexResponse as CreditCardIndexResponse } from "./../../../models/cred
 import { Bid } from "./../../../models/index";
 import { Moment } from "moment";
 
-const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
+export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = getToken();
 const email = getUser()?.email;
 const authHeaderConfig: AxiosRequestConfig = {
@@ -60,6 +60,7 @@ export const pets = {
 
 export const bid = {
     createBid: (body: Bid) => {
-        post(`/api/bids`, body);
+        return Promise.resolve();
+        // return post(`/api/bids`, body);
     }
 };

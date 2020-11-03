@@ -5,7 +5,7 @@ import React, {
     useReducer,
     useState
 } from "react";
-import { pets as PetsApi } from "./../../common/api";
+import { pets as PetsApi, bid as BidApi, formatDate } from "./../../common/api";
 import {
     Select,
     DatePicker,
@@ -26,6 +26,7 @@ import SelectCareTaker from "./SelectCareTaker";
 import CreateOrder from "./CreateOrder";
 import "./NewRequest.css";
 import { Bid } from "../../../../models";
+import { getUser } from "./../../common/token";
 
 const { Step } = Steps;
 
@@ -33,11 +34,13 @@ export type NewRequestState = {
     selectedPet?: Pet;
     selectedDates?: [moment.Moment, moment.Moment];
     selectedCareTaker?: CareTakerDetails;
-    transportMethod?: Pick<Bid, "transport_method">;
+    transportMethod?: Bid["transport_method"];
     notes?: string;
     isCash?: boolean;
     creditCardNumber?: string;
     step: number;
+    isProcessingOrder?: boolean;
+    isOrderSuccessful?: boolean;
 };
 
 export type Action = {
@@ -50,7 +53,9 @@ export type Action = {
         | "setTransportMethod"
         | "setNotes"
         | "setCash"
-        | "setCreditCard";
+        | "setCreditCard"
+        | "setProcessingOrder"
+        | "setIsOrderSuccessful";
     param?: any;
 };
 
@@ -74,6 +79,14 @@ const reducer: Reducer<NewRequestState, Action> = (state, action) => {
             return { ...state, isCash: true, creditCardNumber: undefined };
         case "setCreditCard":
             return { ...state, isCash: false, creditCardNumber: action.param! };
+        case "setIsOrderSuccessful":
+            return {
+                ...state,
+                isOrderSuccessful: action.param!,
+                isProcessingOrder: false
+            };
+        case "setProcessingOrder":
+            return { ...state, isProcessingOrder: true };
     }
 };
 
@@ -81,45 +94,84 @@ const Content = (state: NewRequestState, dispatch: Dispatch<Action>) => {
     const steps = [
         <SelectCareTaker state={state} dispatch={dispatch} />,
         <CreateOrder state={state} dispatch={dispatch} />,
-        <Result
-            status="success"
-            title="You've successfully created a request!"
-            subTitle="Order number: 2017182818828182881 Cloud server configuration takes 1-5 minutes, please wait."
-            extra={[
-                <Button type="primary" key="console">
-                    Go Console
-                </Button>,
-                <Button key="buy">Buy Again</Button>
-            ]}
-        />
+        state.isProcessingOrder ? (
+            <Spin />
+        ) : state.isOrderSuccessful ? (
+            <Result
+                status="success"
+                title="Successfully submitted the request!"
+                // extra={[
+                //     <Button type="primary" key="console">
+                //         Go Console
+                //     </Button>,
+                //     <Button key="buy">Buy Again</Button>
+                // ]}
+            />
+        ) : (
+            <Result
+                status="error"
+                title="There are some error processing your order."
+                // extra={[
+                //     <Button type="primary" key="console">
+                //         Go Console
+                //     </Button>,
+                //     <Button key="buy">Buy Again</Button>
+                // ]}
+            />
+        )
     ];
     return steps[state.step];
 };
 
 const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
+    async function submitOrder() {
+        dispatch({ type: "setProcessingOrder" });
+        try {
+            // TODO: do something about the response
+            await BidApi.createBid({
+                ct_email: state.selectedCareTaker?.email!,
+                owner_email: getUser()?.email!,
+                pet_name: state.selectedPet?.name!,
+                ct_price: state.selectedCareTaker?.ctPriceDaily!,
+                credit_card: state.creditCardNumber,
+                transport_method: state.transportMethod!,
+                start_date: formatDate(state.selectedDates![0]),
+                end_date: formatDate(state.selectedDates![1]),
+                is_cash: state.isCash ?? false,
+                pet_category: state.selectedPet?.category!
+            });
+
+            dispatch({ type: "setIsOrderSuccessful", param: true });
+            message.success("Successfully submitted request");
+        } catch (err) {
+            dispatch({ type: "setIsOrderSuccessful", param: false });
+            message.error("Failed to submit order: " + err);
+        }
+    }
+
     const NextButton = () => {
         switch (state.step) {
             case 0: // first page
-                // const showNextPage =
-                //     state.selectedCareTaker &&
-                //     state.selectedDates &&
-                //     state.selectedPet;
-                // return (
-                //     <Button
-                //         type="primary"
-                //         onClick={() => dispatch({ type: "next" })}
-                //         disabled={!showNextPage}
-                //     >
-                //         Next
-                //     </Button>
-                // );
                 return;
-            case 2: // last page
+            case 1:
+                const showSubmit =
+                    state.selectedCareTaker &&
+                    state.selectedDates &&
+                    state.selectedPet &&
+                    state.isCash &&
+                    state.transportMethod;
                 return (
                     <Button
                         type="primary"
-                        onClick={() => message.success("Processing complete!")}
+                        onClick={() => dispatch({ type: "next" })}
+                        disabled={!showSubmit}
                     >
+                        Submit
+                    </Button>
+                );
+            case 2: // last page
+                return (
+                    <Button type="primary" onClick={() => submitOrder()}>
                         Done
                     </Button>
                 );
