@@ -9,7 +9,9 @@ DROP TABLE IF EXISTS full_time_ct;
 DROP TABLE IF EXISTS part_time_ct;
 DROP TABLE IF EXISTS person;
 DROP TYPE IF EXISTS user_role;
+
 CREATE TYPE user_role AS ENUM ('admin', 'user');
+
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,
 	fullname varchar(64) NOT NULL,
@@ -66,11 +68,14 @@ CREATE VIEW caretaker (email, caretaker_status, rating) AS (
 CREATE TABLE pt_free_schedule (
 	email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
-	end_date date NOT NULL
+	end_date date NOT NULL,
+	CONSTRAINT end_after_start CHECK (end_date >= start_date),
+	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
 
 CREATE TABLE ft_leave_schedule (
 	email varchar(64) REFERENCES full_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
-	end_date date NOT NULL
+	end_date date NOT NULL,
+	CONSTRAINT end_after_start CHECK (end_date >= start_date)
 );
