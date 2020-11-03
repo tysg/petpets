@@ -30,7 +30,7 @@ CREATE TABLE pet_category(
 CREATE TABLE pet(
 	name varchar(64),
 	owner varchar(64) REFERENCES person(email),
-	category varchar(64) REFERENCES pet_category(type_name),
+	category varchar(64) REFERENCES pet_category(type_name) ON UPDATE CASCADE,
 	requirements text,
 	description text,
 	CONSTRAINT pet_id PRIMARY KEY (name, owner)
@@ -46,7 +46,8 @@ CREATE TABLE credit_card(
 
 CREATE TABLE specializes_in (
 	email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
-	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
+	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE ON UPDATE CASCADE,
+	ct_price_daily int NOT NULL,
 	CONSTRAINT specializes_in_id PRIMARY KEY (email, type_name)
 );
 
