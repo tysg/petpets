@@ -25,14 +25,14 @@ export const pet_query = {
 
 export const credit_card_query = {
     get_credit_card:
-        "SELECT * FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+        "SELECT * FROM credit_card WHERE card_number=$1 AND cardholder=$2",
     index_cardholder: "SELECT * FROM credit_card WHERE cardholder=$1",
     delete_credit_card:
-        "DELETE FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+        "DELETE FROM credit_card WHERE card_number=$1 AND cardholder=$2",
     create_credit_card:
-        "INSERT INTO credit_card (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO credit_card (card_number, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
     update_credit_card:
-        "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
+        "UPDATE credit_card SET (card_number, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE card_number=$1 AND cardholder=$2"
 };
 
 const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link, caretaker_status, rating`;

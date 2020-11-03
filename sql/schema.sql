@@ -87,17 +87,16 @@ CREATE VIEW pet_owner (email, pet_name) (
 	FROM person NATURAL JOIN pet
 );
 
-
 CREATE TABLE bid (
-	amount int NOT NULL,
-	is_cash boolean NOT NULL,
-	credit_card bigint REFERENCES credit_card(card_number,cardholder)
 	start_date DATE,
+	is_cash boolean NOT NULL,
+	credit_card bigint REFERENCES credit_card(card_number,cardholder),
+	ct_email varchar(64) REFERENCES caretaker(email),
+	pet_category varchar(64) REFERENCES pet_category(type_name),
 	end_date DATE NOT NULL,
 	transport_method transport_method NOT NULL,
-	FOREIGN KEY (pet, pet_owner, pet_category) REFERENCES pet(name, owner, category),
-	FOREIGN KEY (ct_email, ct_price) REFERENCES specializes_in(email, daily_price),
-	PRIMARY KEY (pet, pet_owner, start_date),
-	CONSTRAINT credit_card CHECK (is_cash AND credit_card IS NULL) OR (!is_cash AND credit_card IS NOT NULL)
-)
+	FOREIGN KEY (pet, pet_owner) REFERENCES pet(name, owner),
+	CONSTRAINT bid_id PRIMARY KEY (pet, pet_owner, start_date),
+	CONSTRAINT valid_credit_card CHECK (is_cash AND credit_card IS NULL) OR (!is_cash AND credit_card IS NOT NULL)
+);
 
