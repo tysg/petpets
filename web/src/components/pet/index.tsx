@@ -9,7 +9,8 @@ import {
     Spin,
     Button,
     Space,
-    List
+    List,
+    PageHeader
 } from "antd";
 import { Pet } from "../../../../models/pet";
 import PetsCard from "./PetCard";
@@ -33,28 +34,22 @@ const PetPage = () => {
     }, []);
 
     return (
-        <>
-            <Row gutter={8}></Row>
-            <br />
+        <PageHeader
+            title="Manage Pets"
+            extra={<Button type="primary">Add Pet</Button>}
+        >
             {userPets.length === 0 ? (
                 <Empty />
             ) : (
-                <Space>
-                    <Row gutter={8}>
-                        <List itemLayout="vertical">
-                            <List.Item>
-                                {userPets.map((c) => (
-                                    <Col span={8}>
-                                        <PetsCard {...c} />
-                                    </Col>
-                                ))}
-                            </List.Item>
-                        </List>
-                        <Button type="primary">Add Pet</Button>
-                    </Row>
-                </Space>
+                <Row gutter={8}>
+                    {userPets.map((c) => (
+                        <Col span={12}>
+                            <PetsCard {...c} />
+                        </Col>
+                    ))}
+                </Row>
             )}
-        </>
+        </PageHeader>
     );
 };
 
