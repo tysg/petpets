@@ -11,7 +11,6 @@ import {
     useRouteMatch
 } from "react-router-dom";
 import React, { PropsWithChildren } from "react";
-import ProfilePage from "./ProfilePage";
 import { createIndexedAccessTypeNode } from "typescript";
 
 
@@ -33,7 +32,7 @@ const NameAndRating = (props: CareTakerDetails) => {
 
 const cardStyle = {
     display: 'block',
-    width: '50vw',
+    width: '45vw',
     transitionDuration: '0.3s',
     height: '12vw'
 }
@@ -41,17 +40,6 @@ const cardStyle = {
 const PetCard = (props: Pet) => {
     const { path } = useRouteMatch();
     return (
-        <><Switch>
-            <Route path={`/dashboard/owner/pets/${props.name}`} render={() => (
-            <ProfilePage
-              name={props.name}
-              owner={props.owner}
-              category={props.category}
-              description={props.description}
-              requirements={props.requirements}
-            />
-          )} />
-        </Switch>
             <Card style={cardStyle}>
                 <Meta
                     avatar={<Avatar
@@ -65,11 +53,14 @@ const PetCard = (props: Pet) => {
                     </Avatar>}
                     title={props.name}
                     description={props.description} />
+                    <Descriptions>
+                        <Descriptions.Item label="Pet Category">{props.category}</Descriptions.Item>
+                        <Descriptions.Item label="Pet Requirements">{props.requirements}</Descriptions.Item>
+                    </Descriptions>
                     <Col span={8} offset={18}>
                         <Button type="primary">Delete</Button>  
                     </Col>
-                    <p><Link to={`/dashboard/owner/pets/${props.name}`}>view profile</Link></p>           
-            </Card></>
+            </Card>
     );
 };
 export default PetCard;
