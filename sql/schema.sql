@@ -47,6 +47,7 @@ CREATE TABLE credit_card(
 CREATE TABLE specializes_in (
 	email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
 	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE ON UPDATE CASCADE,
+	ct_price_hourly int NOT NULL,
 	CONSTRAINT specializes_in_id PRIMARY KEY (email, type_name)
 );
 

@@ -35,7 +35,7 @@ export const credit_card_query = {
         "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 };
 
-const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link, caretaker_status, rating`;
+const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link, caretaker_status, rating, ct_price_hourly`;
 
 export const caretaker_query = {
     create_part_time_ct: `INSERT INTO part_time_ct (email) VALUES ($1)`,
@@ -44,7 +44,7 @@ export const caretaker_query = {
     index_caretaker: `SELECT ${CARETAKER_ATTR} FROM (caretaker NATURAL JOIN person)`,
     search_caretaker: `
         SELECT ${CARETAKER_ATTR} FROM (
-            SELECT email FROM 
+            SELECT email, $3 as type_name FROM 
             (SELECT DISTINCT email 
                 FROM pt_free_schedule 
                 WHERE start_date <= $1 AND end_date >= $2
@@ -58,9 +58,9 @@ export const caretaker_query = {
                     )
             ) as fs
             WHERE EXISTS (
-                SELECT 1 FROM specializes_in s WHERE type_name = $2 AND s.email=fs.email
+                SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=fs.email
             )
-        ) as specializes NATURAL JOIN person NATURAL JOIN caretaker
+        ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
     `,
     // search_caretaker: `
     //     SELECT ${CARETAKER_DETAILS} FROM (
