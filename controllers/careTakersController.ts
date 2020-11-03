@@ -18,7 +18,8 @@ type CareTakerRow = Record<
     | "email"
     | "avatar_link"
     | "caretaker_status"
-    | "rating",
+    | "rating"
+    | "ct_price_hourly",
     any
 >;
 const careTakerRowToCareTakerDetails = (rows: CareTakerRow[]) =>
@@ -31,7 +32,8 @@ const careTakerRowToCareTakerDetails = (rows: CareTakerRow[]) =>
                 email: r.email,
                 phone: r.phone,
                 rating: r.rating,
-                avatarUrl: r.avatar_link
+                avatarUrl: r.avatar_link,
+                ctPriceHourly: r.ct_price_hourly
             };
         }
     );
@@ -42,6 +44,7 @@ export const index = async (req: Request, res: Response) => {
             caretaker_query.index_caretaker,
             []
         );
+        console.log("hi");
         const { rows } = qr;
         const response: IndexResponse = {
             data: careTakerRowToCareTakerDetails(rows),
@@ -60,6 +63,7 @@ export const index = async (req: Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => {
     try {
+        console.log("asdf");
         const { start_date, end_date, pet_category } = req.query;
         const qr: QueryResult<CareTakerRow> = await asyncQuery(
             caretaker_query.search_caretaker,
