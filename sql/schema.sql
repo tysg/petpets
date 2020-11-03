@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS bid;
+DROP VIEW IF EXISTS pet_owner;
 DROP TABLE IF EXISTS credit_card;
 DROP TABLE IF EXISTS specializes_in;
 DROP TABLE IF EXISTS pet;
@@ -9,8 +11,6 @@ DROP TABLE IF EXISTS full_time_ct;
 DROP TABLE IF EXISTS part_time_ct;
 DROP TABLE IF EXISTS person;
 DROP TYPE IF EXISTS user_role;
-DROP VIEW IF EXISTS pet_owner;
-DROP TABLE IF EXISTS bid;
 DROP TYPE IF EXISTS transport_method;
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
@@ -91,7 +91,7 @@ CREATE VIEW pet_owner (email, pet_name) AS (
 );
 
 CREATE TABLE bid (
-	ct_email varchar(64) REFERENCES person(email),
+	ct_email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
 	ct_price int NOT NULL,
 	start_date DATE,
 	end_date DATE NOT NULL,
@@ -100,9 +100,9 @@ CREATE TABLE bid (
 	transport_method transport_method NOT NULL,
 	pet_owner varchar(64),
 	pet_name varchar(64),
-	pet_category varchar(64) REFERENCES pet_category(type_name),
-	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number),
-	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name),
+	pet_category varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
+	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number) ON DELETE CASCADE,
+	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name) ON DELETE CASCADE,
 	CONSTRAINT bid_id PRIMARY KEY (pet_name, pet_owner, start_date),
 	CONSTRAINT valid_date CHECK(end_date > start_date),
 	CONSTRAINT valid_credit_card CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
