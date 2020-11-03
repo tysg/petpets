@@ -1,34 +1,16 @@
 import React, { Dispatch, useEffect, useState } from "react";
-import { pets as PetsApi } from "../../common/api";
-import {
-    Select,
-    DatePicker,
-    Col,
-    Row,
-    Empty,
-    Spin,
-    Radio,
-    Input,
-    Space
-} from "antd";
+import { Select, Col, Row, Radio, Input, Space } from "antd";
 import moment from "moment";
-import { Pet } from "../../../../models/pet";
-import { CareTakerDetails } from "../../../../models/careTaker";
-import CareTakerCard from "./CareTakerCard";
 import { Action, NewRequestState } from "./NewRequest";
 import { CreditCard } from "../../../../models/creditCard";
-import { bid as BidApi } from "./../../common/api";
 import { user as UserApi } from "./../../common/api";
-import { useParams } from "react-router-dom";
-import Moment from "moment";
 
 type CreateOrderProps = {
     state: NewRequestState;
     dispatch: Dispatch<Action>;
 };
 const CreateOrder = (props: CreateOrderProps) => {
-    const { state, dispatch } = props;
-    const { selectedCareTaker, selectedDates, selectedPet } = state;
+    const { dispatch } = props;
     const [payment, setPayment] = useState<string>();
     const [creditCards, setCreditCards] = useState<CreditCard[]>();
 

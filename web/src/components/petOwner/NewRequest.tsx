@@ -1,32 +1,19 @@
-import React, {
-    Dispatch,
-    Reducer,
-    useEffect,
-    useReducer,
-    useState
-} from "react";
-import { pets as PetsApi, bid as BidApi, formatDate } from "./../../common/api";
-import {
-    Select,
-    DatePicker,
-    Col,
-    Row,
-    Empty,
-    Spin,
-    Result,
-    Button,
-    Steps,
-    message
-} from "antd";
+// libraries
+import React, { Dispatch, Reducer, useReducer } from "react";
 import moment from "moment";
+import { Spin, Result, Button, Steps, message } from "antd";
+
+// utils
+import { bid as BidApi, formatDate } from "./../../common/api";
+import { getUser } from "./../../common/token";
+import { Bid } from "../../../../models";
 import { Pet } from "../../../../models/pet";
 import { CareTakerDetails } from "../../../../models/careTaker";
-import CareTakerCard from "./CareTakerCard";
+
+// components
 import SelectCareTaker from "./SelectCareTaker";
 import CreateOrder from "./CreateOrder";
 import "./NewRequest.css";
-import { Bid } from "../../../../models";
-import { getUser } from "./../../common/token";
 
 const { Step } = Steps;
 

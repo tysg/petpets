@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Space, Card, Rate, Switch } from "antd";
+import { Avatar, Space, Card, Rate } from "antd";
 import { CareTakerDetails } from "../../../../models/careTaker";
 import { NewRequestState, Action } from "./NewRequest";
 
@@ -40,7 +40,7 @@ type CareTakerCardProps = {
 };
 
 const CareTakerCard = (props: CareTakerCardProps) => {
-    const { ct, state, dispatch } = props;
+    const { ct, dispatch } = props;
     return (
         <Card
             hoverable

@@ -1,7 +1,6 @@
 import React, { Dispatch, useEffect, useState } from "react";
 import { pets as PetsApi } from "../../common/api";
 import { Select, DatePicker, Col, Row, Empty, Spin } from "antd";
-import moment from "moment";
 import { Pet } from "../../../../models/pet";
 import { CareTakerDetails } from "../../../../models/careTaker";
 import CareTakerCard from "./CareTakerCard";
@@ -34,7 +33,7 @@ const SelectCareTaker = (props: SelectCareTakerProps) => {
     const [userPets, setUserPets] = useState<Pet[]>([]);
     const [careTakers, setCareTakers] = useState<CareTakerDetails[]>([]);
     const { state, dispatch } = props;
-    const { selectedCareTaker, selectedDates, selectedPet } = state;
+    const { selectedDates, selectedPet } = state;
 
     // fetch only once
     useEffect(() => {

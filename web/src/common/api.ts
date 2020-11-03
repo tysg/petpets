@@ -18,8 +18,8 @@ const authHeaderConfig: AxiosRequestConfig = {
     headers: { "x-access-token": token }
 };
 
-const post = (endpoint: string, data: any) =>
-    axios.post(endpoint, data, authHeaderConfig);
+// const post = (endpoint: string, data: any) =>
+//     axios.post(endpoint, data, authHeaderConfig);
 const get = (endpoint: string) => axios.get(endpoint, authHeaderConfig);
 
 export const user = {
