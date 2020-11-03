@@ -52,7 +52,8 @@ const petCatEntries = fakePetCategories.map(
 );
 
 const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
-    const hashedPassword = bcrypt.hashSync(faker.internet.password(), salt);
+    const password = faker.internet.password();
+    const hashedPassword = bcrypt.hashSync(password, salt);
     const email = faker.internet.email();
     const sanitizedName = faker
         .fake("{{name.firstName}} {{name.lastName}}")
