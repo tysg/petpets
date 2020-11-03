@@ -28,7 +28,8 @@ INSERT INTO specializes_in VALUES ('ptct@gmail.com', 'dog');
 
 -- schedules
 INSERT INTO pt_free_schedule VALUES ('ptct@gmail.com', '2020-11-05', '2020-11-10');
-INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-05-28', '2020-06-10');
+INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-12-30', '2021-01-05');
+-- INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-09-20', '2021-09-30'); will throw not enought consecutive working days error
 
 -- credit cards
 -- Postgresql uses the yyyy-mm-dd format

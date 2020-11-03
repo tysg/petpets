@@ -210,12 +210,18 @@ BEGIN
 	);
 
 	INSERT INTO count_sched VALUES (stretch_start + stretch_start2 + stretch_end + stretch_end2);
-
-	IF stretch_start + stretch_start2 + stretch_end + stretch_end2 < 3 THEN
-		RAISE EXCEPTION 'Not enough consecutive working days! %', stretch_start + stretch_start2 + stretch_end + stretch_end2;
+	IF start_y = end_y THEN
+		IF stretch_start + stretch_start2 + stretch_end + stretch_end2 < 2 THEN
+			RAISE EXCEPTION 'Not enough consecutive working days! %', stretch_start + stretch_start2 + stretch_end + stretch_end2;
+		END IF;
 	ELSE
-		RETURN NEW;
+		IF stretch_start + stretch_start2 < 2 THEN
+			RAISE EXCEPTION 'Not enough consecutive working days! %', stretch_start + stretch_start2;
+		ELSIF stretch_end + stretch_end2 < 2 THEN
+			RAISE EXCEPTION 'Not enough consecutive working days! %', stretch_end + stretch_end2;
+		END IF;
 	END IF;
+	RETURN NEW;
 END;
 $t$ LANGUAGE PLpgSQL;
 CREATE TRIGGER check_ft_150
