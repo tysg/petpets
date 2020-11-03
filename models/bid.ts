@@ -1,5 +1,12 @@
 import { ApiResponse } from "./index";
 
+
+export enum BidStatus {
+    success = 0,
+    failure = 1,
+    pending = 2
+}
+
 /**
  * POST api/bids, request;
  */
@@ -14,6 +21,7 @@ export interface Bid {
     pet_owner: string;
     pet_name: string;
     pet_category: string;
+    bid_status: BidStatus;
 }
 
 export const sqlify = (bid: Bid) => [
@@ -32,9 +40,16 @@ export const sqlify = (bid: Bid) => [
 /**
  * GET api/bids/owner/:owner_email
  */
-export type BidderResponse = ApiResponse<Bid[], string>;
+export type OwnerResponse = ApiResponse<Bid[], string>;
 
 /**
  * GET api/bids/caretaker/:ct_email;
  */
 export type CareTakerResponse = ApiResponse<Bid[], string>;
+
+/**
+ * POST api/bids;
+ */
+export type BidResponse = ApiResponse<Bid, string>;
+
+export type StringResponse = ApiResponse<string, string>;

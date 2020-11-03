@@ -43,8 +43,8 @@ CREATE TABLE pet(
 CREATE TABLE credit_card(
 	card_number bigint,
 	cardholder varchar(64) REFERENCES person(email),
-	expiryDate Date,
-	securityCode smallint,
+	expiry_date Date,
+	security_code smallint,
 	CONSTRAINT credit_card_id PRIMARY KEY (card_number, cardholder)
 );
 
@@ -101,6 +101,7 @@ CREATE TABLE bid (
 	pet_owner varchar(64),
 	pet_name varchar(64),
 	pet_category varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE,
+	bid_status int NOT NULL,
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number) ON DELETE CASCADE,
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name) ON DELETE CASCADE,
 	CONSTRAINT bid_id PRIMARY KEY (pet_name, pet_owner, start_date),

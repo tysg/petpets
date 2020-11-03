@@ -1,62 +1,63 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
-    CreditCard,
-    IndexResponse,
-    CreditCardResponse,
+    Bid,
+    OwnerResponse,
+    CareTakerResponse,
+    BidResponse,
     StringResponse,
     sqlify
-} from "../models/creditCard";
+} from "../models/bid";
 import { asyncQuery } from "../utils/db";
-import { credit_card_query } from "../sql/sql_query";
+import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
 import { assert } from "console";
 
-export const index = async (req: Request, res: Response) => {
+export const owner_get = async (req: Request, res: Response) => {
     try {
-        const { cardholder } = req.params;
-        const qr: QueryResult<CreditCard> = await asyncQuery(
-            credit_card_query.index_cardholder,
-            [cardholder]
+        const { email } = req.params;
+        const qr: QueryResult<Bid> = await asyncQuery(
+            bid_query.owner_get_bids,
+            [email]
         );
         const { rows } = qr;
-        const response: IndexResponse = {
+        const response: OwnerResponse = {
             data: rows,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { cardholder } = req.params;
-        log.error("get card error", error);
+        const { email } = req.params;
+        log.error("get owner bids error", error);
         const response: StringResponse = {
             data: "",
-            error: `Credit cards of ${cardholder} not found: ` + error
+            error:
+                `Bids of ${email} not found: ` + error
         };
         res.status(400).send(response);
     }
 };
 
-export const get = async (req: Request, res: Response) => {
+export const ct_get = async (req: Request, res: Response) => {
     try {
-        const { card_number, cardholder } = req.params;
-        const qr: QueryResult<CreditCard> = await asyncQuery(
-            credit_card_query.get_credit_card,
-            [card_number, cardholder]
+        const { ct_email } = req.params;
+        const qr: QueryResult<Bid> = await asyncQuery(
+            bid_query.caretaker_get_bids,
+            [ct_email]
         );
         const { rows } = qr;
-        assert(rows.length == 1, "PK somehow unenforced!"); // By right if PK has been enforced
-        const response: CreditCardResponse = {
-            data: rows[0],
+        const response: CareTakerResponse = {
+            data: rows,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { card_number, cardholder } = req.params;
-        log.error("get card error", error);
+        const { ct_email } = req.params;
+        log.error("get caretaker bids error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${card_number} of ${cardholder} not found: ` + error
+                `Bids of ${ct_email} not found: ` + error
         };
         res.status(400).send(response);
     }
@@ -64,23 +65,25 @@ export const get = async (req: Request, res: Response) => {
 
 export const remove = async (req: Request, res: Response) => {
     try {
-        const { card_number, cardholder } = req.params;
-        await asyncQuery(credit_card_query.delete_credit_card, [
-            card_number,
-            cardholder
+        const { ct_email, owner_email, pet_name, start_date } = req.params;
+        await asyncQuery(bid_query.delete_bid, [
+            ct_email, 
+            owner_email, 
+            pet_name, 
+            start_date
         ]);
         const response: StringResponse = {
-            data: `${card_number} ${cardholder} has been deleted `,
+            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been deleted `,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { card_number, cardholder } = req.params;
-        log.error("delete card error", error);
+        const { ct_email, owner_email, pet_name, start_date } = req.params;
+        log.error("delete bid error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${card_number} of ${cardholder} cannot be deleted: ` +
+                `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} cannot be deleted: ` +
                 error
         };
         res.status(400).send(response);
@@ -89,19 +92,19 @@ export const remove = async (req: Request, res: Response) => {
 
 export const create = async (req: Request, res: Response) => {
     try {
-        const credit_card: CreditCard = req.body;
+        const bid: Bid = req.body;
         await asyncQuery(
-            credit_card_query.create_credit_card,
-            sqlify(credit_card)
+            bid_query.create_bid,
+            sqlify(bid)
         );
-        const response: CreditCardResponse = {
-            data: credit_card,
+        const response: BidResponse = {
+            data: bid,
             error: ""
         };
         res.send(response);
     } catch (error) {
         const { card_number, cardholder } = req.body;
-        log.error("create card error", error);
+        log.error("create bid error", error);
         const response: StringResponse = {
             data: "",
             error:
@@ -116,7 +119,7 @@ export const update = async (req: Request, res: Response) => {
     try {
         const credit_card: CreditCard = req.body;
         await asyncQuery(
-            credit_card_query.update_credit_card,
+            bid_query.update_credit_card,
             sqlify(credit_card)
         );
         const response: CreditCardResponse = {
