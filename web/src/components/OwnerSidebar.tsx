@@ -12,7 +12,7 @@ const OwnerSidebar = (props: RouteComponentProps) => {
         <ResponsiveSidebar
             {...props}
             defaultOpen="owner"
-            defaultSelected="pets"
+            defaultSelected="petsUpdate "
         >
             <SubMenu key="owner" icon={<UserOutlined />} title="Pet Owner">
                 <Menu.Item key="pets">

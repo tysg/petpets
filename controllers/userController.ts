@@ -93,7 +93,7 @@ const signIn = async (req: Request, res: Response) => {
             return res.status(401).send(errorResponse("Wrong password!"));
         }
 
-        const token = jwt.sign({ email: user.email }, SECRET, {
+        const token = jwt.sign({ email: user.email, role: user.role }, SECRET, {
             expiresIn: 86400 // 24 hours
         });
 
