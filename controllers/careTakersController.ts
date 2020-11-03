@@ -19,7 +19,7 @@ type CareTakerRow = Record<
     | "avatar_link"
     | "caretaker_status"
     | "rating"
-    | "ct_price_hourly",
+    | "ct_price_daily",
     any
 >;
 const careTakerRowToCareTakerDetails = (rows: CareTakerRow[]) =>
@@ -33,7 +33,7 @@ const careTakerRowToCareTakerDetails = (rows: CareTakerRow[]) =>
                 phone: r.phone,
                 rating: r.rating,
                 avatarUrl: r.avatar_link,
-                ctPriceHourly: r.ct_price_hourly
+                ctPriceDaily: r.ct_price_daily
             };
         }
     );
