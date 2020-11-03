@@ -29,3 +29,4 @@ apiRouter.use("/petCategories", petCategories);
 apiRouter.use("/credit_cards", credit_cards);
 apiRouter.use("/caretakers", careTakers);
 apiRouter.use("/schedules", schedules);
+apiRouter.use("/bids", schedules);
