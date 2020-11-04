@@ -101,24 +101,23 @@ export const schedule_query = {
 export const bid_query = {
     owner_get_bids: `SELECT * FROM bid WHERE email = $1`,
     caretaker_get_bids: `SELECT * FROM bid WHERE ct_email = $1`,
-    create_bid: `
-    INSERT INTO bid VALUES ($1, 
-        SELECT ct_price_daily 
+    query_price: `SELECT ct_price_daily 
         FROM specializes_in
-        WHERE email=$1 AND $type_name=$8 as ct_daily, 
-        $2, $3, $4, $5, $6, $7, $8, $9, 
-        SELECT (
+        WHERE email= $1 AND type_name= $2`,
+    query_role: `SELECT caretaker_status 
+        FROM caretaker 
+        WHERE email = $1`,
+    create_bid: `
+    INSERT INTO bid VALUES ($1, $2, $3, $4, $5, $6, $7::transport_method, $8, $9, $10, (SELECT (
             CASE 
             WHEN (
-                SELECT caretaker_status 
-                FROM caretaker 
-                WHERE email = $1
+                
                 ) = 1 
             THEN 'submitted'
             ELSE 'confirmed' 
             END)
-        FROM caretaker,
-        NULL)`,
+        FROM caretaker
+        ), $12)`,
     delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`,
     update_bid: `UPDATE bid SET (bid_status) = $5 WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`
 }

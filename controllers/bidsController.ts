@@ -6,19 +6,21 @@ import {
     CareTakerResponse,
     BidResponse,
     StringResponse,
-    sqlify
+    sqlify,
+    sqlify_price_query,
+    sqlify_role_query
 } from "../models/bid";
 import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
-import { assert } from "console";
 
 export const owner_get = async (req: Request, res: Response) => {
     try {
-        const { email } = req.params;
+        const { owner_email } = req.params;
+        console.log([owner_email]);
         const qr: QueryResult<Bid> = await asyncQuery(
             bid_query.owner_get_bids,
-            [email]
+            [owner_email]     
         );
         const { rows } = qr;
         const response: OwnerResponse = {
@@ -27,12 +29,12 @@ export const owner_get = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { email } = req.params;
+        const { owner_email } = req.params;
         log.error("get owner bids error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Bids of ${email} not found: ` + error
+                `Bids of ${owner_email} not found: ` + error
         };
         res.status(400).send(response);
     }
@@ -92,7 +94,14 @@ export const remove = async (req: Request, res: Response) => {
 
 export const create = async (req: Request, res: Response) => {
     try {
-        const bid: Bid = req.body;
+        var bid: Bid = req.body;
+        const price: QueryResult<Number>= await asyncQuery(
+            bid_query.query_price,
+            sqlify_price_query(bid.ct_email, bid.pet_category)
+        );
+        const { rows } = price;
+        bid.ct_price = <number>rows[0];
+        console.log(rows[0]);
         await asyncQuery(
             bid_query.create_bid,
             sqlify(bid)

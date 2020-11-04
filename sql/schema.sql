@@ -14,7 +14,7 @@ DROP TYPE IF EXISTS user_role;
 DROP TYPE IF EXISTS transport_method;
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
-CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'PCS');
+CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'pcs');
 
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,

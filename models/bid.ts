@@ -36,6 +36,14 @@ export const sqlify = (bid: Bid) => [
     bid.feedback
 ];
 
+export const sqlify_price_query = (arg1: string, arg2: string) => [
+    arg1,
+    arg2
+]
+
+export const sqlify_role_query = (arg: string) => [
+    arg
+]
 /**
  * GET api/bids/owner/:owner_email
  */
