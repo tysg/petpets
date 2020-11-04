@@ -12,7 +12,7 @@ export const pet_query = {
     create_pet:
         "INSERT INTO pet (name, owner, category, requirements, description) VALUES ($1, $2, $3, $4, $5)",
     update_pet:
-        "UPDATE pet SET (name, owner, category, requirements, description) = ($1, $2, $3, $4, $5) WHERE name=$1 AND email=$2",
+        "UPDATE pet SET (name, owner, category, requirements, description) = ($1, $2, $3, $4, $5) WHERE name=$1 AND owner=$2",
     get_pet_categories: "SELECT type_name, base_daily_price FROM pet_category",
     select_pet_category:
         "SELECT type_name, base_daily_price FROM pet_category WHERE type_name=$1",
