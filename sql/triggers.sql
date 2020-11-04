@@ -88,6 +88,33 @@ CREATE TRIGGER get_avg_rating
 AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE avg_rating();
 
+CREATE OR REPLACE FUNCTION close_bid()
+RETURNS TRIGGER AS 
+$t$
+DECLARE avg_rating NUMERIC;
+DECLARE ct_status INTEGER;
+BEGIN
+	SELECT caretaker_status INTO ct_status FROM caretaker WHERE email=NEW.ct_email;
+	IF NEW.bid_status = 'confirmed' THEN
+		IF ct_status = 2 THEN 
+			UPDATE full_time_ct 
+				SET (rating) = 
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		ELSE
+			UPDATE part_time_ct 
+				SET (rating) =
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		END IF;
+	END IF;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER close_pt_bid
+AFTER INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
 -- TODO bid overlap trigger for pet, owner, ct and 
 -- TODO close bid if accepted by anyone
