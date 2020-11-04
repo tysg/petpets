@@ -41,27 +41,55 @@ BEFORE INSERT ON part_time_ct
 FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 
 
-CREATE OR REPLACE FUNCTION ft_rating()
+-- CREATE OR REPLACE FUNCTION ft_rating()
+-- RETURNS TRIGGER AS 
+-- $t$
+-- DECLARE avg_rating NUMERIC;
+-- BEGIN
+-- 	IF NEW.rating is not NULL THEN
+-- 		UPDATE full_time_ct 
+-- 		SET (rating) = (SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+-- 		WHERE email=NEW.ct_email;
+-- 	END IF;
+-- 	RETURN NEW;
+-- END;
+-- $t$ LANGUAGE PLpgSQL;
+
+-- CREATE TRIGGER get_ft_rating
+-- BEFORE INSERT OR UPDATE ON bid
+-- FOR EACH ROW EXECUTE PROCEDURE ft_rating();
+
+
+CREATE OR REPLACE FUNCTION avg_rating()
 RETURNS TRIGGER AS 
 $t$
 DECLARE avg_rating NUMERIC;
+DECLARE ct_status INTEGER;
 BEGIN
+	SELECT caretaker_status INTO ct_status FROM caretaker WHERE email=NEW.ct_email;
 	IF NEW.rating is not NULL THEN
-		UPDATE full_time_ct 
-		SET (rating) = (SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
-		WHERE email=NEW.ct_email;
+		IF ct_status = 2 THEN 
+			UPDATE full_time_ct 
+				SET (rating) = 
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		ELSE
+			UPDATE part_time_ct 
+				SET (rating) =
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		END IF;
 	END IF;
 	RETURN NEW;
 END;
 $t$ LANGUAGE PLpgSQL;
 
-CREATE TRIGGER get_ft_rating
-BEFORE INSERT OR UPDATE ON bid
-FOR EACH ROW EXECUTE PROCEDURE ft_rating();
+CREATE TRIGGER get_avg_rating
+AFTER INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE avg_rating();
 
 
 -- TODO bid overlap trigger for pet, owner, ct and 
--- TODO average rating trigger, pet limit
 -- TODO close bid if accepted by anyone
 -- TODO close bid if my limit is reached
 

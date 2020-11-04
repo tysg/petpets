@@ -27,6 +27,7 @@ export interface Bid {
     pet_category: string;
     bid_status: BidStatus;
     feedback: Text;
+    rating: number;
 }
 
 export const sqlify = (bid: Bid) => [
@@ -41,7 +42,8 @@ export const sqlify = (bid: Bid) => [
     bid.pet_name,
     bid.pet_category,
     bid.bid_status,
-    bid.feedback
+    bid.feedback,
+    bid.rating
 ];
 
 export interface BidPeriod {
