@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
+    CreditCardSchema,
     CreditCard,
     IndexResponse,
     CreditCardResponse,
@@ -11,20 +12,33 @@ import { asyncQuery } from "../utils/db";
 import { credit_card_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
 import { assert } from "console";
+import * as yup from "yup";
+
+const mapCreditCardRow = (r: any): CreditCard => ({
+    cardholder: r.cardholder,
+    cardNumber: r.card_number,
+    securityCode: r.security_code,
+    expiryDate: r.expiry_date
+});
 
 export const index = async (req: Request, res: Response) => {
     try {
         const { cardholder } = req.params;
-        const qr: QueryResult<CreditCard> = await asyncQuery(
-            credit_card_query.index_cardholder,
-            [cardholder]
-        );
-        const { rows } = qr;
-        const response: IndexResponse = {
-            data: rows,
-            error: ""
-        };
-        res.send(response);
+        const qr = await asyncQuery(credit_card_query.index_cardholder, [
+            cardholder
+        ]);
+        const rows = qr.rows.map(mapCreditCardRow);
+        yup.array(CreditCardSchema)
+            .defined()
+            .validate(rows)
+            .then((value) => {
+                const response: IndexResponse = {
+                    data: value,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         const { cardholder } = req.params;
         log.error("get card error", error);
@@ -39,24 +53,30 @@ export const index = async (req: Request, res: Response) => {
 export const get = async (req: Request, res: Response) => {
     try {
         const { card_number, cardholder } = req.params;
-        const qr: QueryResult<CreditCard> = await asyncQuery(
-            credit_card_query.get_credit_card,
-            [card_number, cardholder]
-        );
-        const { rows } = qr;
-        assert(rows.length == 1, "PK somehow unenforced!"); // By right if PK has been enforced
-        const response: CreditCardResponse = {
-            data: rows[0],
-            error: ""
-        };
-        res.send(response);
+        const qr = await asyncQuery(credit_card_query.get_credit_card, [
+            card_number,
+            cardholder
+        ]);
+        const rows = qr.rows.map(mapCreditCardRow);
+        yup.array(CreditCardSchema)
+            .defined()
+            .validate(rows)
+            .then((value) => {
+                const response: IndexResponse = {
+                    data: value,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         const { card_number, cardholder } = req.params;
         log.error("get card error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${card_number} of ${cardholder} not found: ` + error
+                `Credit card ${card_number} of ${cardholder} not found: ` +
+                error
         };
         res.status(400).send(response);
     }
