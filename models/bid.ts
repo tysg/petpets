@@ -44,6 +44,13 @@ export const sqlify = (bid: Bid) => [
     bid.feedback
 ];
 
+export interface BidPeriod {
+    ct_email: string;
+    ct_status: number;
+    start_date: Date;
+    end_date: Date;
+}
+
 export const sqlify_price_query = (arg1: string, arg2: string) => [arg1, arg2];
 
 /**

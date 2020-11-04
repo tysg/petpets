@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
+    BidPeriod,
     CtPrice,
     CtStatus,
     Bid,
@@ -14,6 +15,8 @@ import { CaretakerStatus } from "../models/careTaker";
 import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
+import moment from "moment";
+import { exception } from "console";
 
 export const owner_get = async (req: Request, res: Response) => {
     try {
@@ -91,6 +94,11 @@ export const remove = async (req: Request, res: Response) => {
     }
 };
 
+export const test = async (req: Request, res: Response) => {
+    const { startDate, endDate } = req.body;
+    res.send(moment(startDate));
+};
+
 export const create = async (req: Request, res: Response) => {
     try {
         var bid: Bid = req.body;
@@ -109,6 +117,26 @@ export const create = async (req: Request, res: Response) => {
         bid.bid_status =
             ctStatus === CaretakerStatus.partTimeCt ? "submitted" : "confirmed";
         bid.ct_price = ctPrice;
+
+        const overlappingBidRows: QueryResult<BidPeriod> = await asyncQuery(
+            bid_query.get_overlapping_bids,
+            [bid.ct_email, bid.start_date, bid.end_date]
+        );
+
+        const petLimit = 5; // TODO remove hard code
+        const overlappingBids = overlappingBidRows.rows;
+        const bidStart = moment(bid.start_date);
+        const bidEnd = moment(bid.end_date);
+        for (let m = bidStart; m.isBefore(bidEnd); m.add(1, "days")) {
+            const overlapDay = overlappingBids.filter(
+                (b) =>
+                    m.isBetween(moment(b.start_date), moment(b.end_date)) ||
+                    m.isSame(moment(b.start_date)) ||
+                    m.isSame(moment(b.end_date))
+            );
+            if (overlapDay.length > petLimit)
+                throw `${petLimit} for careTaker ${bid.ct_email} reached!`;
+        }
 
         await asyncQuery(bid_query.create_bid, sqlify(bid));
         const response: BidResponse = {
