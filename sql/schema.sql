@@ -11,11 +11,11 @@ DROP VIEW IF EXISTS caretaker CASCADE;
 DROP TABLE IF EXISTS full_time_ct CASCADE;
 DROP TABLE IF EXISTS part_time_ct CASCADE;
 DROP TABLE IF EXISTS person CASCADE;
+DROP TABLE IF EXISTS bid;
 DROP TYPE IF EXISTS user_role;
 DROP TYPE IF EXISTS transport_method;
 DROP TYPE IF EXISTS bid_status;
 DROP TYPE IF EXISTS caretaker_status;
-
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
 CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'pcs');
