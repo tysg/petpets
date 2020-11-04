@@ -1,7 +1,10 @@
 DROP TABLE IF EXISTS bid CASCADE;
 DROP VIEW IF EXISTS pet_owner CASCADE;
 DROP TABLE IF EXISTS credit_card CASCADE;
-DROP TABLE IF EXISTS specializes_in CASCADE;
+DROP TABLE IF EXISTS specializes_in CASCADE; -- backwards compatible
+DROP VIEW IF EXISTS specializes_in CASCADE;
+DROP TABLE IF EXISTS pt_specializes_in CASCADE;
+DROP TABLE IF EXISTS ft_specializes_in CASCADE;
 DROP TABLE IF EXISTS pet CASCADE;
 DROP TABLE IF EXISTS pet_category CASCADE;
 DROP TABLE IF EXISTS pt_free_schedule CASCADE;
@@ -12,6 +15,7 @@ DROP TABLE IF EXISTS part_time_ct CASCADE;
 DROP TABLE IF EXISTS person CASCADE;
 DROP TYPE IF EXISTS user_role CASCADE;
 DROP TYPE IF EXISTS transport_method CASCADE;
+
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
 CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'pcs');
@@ -48,13 +52,6 @@ CREATE TABLE credit_card(
 	CONSTRAINT credit_card_id PRIMARY KEY (card_number, cardholder)
 );
 
-CREATE TABLE specializes_in (
-	email varchar(64) REFERENCES person(email) ON DELETE CASCADE,
-	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE ON UPDATE CASCADE,
-	ct_price_daily int NOT NULL,
-	CONSTRAINT specializes_in_id PRIMARY KEY (email, type_name)
-);
-
 CREATE TABLE part_time_ct (
 	email varchar(64) PRIMARY KEY REFERENCES person(email) ON DELETE CASCADE
 );
@@ -63,11 +60,30 @@ CREATE TABLE full_time_ct (
 	email varchar(64) PRIMARY KEY REFERENCES person(email) ON DELETE CASCADE
 );
 
-
 CREATE VIEW caretaker (email, caretaker_status, rating) AS (
 	SELECT email, 1 as caretaker_status, 4.1 as rating FROM part_time_ct 
 	UNION 
 	SELECT email, 2 as caretaker_status, 4.2 as rating FROM full_time_ct
+);
+
+CREATE TABLE pt_specializes_in (
+	email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
+	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE ON UPDATE CASCADE,
+	ct_price_daily int NOT NULL,
+	CONSTRAINT pt_specializes_in_id PRIMARY KEY (email, type_name)
+);
+
+CREATE TABLE ft_specializes_in (
+	email varchar(64) REFERENCES full_time_ct(email) ON DELETE CASCADE,
+	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE ON UPDATE CASCADE,
+	ct_price_daily int NOT NULL,
+	CONSTRAINT ft_specializes_in_id PRIMARY KEY (email, type_name)
+);
+
+CREATE VIEW specializes_in (email, type_name, ct_price_daily) as (
+	SELECT email, type_name, ct_price_daily FROM pt_specializes_in
+	UNION
+	SELECT email, type_name, ct_price_daily FROM ft_specializes_in
 );
 
 CREATE TABLE pt_free_schedule (
