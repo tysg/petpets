@@ -1,7 +1,7 @@
 import { ApiResponse } from "./index";
 
 
-type BidStatus = 'submitted' | 'confirmed' | 'reviewed' | 'closed';
+export type BidStatus = 'submitted' | 'confirmed' | 'reviewed' | 'closed';
 
 /**
  * POST api/bids, request;

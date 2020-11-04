@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
+    BidStatus,
     Bid,
     OwnerResponse,
     CareTakerResponse,
@@ -101,7 +102,14 @@ export const create = async (req: Request, res: Response) => {
         );
         const { rows } = price;
         bid.ct_price = <number>rows[0];
-        console.log(rows[0]);
+
+        const role: QueryResult<Number>= await asyncQuery(
+            bid_query.query_price,
+            sqlify_role_query(bid.ct_email)
+        );
+        const r = role.rows;
+        bid.bid_status = <BidStatus>rows[0] == 1 ? "": "";
+
         await asyncQuery(
             bid_query.create_bid,
             sqlify(bid)

@@ -108,16 +108,7 @@ export const bid_query = {
         FROM caretaker 
         WHERE email = $1`,
     create_bid: `
-    INSERT INTO bid VALUES ($1, $2, $3, $4, $5, $6, $7::transport_method, $8, $9, $10, (SELECT (
-            CASE 
-            WHEN (
-                
-                ) = 1 
-            THEN 'submitted'
-            ELSE 'confirmed' 
-            END)
-        FROM caretaker
-        ), $12)`,
+    INSERT INTO bid VALUES ($1, $2, $3, $4, $5, $6, $7::transport_method, $8, $9, $10, $11, $12)`,
     delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`,
     update_bid: `UPDATE bid SET (bid_status) = $5 WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`
 }
