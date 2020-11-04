@@ -7,6 +7,12 @@ import {
     StringResponse,
     Pet
 } from "./../../../models/pet";
+import {
+    IndexResponse as CreditCardIndexResponse,
+    CreditCardResponse,
+    StringResponse as CreditCardStringIndexResponse,
+    CreditCard
+} from "./../../../models/creditCard";
 import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
 import { Moment } from "moment";
 
@@ -19,6 +25,10 @@ const authHeaderConfig: AxiosRequestConfig = {
 
 function addOwnerField(pet: Omit<Pet, "owner">): Pet {
     return { ...pet, owner: email };
+}
+
+function addCardHolderField(creditCard: Omit<CreditCard, "cardholer">): CreditCard {
+    return { ...creditCard, cardholder: email };
 }
 
 const remove = (endpoint: string) => axios.delete(endpoint, authHeaderConfig);
@@ -78,3 +88,24 @@ export const pets = {
         return remove(`/api/pets/${email}/${pet.name}`);
     }
 };
+
+export const creditCards = {
+    getUserCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
+        get(`/api/creditCards/${email}`),
+    postCreditCard: (
+        creditCard: Omit<CreditCard, "">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return post(`/api/creditCards`, creditCard);
+    },
+    putCreditCard: (
+        creditCard: Omit<CreditCard, "">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return patch(`/api/creditCards/${email}/${creditCard.cardNumber}`, creditCard);
+    },
+    deleteCreditCard: (
+        creditCard: Omit<CreditCard, "">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return remove(`/api/creditCards/${email}/${creditCard.cardNumber}`);
+    }
+};
+
