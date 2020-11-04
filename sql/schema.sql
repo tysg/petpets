@@ -1,5 +1,4 @@
 DROP TABLE IF EXISTS credit_card CASCADE;
-DROP TABLE IF EXISTS specializes_in CASCADE; -- backwards compatible
 DROP VIEW IF EXISTS specializes_in CASCADE;
 DROP TABLE IF EXISTS pt_specializes_in CASCADE;
 DROP TABLE IF EXISTS ft_specializes_in CASCADE;
