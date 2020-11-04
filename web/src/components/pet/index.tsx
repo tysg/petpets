@@ -92,7 +92,11 @@ const PetPage = () => {
     return (
         <PageHeader
             title="Manage Pets"
-            extra={<Button type="primary">Add Pet</Button>}
+            extra={
+                <Button type="primary" onClick={newModal}>
+                    Add Pet
+                </Button>
+            }
         >
             {visibleModal && (
                 <PetModalForm
