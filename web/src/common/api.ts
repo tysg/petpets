@@ -8,11 +8,12 @@ import {
     Pet
 } from "./../../../models/pet";
 import {
-    IndexResponse as CareTakerIndexResponse,
-    SearchResponse
-} from "./../../../models/careTaker";
-import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
-import { CreateBidRequest } from "./../../../models/bid";
+    IndexResponse as CreditCardIndexResponse,
+    CreditCardResponse,
+    StringResponse as CreditCardStringIndexResponse,
+    CreditCard
+} from "./../../../models/creditCard";
+import { SearchResponse } from "./../../../models/careTaker";
 import { Moment } from "moment";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
@@ -24,6 +25,12 @@ const authHeaderConfig: AxiosRequestConfig = {
 
 function addOwnerField(pet: Omit<Pet, "owner">): Pet {
     return { ...pet, owner: email };
+}
+
+function addCardHolderField(
+    creditCard: Omit<CreditCard, "cardholer">
+): CreditCard {
+    return { ...creditCard, cardholder: email };
 }
 
 const remove = (endpoint: string) => axios.delete(endpoint, authHeaderConfig);
@@ -87,11 +94,25 @@ export const pets = {
     }
 };
 
-export const bid = {
-    createBid: (body: CreateBidRequest) => {
-        console.log(body);
-        // return Promise.resolve();
-        // return Promise.reject();
-        return post(`/api/bids`, body);
+export const creditCards = {
+    getUserCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
+        get(`/api/creditCards/${email}`),
+    postCreditCard: (
+        creditCard: Omit<CreditCard, "">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return post(`/api/creditCards`, creditCard);
+    },
+    putCreditCard: (
+        creditCard: Omit<CreditCard, "">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return patch(
+            `/api/creditCards/${email}/${creditCard.cardNumber}`,
+            creditCard
+        );
+    },
+    deleteCreditCard: (
+        creditCard: Omit<CreditCard, "">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return remove(`/api/creditCards/${email}/${creditCard.cardNumber}`);
     }
 };
