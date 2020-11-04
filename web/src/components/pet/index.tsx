@@ -20,25 +20,74 @@ const { Option, OptGroup } = Select;
 
 const PetPage = () => {
     const [userPets, setUserPets] = useState<Pet[]>([]);
+    const fetchUserPets = async () => {
+        try {
+            const fetchedPets = (await PetsApi.getUserPets()).data.data;
+            setUserPets(fetchedPets);
+        } catch (err) {
+            console.log("fetchPetCategories err", err);
+        }
+    };
     // fetch only once
     useEffect(() => {
-        const liveFetch = async () => {
-            try {
-                const fetchedPets = (await PetsApi.getUserPets()).data.data;
-                setUserPets(fetchedPets);
-            } catch (err) {
-                console.log("fetchPetCategories err", err);
-            }
-        };
-        liveFetch();
+        fetchUserPets();
     }, []);
 
     // modal settings
     const [visibleModal, setVisibleModal] = useState(false);
     const showModal = () => setVisibleModal(true);
     const hideModal = () => setVisibleModal(false);
-    const [record, setRecord] = useState<Pet>({});
+    const [record, setRecord] = useState<Omit<Pet, "owner">>({
+        category: "",
+        requirements: "",
+        description: "",
+        name: ""
+    });
     const [title, setTitle] = useState("");
+
+    const onSubmit = (values: Omit<Pet, "owner">) => {
+        // TODO:axios here
+        PetsApi.putPet(values)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                fetchUserPets();
+                hideModal();
+            });
+    };
+    const onDelete = (values: Omit<Pet, "owner">) => {
+        // TODO:axios here
+        PetsApi.deletePet(values)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+            .finally(() => {
+                fetchUserPets();
+                hideModal();
+            });
+    };
+    const newModal = () => {
+        setTitle("New Pet Category");
+        setRecord({
+            category: "",
+            requirements: "",
+            description: "",
+            name: ""
+        });
+        showModal();
+    };
+    const generateModal = (record: Omit<Pet, "owner">) => {
+        setTitle("Manage Category");
+        setRecord(record);
+        showModal();
+    };
 
     return (
         <PageHeader

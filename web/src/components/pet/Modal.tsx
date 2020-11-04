@@ -22,8 +22,8 @@ function petCategoryOptions(pets: PetCategory[]) {
 export interface PetModalFormProps {
     title: string;
     visible: boolean;
-    defaultPet: Pet;
-    onSubmit: (value: Pet) => void;
+    defaultPet: Omit<Pet, "owner">;
+    onSubmit: (value: Omit<Pet, "owner">) => void;
     onCancel: () => void;
 }
 
@@ -58,10 +58,10 @@ const PetModalForm = (props: PetModalFormProps) => {
                             description,
                             requirements
                         } = values;
-                        const record: Pet = {
+                        const record: Omit<Pet, "owner"> = {
                             name,
                             category,
-                            owner: getUser()!.email,
+                            // owner: getUser()!.email,
                             description,
                             requirements
                         };

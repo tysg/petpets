@@ -4,7 +4,8 @@ import {
     IndexResponse as PetIndexResponse,
     PetCategoriesResponse,
     PetCategory,
-    StringResponse
+    StringResponse,
+    Pet
 } from "./../../../models/pet";
 import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
 import { Moment } from "moment";
@@ -51,5 +52,14 @@ export const pets = {
             `/api/caretakers/search?start_date=${formatDate(
                 startDate
             )}&end_date=${formatDate(endDate)}&pet_category=${petCategory}`
-        )
+        ),
+
+    // putPet: (pet: Omit<Pet, "owner">): Promise<AxiosResponse<any>> => {
+    putPet: (pet: Omit<Pet, "owner">) => {
+        // add owner field
+        return Promise.resolve();
+    },
+    deletePet: (pet: Omit<Pet, "owner">) => {
+        return Promise.resolve();
+    }
 };
