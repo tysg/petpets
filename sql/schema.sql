@@ -10,9 +10,16 @@ DROP VIEW IF EXISTS caretaker CASCADE;
 DROP TABLE IF EXISTS full_time_ct CASCADE;
 DROP TABLE IF EXISTS part_time_ct CASCADE;
 DROP TABLE IF EXISTS person CASCADE;
-DROP TYPE IF EXISTS user_role CASCADE;
+DROP TABLE IF EXISTS bid;
+DROP TYPE IF EXISTS user_role;
+DROP TYPE IF EXISTS transport_method;
+DROP TYPE IF EXISTS bid_status;
+DROP TYPE IF EXISTS caretaker_status;
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
+CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'pcs');
+CREATE TYPE bid_status AS ENUM ('submitted', 'confirmed', 'reviewed', 'closed');
+CREATE TYPE caretaker_status AS ENUM ('not_ct', 'part_time_ct', 'full_time_ct');
 
 CREATE TABLE person(
 	email varchar(64) PRIMARY KEY,
@@ -39,11 +46,11 @@ CREATE TABLE pet(
 );
 
 CREATE TABLE credit_card(
-	cardNumber bigint,
+	card_number bigint,
 	cardholder varchar(64) REFERENCES person(email),
-	expiryDate Date,
-	securityCode smallint,
-	CONSTRAINT credit_card_id PRIMARY KEY (cardNumber, cardholder)
+	expiry_date Date,
+	security_code smallint,
+	CONSTRAINT credit_card_id PRIMARY KEY (card_number, cardholder)
 );
 
 CREATE TABLE part_time_ct (
@@ -55,9 +62,9 @@ CREATE TABLE full_time_ct (
 );
 
 CREATE VIEW caretaker (email, caretaker_status, rating) AS (
-	SELECT email, 1 as caretaker_status, 4.1 as rating FROM part_time_ct 
+	SELECT email, 1, 4.1 FROM  part_time_ct 
 	UNION 
-	SELECT email, 2 as caretaker_status, 4.2 as rating FROM full_time_ct
+	SELECT email, 2, 4.2 FROM full_time_ct
 );
 
 CREATE TABLE pt_specializes_in (
@@ -94,3 +101,29 @@ CREATE TABLE ft_leave_schedule (
 	end_date date NOT NULL,
 	CONSTRAINT end_after_start CHECK (end_date >= start_date)
 );
+
+CREATE VIEW pet_owner (email, pet_name) AS (
+	SELECT email, name as pet_name
+	FROM person NATURAL JOIN pet
+);
+
+CREATE TABLE bid (
+	ct_email varchar(64) REFERENCES person(email),
+	ct_price int NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL,
+	is_cash boolean NOT NULL,
+	credit_card bigint,
+	transport_method transport_method NOT NULL,
+	pet_owner varchar(64),
+	pet_name varchar(64),
+	pet_category varchar(64) REFERENCES pet_category(type_name),
+	bid_status bid_status NOT NULL,
+	feedback text,
+	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number),
+	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name),
+	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date),
+	CONSTRAINT valid_date CHECK(end_date >= start_date),
+	CONSTRAINT xor_cash_credit CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
+);
+

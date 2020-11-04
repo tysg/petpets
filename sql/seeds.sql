@@ -32,6 +32,9 @@ INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-12-30', '2021-01-0
 -- will throw not enought consecutive working days error
 -- INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-09-20', '2021-09-30'); 
 
+-- bids
+INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-10-10', '2020-10-12', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'dog', 'confirmed', '');
+
 -- credit cards
 -- Postgresql uses the yyyy-mm-dd format
 INSERT INTO credit_card
@@ -40,4 +43,20 @@ VALUES (
     'p@gmail.com',
     '2022-12-01',
     023
+  );
+
+INSERT INTO credit_card
+VALUES (
+    '4000400040004000',
+    'jan@gmail.com',
+    '2025-12-05',
+    344
+  );
+
+INSERT INTO credit_card
+VALUES (
+    '7200123456781234',
+    'jan@gmail.com',
+    '2023-10-05',
+    890
   );

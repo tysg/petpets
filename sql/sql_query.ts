@@ -25,14 +25,14 @@ export const pet_query = {
 
 export const credit_card_query = {
     get_credit_card:
-        "SELECT * FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+        "SELECT * FROM credit_card WHERE card_number=$1 AND cardholder=$2",
     index_cardholder: "SELECT * FROM credit_card WHERE cardholder=$1",
     delete_credit_card:
-        "DELETE FROM credit_card WHERE cardNumber=$1 AND cardholder=$2",
+        "DELETE FROM credit_card WHERE card_number=$1 AND cardholder=$2",
     create_credit_card:
-        "INSERT INTO credit_card (cardNumber, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO credit_card (card_number, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
     update_credit_card:
-        "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
+        "UPDATE credit_card SET (card_number, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE card_number=$1 AND cardholder=$2"
 };
 
 const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link as avatarUrl, caretaker_status as caretakerStatus, rating`;
@@ -92,6 +92,23 @@ export const schedule_query = {
     delete_ft_schedule: `DELETE FROM ft_leave_schedule WHERE email = $1 AND start_date=$2 AND end_date=$3`,
     create_pt_schedule: `INSERT INTO pt_free_schedule VALUES ($1, $2, $3)`,
     create_ft_schedule: `INSERT INTO ft_leave_schedule VALUES ($1, $2, $3)`
+};
+
+export const bid_query = {
+    owner_get_bids: `SELECT * FROM bid WHERE pet_owner = $1`,
+    caretaker_get_bids: `SELECT * FROM bid WHERE ct_email = $1`,
+    query_price: `SELECT ct_price_daily 
+        FROM specializes_in
+        WHERE email= $1 AND type_name= $2`,
+    query_role: `SELECT caretaker_status 
+        FROM caretaker 
+        WHERE email = $1`,
+    create_bid: `
+    INSERT INTO bid VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        `,
+    delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`,
+    update_bid: `UPDATE bid SET bid_status = $5 WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`
 };
 
 export default { user_query, pet_query, credit_card_query };

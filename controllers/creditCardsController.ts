@@ -38,10 +38,10 @@ export const index = async (req: Request, res: Response) => {
 
 export const get = async (req: Request, res: Response) => {
     try {
-        const { cardNumber, cardholder } = req.params;
+        const { card_number, cardholder } = req.params;
         const qr: QueryResult<CreditCard> = await asyncQuery(
             credit_card_query.get_credit_card,
-            [cardNumber, cardholder]
+            [card_number, cardholder]
         );
         const { rows } = qr;
         assert(rows.length == 1, "PK somehow unenforced!"); // By right if PK has been enforced
@@ -51,12 +51,12 @@ export const get = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { cardNumber, cardholder } = req.params;
+        const { card_number, cardholder } = req.params;
         log.error("get card error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${cardNumber} of ${cardholder} not found: ` + error
+                `Credit card ${card_number} of ${cardholder} not found: ` + error
         };
         res.status(400).send(response);
     }
@@ -64,23 +64,23 @@ export const get = async (req: Request, res: Response) => {
 
 export const remove = async (req: Request, res: Response) => {
     try {
-        const { cardNumber, cardholder } = req.params;
+        const { card_number, cardholder } = req.params;
         await asyncQuery(credit_card_query.delete_credit_card, [
-            cardNumber,
+            card_number,
             cardholder
         ]);
         const response: StringResponse = {
-            data: `${cardNumber} ${cardholder} has been deleted `,
+            data: `${card_number} ${cardholder} has been deleted `,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { cardNumber, cardholder } = req.params;
+        const { card_number, cardholder } = req.params;
         log.error("delete card error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${cardNumber} of ${cardholder} cannot be deleted: ` +
+                `Credit card ${card_number} of ${cardholder} cannot be deleted: ` +
                 error
         };
         res.status(400).send(response);
@@ -100,12 +100,12 @@ export const create = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { cardNumber, cardholder } = req.body;
+        const { card_number, cardholder } = req.body;
         log.error("create card error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${cardNumber} of ${cardholder} cannot be created: ` +
+                `Credit card ${card_number} of ${cardholder} cannot be created: ` +
                 error
         };
         res.status(400).send(response);
