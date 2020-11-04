@@ -105,7 +105,7 @@ export const create = async (req: Request, res: Response) => {
 
         const ctPrice = priceRow.rows[0].ct_price_daily;
         const ctStatus = roleRow.rows[0].caretaker_status;
-        bid.bid_status = ctStatus == 1 ? "submitted" : "closed";
+        bid.bid_status = ctStatus == 1 ? "submitted" : "confirmed";
         bid.ct_price = ctPrice;
 
         await asyncQuery(bid_query.create_bid, sqlify(bid));
@@ -134,7 +134,8 @@ export const update = async (req: Request, res: Response) => {
             ct_email,
             owner_email,
             pet_name,
-            start_date
+            start_date,
+            "success"
         ]);
         const response: StringResponse = {
             data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been updated `,
