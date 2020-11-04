@@ -109,7 +109,6 @@ CREATE OR REPLACE FUNCTION date_non_overlap_ft_schedule()
 RETURNS TRIGGER AS 
 $t$ 
 DECLARE overlap NUMERIC;
-DECLARE stretch NUMERIC;
 BEGIN
 	SELECT COUNT(*) INTO overlap FROM 
 		ft_leave_schedule ft 
@@ -129,13 +128,12 @@ CREATE TRIGGER check_ft_schedule_no_date_overlap
 BEFORE INSERT ON ft_leave_schedule
 FOR EACH ROW EXECUTE PROCEDURE date_non_overlap_ft_schedule();
 
--- for debuggin
+-- for debugging
 -- DROP TABLE IF EXISTS count_sched;
 
 -- CREATE TABLE count_sched (
 -- 	c1 int
 -- );
-
 CREATE OR REPLACE FUNCTION ft_150_constraint()
 RETURNS TRIGGER AS 
 $t$ 
