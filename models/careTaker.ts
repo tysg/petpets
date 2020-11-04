@@ -64,6 +64,14 @@ export interface CareTakerSpecializesDetails extends CareTakerDetails {
     allSpecializes: SpecializesIn[];
 }
 
+export interface CareTakerSpecializesInCategory
+    extends CareTakerDetails,
+        SpecializesIn {}
+
+export const CareTakerSpecializesInCategorySchema: yup.ObjectSchema<CareTakerSpecializesInCategory> = CareTakerDetailsSchema.concat(
+    SpecializesInSchema
+).defined();
+
 export interface SpecializesIn {
     typeName: string;
     ctPriceDaily: number;
@@ -84,8 +92,8 @@ export type IndexResponse = ApiResponse<CareTakerDetails[], string>;
 /**
  * GET api/caretakers/search?start_date=2020-11-06&end_date=2020-11-08&pet_category=dog
  */
-export type SpecializesIndexResponse = ApiResponse<
-    CareTakerSpecializesDetails[],
+export type SearchResponse = ApiResponse<
+    CareTakerSpecializesInCategory[],
     string
 >;
 
