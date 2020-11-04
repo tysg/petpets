@@ -74,7 +74,7 @@ const PetPage = () => {
             });
     };
     const newModal = () => {
-        setTitle("New Pet Category");
+        setTitle("New Pet ");
         setRecord({
             category: "",
             requirements: "",
@@ -84,7 +84,7 @@ const PetPage = () => {
         showModal();
     };
     const generateModal = (record: Omit<Pet, "owner">) => {
-        setTitle("Manage Category");
+        setTitle("Edit Pet");
         setRecord(record);
         showModal();
     };
@@ -113,7 +113,12 @@ const PetPage = () => {
                 <Row gutter={8}>
                     {userPets.map((c) => (
                         <Col span={12}>
-                            <PetsCard {...c} />
+                            <PetsCard
+                                pet={c}
+                                // onSubmit={onSubmit}
+                                generateModal={generateModal}
+                                onDelete={onDelete}
+                            />
                         </Col>
                     ))}
                 </Row>

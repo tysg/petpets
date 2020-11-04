@@ -1,14 +1,41 @@
 import React from "react";
-import { Avatar, Card } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { Avatar, Card, Modal } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Pet } from "../../../../models/pet";
 
 const { Meta } = Card;
 
-const PetCard = (props: Pet) => {
+type PetCardProps = {
+    pet: Pet;
+    // onSubmit: (value: Omit<Pet, "owner">) => void;
+    generateModal: (rec: Omit<Pet, "owner">) => void;
+    onDelete: (rec: Omit<Pet, "owner">) => void;
+};
+
+const PetCard = (props: PetCardProps) => {
+    const { pet, generateModal, onDelete } = props;
     return (
         <Card
-            actions={[<EditOutlined key="edit" />]}
+            actions={[
+                <EditOutlined
+                    key="edit"
+                    onClick={() => {
+                        generateModal(pet);
+                    }}
+                />,
+                <DeleteOutlined
+                    key="delete"
+                    onClick={() => {
+                        Modal.confirm({
+                            title: "Do you really want to delete this pet?",
+                            onOk: () => {
+                                onDelete(pet);
+                            },
+                            okText: "Confirm"
+                        });
+                    }}
+                />
+            ]}
             style={{ height: "100%" }}
         >
             <Meta
@@ -20,21 +47,21 @@ const PetCard = (props: Pet) => {
                         }}
                         size="large"
                     >
-                        {props.name.charAt(0).toUpperCase()}
+                        {pet.name.charAt(0).toUpperCase()}
                     </Avatar>
                 }
-                title={props.name + " / " + props.category}
+                title={pet.name + " / " + pet.category}
                 description={
                     <>
                         <p>
                             {"Descriptions: "}
                             <br />
-                            {props.description}
+                            {pet.description}
                         </p>
                         <p>
                             {"Requirements: "}
                             <br />
-                            {props.requirements}
+                            {pet.requirements}
                         </p>
                     </>
                 }
