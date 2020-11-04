@@ -106,7 +106,7 @@ END;
 $t$ LANGUAGE PLpgSQL;
 
 CREATE TRIGGER close_pt_bid
-BEFORE INSERT OR UPDATE ON bid
+AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
 -- TODO bid overlap trigger for pet, owner, ct and 
