@@ -1,17 +1,17 @@
-DROP TABLE IF EXISTS bid;
-DROP VIEW IF EXISTS pet_owner;
-DROP TABLE IF EXISTS credit_card;
-DROP TABLE IF EXISTS specializes_in;
-DROP TABLE IF EXISTS pet;
-DROP TABLE IF EXISTS pet_category;
-DROP TABLE IF EXISTS pt_free_schedule;
-DROP TABLE IF EXISTS ft_leave_schedule;
-DROP VIEW IF EXISTS caretaker;
-DROP TABLE IF EXISTS full_time_ct;
-DROP TABLE IF EXISTS part_time_ct;
-DROP TABLE IF EXISTS person;
-DROP TYPE IF EXISTS user_role;
-DROP TYPE IF EXISTS transport_method;
+DROP TABLE IF EXISTS bid CASCADE;
+DROP VIEW IF EXISTS pet_owner CASCADE;
+DROP TABLE IF EXISTS credit_card CASCADE;
+DROP TABLE IF EXISTS specializes_in CASCADE;
+DROP TABLE IF EXISTS pet CASCADE;
+DROP TABLE IF EXISTS pet_category CASCADE;
+DROP TABLE IF EXISTS pt_free_schedule CASCADE;
+DROP TABLE IF EXISTS ft_leave_schedule CASCADE;
+DROP VIEW IF EXISTS caretaker CASCADE;
+DROP TABLE IF EXISTS full_time_ct CASCADE;
+DROP TABLE IF EXISTS part_time_ct CASCADE;
+DROP TABLE IF EXISTS person CASCADE;
+DROP TYPE IF EXISTS user_role CASCADE;
+DROP TYPE IF EXISTS transport_method CASCADE;
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
 CREATE TYPE transport_method AS ENUM ('delivery', 'pickup', 'pcs');
@@ -106,7 +106,7 @@ CREATE TABLE bid (
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number) ON DELETE CASCADE,
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name) ON DELETE CASCADE,
 	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date),
-	CONSTRAINT valid_date CHECK(end_date > start_date),
+	CONSTRAINT valid_date CHECK(end_date >= start_date),
 	CONSTRAINT valid_credit_card CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
 );
 
