@@ -41,6 +41,30 @@ BEFORE INSERT ON part_time_ct
 FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 
 
+CREATE OR REPLACE FUNCTION ft_rating()
+RETURNS TRIGGER AS 
+$t$
+DECLARE avg_rating NUMERIC;
+BEGIN
+	IF NEW.rating is not NULL THEN
+		UPDATE full_time_ct 
+		SET (rating) = (SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+		WHERE email=NEW.ct_email;
+	END IF;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER get_ft_rating
+BEFORE INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE ft_rating();
+
+
+-- TODO bid overlap trigger for pet, owner, ct and 
+-- TODO average rating trigger, pet limit
+-- TODO close bid if accepted by anyone
+-- TODO close bid if my limit is reached
+
 -- REMOVED cos caretaker overlap enforcement + FK constraint should already enforce this
 -- -- NONOVERLAPPING constraints for schedule
 -- CREATE OR REPLACE FUNCTION not_in_pt_schedule()
@@ -85,12 +109,11 @@ $t$
 DECLARE overlap NUMERIC;
 BEGIN
 	SELECT COUNT(*) INTO overlap FROM 
-		pt_free_schedule p 
+		pt_free_schedule p
 		WHERE p.email=NEW.email 
 		AND 
 		((NEW.start_date >= p.start_date AND NEW.start_date <= p.end_date) 
 		OR (NEW.end_date >= p.start_date AND NEW.end_date <= p.end_date));
-
 	IF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
 	ELSE
