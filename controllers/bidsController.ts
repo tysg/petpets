@@ -10,6 +10,7 @@ import {
     StringResponse,
     sqlify
 } from "../models/bid";
+import { CaretakerStatus } from "../models/careTaker";
 import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
@@ -105,7 +106,8 @@ export const create = async (req: Request, res: Response) => {
 
         const ctPrice = priceRow.rows[0].ct_price_daily;
         const ctStatus = roleRow.rows[0].caretaker_status;
-        bid.bid_status = ctStatus == 1 ? "submitted" : "closed";
+        bid.bid_status =
+            ctStatus === CaretakerStatus.partTimeCt ? "submitted" : "confirmed";
         bid.ct_price = ctPrice;
 
         await asyncQuery(bid_query.create_bid, sqlify(bid));

@@ -1,9 +1,9 @@
 import { ApiResponse } from "./index";
 
 export enum CaretakerStatus {
-    not_ct = 0,
-    part_time_ct = 1,
-    full_time_ct = 2
+    notCt = 0,
+    partTimeCt = 1,
+    fullTimeCt = 2
 }
 
 /**

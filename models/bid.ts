@@ -1,6 +1,7 @@
 import { ApiResponse } from "./index";
 
 export type BidStatus = "submitted" | "confirmed" | "reviewed" | "closed";
+export type TransportMethod = "delivery" | "pickup" | "pcs";
 
 export interface CtPrice {
     ct_price_daily: number;
@@ -20,7 +21,7 @@ export interface Bid {
     end_date: Date;
     is_cash: boolean;
     credit_card: number;
-    transport_method: string;
+    transport_method: TransportMethod;
     pet_owner: string;
     pet_name: string;
     pet_category: string;
