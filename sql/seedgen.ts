@@ -122,5 +122,6 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
 });
 
 const seedString = petCatEntries.join("\n") + fakePeople.join("\n");
+console.log(seedString);
 
 export default seedString;
