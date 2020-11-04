@@ -45,23 +45,26 @@ export const caretaker_query = {
     search_caretaker: `
     SELECT ${CARETAKER_ATTR}, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
         SELECT email, $3 as type_name FROM 
-        (SELECT DISTINCT email 
-            FROM pt_free_schedule 
-            WHERE start_date <= $1 AND end_date >= $2
+            (SELECT DISTINCT email 
+                FROM pt_free_schedule 
+                WHERE start_date <= $1 AND end_date >= $2
             UNION
             SELECT email FROM full_time_ct ftct
-            WHERE NOT EXISTS (
-                SELECT 1 FROM ft_leave_schedule fts
-                WHERE fts.email = ftct.email
-                AND start_date <= $1
-                AND end_date >= $2
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM ft_leave_schedule fts
+                    WHERE fts.email = ftct.email
+                    AND start_date <= $1
+                    AND end_date >= $2
                 )
-                ) as fs
-                WHERE EXISTS (
-                    SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=fs.email
-                    )
-                    ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
-                    `,
+            ) as free_sched
+            WHERE EXISTS (
+                SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
+            ) 
+        ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
+    `,
+    // AND EXISTS (
+    //     SELECT 1 FROM bids WHERE start_date <= $1 AND end_date >= $2 AND free_sched.email=ct_email GROUP BY ct_email HAVING COUNT(*) < 5
+    // )
     delete_caretaker: [
         `DELETE FROM part_time_ct where email=$1`,
         `DELETE FROM full_time_ct where email=$1`
