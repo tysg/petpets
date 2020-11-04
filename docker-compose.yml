@@ -2,33 +2,33 @@ version: "3.7"
 
 # for development
 services:
-  app:
-    container_name: app
-    image: cs2102_app:dev
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ".:/app"
-      - "/app/node_modules"
-    depends_on:
-      - db
-    ports:
-      - 8000:8000
-    stdin_open: true
-    environment:
-      DATABASE_URL: postgresql://postgres:admin@db/cs2102_project
-      SECRET: development-secret
-  db:
-    image: postgres:12.3-alpine
-    volumes:
-      - pg_data:/var/lib/postgresql/data # persists db data as a Docker volume
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: cs2102_project
-    ports:
-      - 5433:5432
+    app:
+        container_name: app
+        image: cs2102_app:dev
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ".:/app"
+            - "/app/node_modules"
+        depends_on:
+            - db
+        ports:
+            - 8000:8000
+        stdin_open: true
+        environment:
+            DATABASE_URL: postgresql://postgres:admin@db/cs2102_project
+            SECRET: development-secret
+    db:
+        image: postgres:12.3-alpine
+        # volumes:
+        #   - pg_data:/var/lib/postgresql/data # persists db data as a Docker volume
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: admin
+            POSTGRES_DB: cs2102_project
+        ports:
+            - 5433:5432
 volumes:
-  pg_data:
+    pg_data:
 # https://mherman.org/blog/dockerizing-a-react-app/
