@@ -1,16 +1,16 @@
-DROP TABLE IF EXISTS credit_card;
-DROP VIEW IF EXISTS specializes_in;
-DROP TABLE IF EXISTS pt_specializes_in;
-DROP TABLE IF EXISTS ft_specializes_in;
-DROP TABLE IF EXISTS pet;
-DROP TABLE IF EXISTS pet_category;
-DROP TABLE IF EXISTS pt_free_schedule;
-DROP TABLE IF EXISTS ft_leave_schedule;
-DROP VIEW IF EXISTS caretaker;
-DROP TABLE IF EXISTS full_time_ct;
-DROP TABLE IF EXISTS part_time_ct;
-DROP TABLE IF EXISTS person;
-DROP TYPE IF EXISTS user_role;
+DROP TABLE IF EXISTS credit_card CASCADE;
+DROP VIEW IF EXISTS specializes_in CASCADE;
+DROP TABLE IF EXISTS pt_specializes_in CASCADE;
+DROP TABLE IF EXISTS ft_specializes_in CASCADE;
+DROP TABLE IF EXISTS pet CASCADE;
+DROP TABLE IF EXISTS pet_category CASCADE;
+DROP TABLE IF EXISTS pt_free_schedule CASCADE;
+DROP TABLE IF EXISTS ft_leave_schedule CASCADE;
+DROP VIEW IF EXISTS caretaker CASCADE;
+DROP TABLE IF EXISTS full_time_ct CASCADE;
+DROP TABLE IF EXISTS part_time_ct CASCADE;
+DROP TABLE IF EXISTS person CASCADE;
+DROP TYPE IF EXISTS user_role CASCADE;
 
 CREATE TYPE user_role AS ENUM ('admin', 'user');
 
