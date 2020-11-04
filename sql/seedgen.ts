@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import fs from "fs";
 import { SignInRequest } from "../models/user";
 
-const fakerSeed = 69;
+const fakerSeed = 6969;
 faker.seed(fakerSeed);
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
