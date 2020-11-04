@@ -136,7 +136,8 @@ export const update = async (req: Request, res: Response) => {
             ct_email,
             owner_email,
             pet_name,
-            start_date
+            start_date,
+            "success"
         ]);
         const response: StringResponse = {
             data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been updated `,

@@ -89,6 +89,14 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
         if (faker.random.boolean()) {
             // fulltime
             postfix += `INSERT INTO full_time_ct VALUES ('${email}');` + "\n";
+            faker.random
+                .arrayElements(fakePetCategories, faker.random.number(3))
+                .forEach((petCategory) => {
+                    const dailyPrice = faker.random.number(20);
+                    postfix +=
+                        `INSERT INTO ft_specializes_in VALUES ('${email}', '${petCategory}', ${dailyPrice});` +
+                        "\n";
+                });
         } else {
             // part time
             postfix += `INSERT INTO part_time_ct VALUES ('${email}');` + "\n";
@@ -100,15 +108,15 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
             postfix +=
                 `INSERT INTO pt_free_schedule VALUES ('${email}', '${startDate.toISOString()}', '${futureDate.toISOString()}');` +
                 "\n";
+            faker.random
+                .arrayElements(fakePetCategories, faker.random.number(3))
+                .forEach((petCategory) => {
+                    const dailyPrice = faker.random.number(20);
+                    postfix +=
+                        `INSERT INTO pt_specializes_in VALUES ('${email}', '${petCategory}', ${dailyPrice});` +
+                        "\n";
+                });
         }
-        faker.random
-            .arrayElements(fakePetCategories, faker.random.number(3))
-            .forEach((petCategory) => {
-                const dailyPrice = faker.random.number(20);
-                postfix +=
-                    `INSERT INTO specializes_in VALUES ('${email}', '${petCategory}', ${dailyPrice});` +
-                    "\n";
-            });
     }
     return `INSERT INTO person VALUES (${record});` + "\n" + postfix;
 });
