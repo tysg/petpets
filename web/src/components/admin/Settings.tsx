@@ -2,22 +2,15 @@ import {
     Button,
     Input,
     InputNumber,
-    Layout,
     PageHeader,
     Space,
     Table,
     Form
 } from "antd";
-import { FormProps } from "antd/lib/form";
 import FormItem from "antd/lib/form/FormItem";
-import Modal, { ModalFuncProps, ModalProps } from "antd/lib/modal/Modal";
+import Modal from "antd/lib/modal/Modal";
 import { AxiosResponse } from "axios";
-import React, {
-    EffectCallback,
-    PropsWithChildren,
-    useEffect,
-    useState
-} from "react";
+import React, { EffectCallback, useEffect, useState } from "react";
 import { PetCategoriesResponse, PetCategory } from "../../../../models/pet";
 import { pets as petsApi } from "../../common/api";
 
