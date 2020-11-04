@@ -35,7 +35,7 @@ export const credit_card_query = {
         "UPDATE credit_card SET (cardNumber, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE cardNumber=$1 AND cardholder=$2"
 };
 
-const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link, caretaker_status, rating, ct_price_daily`;
+const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link as avatarUrl, caretaker_status as caretakerStatus, rating`;
 
 export const caretaker_query = {
     create_part_time_ct: `INSERT INTO part_time_ct (email) VALUES ($1)`,
@@ -43,46 +43,39 @@ export const caretaker_query = {
     get_caretaker: `SELECT ${CARETAKER_ATTR} FROM (caretaker NATURAL JOIN person) WHERE email=$1`,
     index_caretaker: `SELECT ${CARETAKER_ATTR} FROM (caretaker NATURAL JOIN person)`,
     search_caretaker: `
-        SELECT ${CARETAKER_ATTR} FROM (
-            SELECT email, $3 as type_name FROM 
-            (SELECT DISTINCT email 
-                FROM pt_free_schedule 
-                WHERE start_date <= $1 AND end_date >= $2
-                UNION
-                SELECT email FROM full_time_ct ftct
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM ft_leave_schedule fts
-                    WHERE fts.email = ftct.email
-                    AND start_date <= $1
-                    AND end_date >= $2
+    SELECT ${CARETAKER_ATTR}, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
+        SELECT email, $3 as type_name FROM 
+        (SELECT DISTINCT email 
+            FROM pt_free_schedule 
+            WHERE start_date <= $1 AND end_date >= $2
+            UNION
+            SELECT email FROM full_time_ct ftct
+            WHERE NOT EXISTS (
+                SELECT 1 FROM ft_leave_schedule fts
+                WHERE fts.email = ftct.email
+                AND start_date <= $1
+                AND end_date >= $2
+                )
+                ) as fs
+                WHERE EXISTS (
+                    SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=fs.email
                     )
-            ) as fs
-            WHERE EXISTS (
-                SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=fs.email
-            )
-        ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
-    `,
-    // search_caretaker: `
-    //     SELECT ${CARETAKER_DETAILS} FROM (
-    //         SELECT DISTINCT email
-    //         FROM pt_free_schedule
-    //         WHERE start_date <= $1 AND end_date >= $1
-    //         UNION
-    //         SELECT email from full_time_ct ftct
-    //         WHERE NOT EXISTS (
-    //             SELECT 1 from ft_leave_schedule fts
-    //             WHERE fts.email = ftct.email
-    //             AND start_date <= $1
-    //             AND end_date >= $1
-    //         )
-    //     ) as free_schedules NATURAL JOIN person
-    // `,
+                    ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
+                    `,
     delete_caretaker: [
         `DELETE FROM part_time_ct where email=$1`,
         `DELETE FROM full_time_ct where email=$1`
+    ]
+};
+
+export const specializes_query = {
+    get_specializes: `SELECT type_name as typeName, ct_price_daily as ctPriceDaily FROM specializes_in WHERE email=$1`,
+    delete_specializes: [
+        `DELETE FROM ft_specializes_in WHERE email=$1`,
+        `DELETE FROM pt_specializes_in WHERE email=$1`
     ],
-    delete_specializes: `DELETE FROM specializes_in WHERE email=$1`,
-    set_specializes: `INSERT INTO specializes_in VALUES ($1, $2)`
+    set_pt_specializes: `INSERT INTO pt_specializes_in VALUES ($1, $2, $3)`,
+    set_ft_specializes: `INSERT INTO ft_specializes_in VALUES ($1, $2, $3)`
 };
 
 export const schedule_query = {

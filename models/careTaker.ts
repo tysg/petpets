@@ -6,17 +6,25 @@ export enum CaretakerStatus {
     full_time_ct = 2
 }
 
+export interface SpecializesIn {
+    typeName: string;
+    ctPriceDaily: number;
+}
+
 /**
  * PATCH api/caretakers/
- * ^ For updating specalizesIn, but just give the new specializesIn, not just deleted/added
+ * ^ For updating specalizesIn, but just give all specializes, not just deleted/added
  * POST api/caretakers/part_timer
  * POST api/caretakers/full_timer
  */
 export interface CareTaker {
     email: string;
-    specializesIn: string[];
+    allSpecializes: SpecializesIn[];
 }
 
+/**
+ * GET api/caretakers/
+ */
 export interface CareTakerDetails {
     fullname: string;
     phone: number;
@@ -25,18 +33,36 @@ export interface CareTakerDetails {
     avatarUrl?: string;
     caretakerStatus: CaretakerStatus;
     rating: number;
-    ctPriceDaily: number;
 }
-
-/**
- * GET api/caretakers/index
- * GET api/caretakers/search?start_date=2020-11-06&end_date=2020-11-08&pet_category=dog
- */
-export type IndexResponse = ApiResponse<CareTakerDetails[], string>;
 
 /**
  * GET api/caretakers/:email
  */
-export type GetResponse = ApiResponse<CareTakerDetails, string>;
+export interface CareTakerSpecializesDetails extends CareTakerDetails {
+    allSpecializes: SpecializesIn[];
+}
+
+export interface SpecializesDetails extends CareTakerDetails {
+    typeName: string;
+    ctPriceDaily: number;
+}
+
+/**
+ * GET api/caretakers/
+ */
+export type IndexResponse = ApiResponse<CareTakerDetails[], string>;
+
+/**
+ * GET api/caretakers/search?start_date=2020-11-06&end_date=2020-11-08&pet_category=dog
+ */
+export type SpecializesIndexResponse = ApiResponse<
+    SpecializesDetails[],
+    string
+>;
+
+/**
+ * GET api/caretakers/:email
+ */
+export type GetResponse = ApiResponse<CareTakerSpecializesDetails, string>;
 
 export type StringResponse = ApiResponse<string, string>;
