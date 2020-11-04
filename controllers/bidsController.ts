@@ -9,8 +9,7 @@ import {
     CareTakerResponse,
     BidResponse,
     StringResponse,
-    sqlify,
-    sqlify_role_query
+    sqlify
 } from "../models/bid";
 import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
