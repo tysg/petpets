@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS credit_card;
+DROP VIEW IF EXISTS specializes_in;
 DROP TABLE IF EXISTS pt_specializes_in;
 DROP TABLE IF EXISTS ft_specializes_in;
 DROP TABLE IF EXISTS pet;
