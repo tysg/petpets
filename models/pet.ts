@@ -1,4 +1,5 @@
 import { ApiResponse } from "./index";
+import * as yup from "yup";
 
 /**
  * POST api/pets, request;
@@ -11,6 +12,16 @@ export interface Pet {
     requirements: string;
     description: string;
 }
+
+export const PetSchema: yup.ObjectSchema<Pet> = yup
+    .object({
+        name: yup.string().defined(),
+        owner: yup.string().defined(),
+        category: yup.string().defined(),
+        requirements: yup.string().defined(),
+        description: yup.string().defined()
+    })
+    .defined();
 
 export const sqlify = (pet: Pet) => [
     pet.name,
@@ -41,6 +52,12 @@ export interface PetCategory {
     baseDailyPrice: number;
 }
 
+export const PetCategorySchema: yup.ObjectSchema<PetCategory> = yup
+    .object({
+        typeName: yup.string().defined(),
+        baseDailyPrice: yup.number().defined()
+    })
+    .defined();
 /**
  * GET api/pets/categories
  */
