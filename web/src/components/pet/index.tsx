@@ -10,7 +10,8 @@ import {
     Button,
     Space,
     List,
-    PageHeader
+    PageHeader,
+    message
 } from "antd";
 import { Pet } from "../../../../models/pet";
 import PetsCard from "./PetCard";
@@ -20,6 +21,7 @@ const { Option, OptGroup } = Select;
 
 const PetPage = () => {
     const [userPets, setUserPets] = useState<Pet[]>([]);
+    // const [needsUpdate, setNeedsUpdate] = useState(true);
     const fetchUserPets = async () => {
         try {
             const fetchedPets = (await PetsApi.getUserPets()).data.data;
@@ -32,6 +34,13 @@ const PetPage = () => {
     useEffect(() => {
         fetchUserPets();
     }, []);
+    // // fetch only once
+    // useEffect(() => {
+    //     if (needsUpdate) {
+    //         fetchUserPets();
+    //     }
+    //     setNeedsUpdate(false);
+    // }, [needsUpdate]);
 
     // modal settings
     const [visibleModal, setVisibleModal] = useState(false);
@@ -45,27 +54,31 @@ const PetPage = () => {
     });
     const [title, setTitle] = useState("");
 
-    const onSubmit = (values: Omit<Pet, "owner">) => {
-        // TODO:axios here
-        PetsApi.putPet(values)
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-            .finally(() => {
-                fetchUserPets();
-                hideModal();
-            });
+    const onSubmit = async (values: Omit<Pet, "owner">) => {
+        try {
+            if (userPets.find((p) => p.name === values.name)) {
+                await PetsApi.putPet(values);
+                message.success("Successfully edited pet!");
+            } else {
+                await PetsApi.postPet(values);
+                message.success("Successfully created pet!");
+            }
+        } catch (err) {
+            message.error("Something is wrong: " + err);
+            console.log(err);
+        } finally {
+            fetchUserPets();
+            hideModal();
+        }
     };
     const onDelete = (values: Omit<Pet, "owner">) => {
-        // TODO:axios here
         PetsApi.deletePet(values)
             .then((res) => {
+                message.success("Successfully deleted pet!");
                 console.log(res);
             })
             .catch((err) => {
+                message.error("There was an error deleting your pet.");
                 console.log(err);
             })
             .finally(() => {
@@ -74,7 +87,7 @@ const PetPage = () => {
             });
     };
     const newModal = () => {
-        setTitle("New Pet ");
+        setTitle("New Pet");
         setRecord({
             category: "",
             requirements: "",

@@ -90,7 +90,23 @@ const PetModalForm = (props: PetModalFormProps) => {
                 >
                     <Input defaultValue={defaultPet.name}></Input>
                 </FormItem>
-                <FormItem label="Category" name="category">
+                <FormItem
+                    label="Category"
+                    name="category"
+                    required
+                    rules={[
+                        () => ({
+                            validator(rule, value) {
+                                if (value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                    "Pet Category cannot be empty"
+                                );
+                            }
+                        })
+                    ]}
+                >
                     <Select
                         showSearch
                         style={{ width: 200 }}
