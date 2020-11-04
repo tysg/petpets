@@ -1,15 +1,12 @@
-import { Input, Select, Form } from "antd";
-import FormItem from "antd/lib/form/FormItem";
-import Modal from "antd/lib/modal/Modal";
+import React, { useEffect, useState } from "react";
+import { Modal, Input, Select, Form } from "antd";
 import { AxiosResponse } from "axios";
-import React, { EffectCallback, useEffect, useState } from "react";
 import {
     Pet,
     PetCategory,
     PetCategoriesResponse
 } from "../../../../models/pet";
 import { pets as petsApi } from "../../common/api";
-import { getUser } from "./../../common/token";
 
 function petCategoryOptions(pets: PetCategory[]) {
     return pets.map((p) => (
@@ -31,7 +28,7 @@ const PetModalForm = (props: PetModalFormProps) => {
     const { visible, onSubmit, onCancel, title, defaultPet } = props;
     const [form] = Form.useForm();
     const [petTypes, setPetTypes] = useState<PetCategory[]>([]);
-    const pollCategories: EffectCallback = () => {
+    const pollCategories = () => {
         console.log("making call to backend");
         petsApi
             .getCategories()
@@ -61,7 +58,6 @@ const PetModalForm = (props: PetModalFormProps) => {
                         const record: Omit<Pet, "owner"> = {
                             name,
                             category,
-                            // owner: getUser()!.email,
                             description,
                             requirements
                         };
@@ -71,7 +67,7 @@ const PetModalForm = (props: PetModalFormProps) => {
             }}
         >
             <Form form={form} initialValues={defaultPet}>
-                <FormItem
+                <Form.Item
                     label="Pet Name"
                     name="name"
                     required
@@ -89,8 +85,8 @@ const PetModalForm = (props: PetModalFormProps) => {
                     ]}
                 >
                     <Input defaultValue={defaultPet.name}></Input>
-                </FormItem>
-                <FormItem
+                </Form.Item>
+                <Form.Item
                     label="Category"
                     name="category"
                     required
@@ -112,10 +108,6 @@ const PetModalForm = (props: PetModalFormProps) => {
                         style={{ width: 200 }}
                         placeholder="Select a category"
                         optionFilterProp="children"
-                        // onChange={onChange}
-                        // onFocus={onFocus}
-                        // onBlur={onBlur}
-                        // onSearch={onSearch}
                         filterOption={(input, option) =>
                             option?.children
                                 .toLowerCase()
@@ -124,13 +116,13 @@ const PetModalForm = (props: PetModalFormProps) => {
                     >
                         {petCategoryOptions(petTypes)}
                     </Select>
-                </FormItem>
-                <FormItem label="Description" name="description">
+                </Form.Item>
+                <Form.Item label="Description" name="description">
                     <Input.TextArea rows={4} />
-                </FormItem>
-                <FormItem label="Requirements" name="requirements">
+                </Form.Item>
+                <Form.Item label="Requirements" name="requirements">
                     <Input.TextArea rows={7} />
-                </FormItem>
+                </Form.Item>
             </Form>
         </Modal>
     );

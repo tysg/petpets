@@ -1,27 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { pets as PetsApi } from "./../../common/api";
-import {
-    Select,
-    DatePicker,
-    Col,
-    Row,
-    Empty,
-    Spin,
-    Button,
-    Space,
-    List,
-    PageHeader,
-    message
-} from "antd";
+import { Col, Row, Empty, Button, PageHeader, message } from "antd";
 import { Pet } from "../../../../models/pet";
 import PetsCard from "./PetCard";
 import PetModalForm from "./Modal";
 
-const { Option, OptGroup } = Select;
-
 const PetPage = () => {
     const [userPets, setUserPets] = useState<Pet[]>([]);
-    // const [needsUpdate, setNeedsUpdate] = useState(true);
     const fetchUserPets = async () => {
         try {
             const fetchedPets = (await PetsApi.getUserPets()).data.data;
@@ -34,13 +19,6 @@ const PetPage = () => {
     useEffect(() => {
         fetchUserPets();
     }, []);
-    // // fetch only once
-    // useEffect(() => {
-    //     if (needsUpdate) {
-    //         fetchUserPets();
-    //     }
-    //     setNeedsUpdate(false);
-    // }, [needsUpdate]);
 
     // modal settings
     const [visibleModal, setVisibleModal] = useState(false);
@@ -128,7 +106,6 @@ const PetPage = () => {
                         <Col span={12}>
                             <PetsCard
                                 pet={c}
-                                // onSubmit={onSubmit}
                                 generateModal={generateModal}
                                 onDelete={onDelete}
                             />

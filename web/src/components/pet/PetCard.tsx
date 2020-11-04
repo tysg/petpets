@@ -7,7 +7,6 @@ const { Meta } = Card;
 
 type PetCardProps = {
     pet: Pet;
-    // onSubmit: (value: Omit<Pet, "owner">) => void;
     generateModal: (rec: Omit<Pet, "owner">) => void;
     onDelete: (rec: Omit<Pet, "owner">) => void;
 };
