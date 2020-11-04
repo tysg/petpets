@@ -3,7 +3,6 @@ import { QueryResult } from "pg";
 import {
     CtPrice,
     CtStatus,
-    BidStatus,
     Bid,
     OwnerResponse,
     CareTakerResponse,
@@ -130,10 +129,15 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
     try {
-        const bid: Bid = req.body;
-        await asyncQuery(bid_query.update_bid, sqlify(bid));
-        const response: BidResponse = {
-            data: bid,
+        const { ct_email, owner_email, pet_name, start_date } = req.params;
+        await asyncQuery(bid_query.update_bid, [
+            ct_email,
+            owner_email,
+            pet_name,
+            start_date
+        ]);
+        const response: StringResponse = {
+            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been updated `,
             error: ""
         };
         res.send(response);

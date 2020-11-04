@@ -99,7 +99,7 @@ export const schedule_query = {
 };
 
 export const bid_query = {
-    owner_get_bids: `SELECT * FROM bid WHERE email = $1`,
+    owner_get_bids: `SELECT * FROM bid WHERE pet_owner = $1`,
     caretaker_get_bids: `SELECT * FROM bid WHERE ct_email = $1`,
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
