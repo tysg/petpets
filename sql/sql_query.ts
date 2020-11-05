@@ -92,7 +92,7 @@ const ptPaymentMonthly = `
 
 const ftPaymentMonthly = `
   select sum(ct_price), mm, yy FROM (
-	select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by date || ct_price || pet_owner || pet_name || ct_email asc) as r FROM
+	select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by date || pet_owner || pet_name || ct_email asc) as r FROM
 	(select
 		pet_owner,
 		pet_name,
@@ -109,7 +109,7 @@ const ftPaymentMonthly = `
 				startend.ed, '1 day'
 			)::date as date
 			from
-			(select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1) as startend
+			(select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1 AND end_date <= CURRENT_DATE AND bid_status='confirmed') as startend
 			order by 1
 		) as ac, (select * FROM bid WHERE ct_email=$1) as p
 		where ac.Date >= p.start_date and ac.Date <= p.end_date 
