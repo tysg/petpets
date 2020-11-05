@@ -5,6 +5,15 @@ import * as yup from "yup";
  * POST api/creditCards, request;
  * PATCH api/creditCards/:cardholder/:cardNumber, request;
  */
+export const CreditCardSchema: yup.ObjectSchema<CreditCard> = yup
+    .object({
+        cardNumber: yup.number().defined(),
+        securityCode: yup.number().defined(),
+        expiryDate: yup.date().defined(),
+        cardholder: yup.string().defined()
+    })
+    .defined();
+
 export interface CreditCard {
     cardNumber: number;
     cardholder: string;
