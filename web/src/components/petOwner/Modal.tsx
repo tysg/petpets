@@ -42,18 +42,6 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     label="card number"
                     name="card number"
                     required
-                    rules={[
-                        () => ({
-                            validator(rule, value) {
-                                if (value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(
-                                    "card number cannot be empty"
-                                );
-                            }
-                        })
-                    ]}
                 >
                     <Input></Input>
                 </Form.Item>
@@ -61,18 +49,6 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     label="expiry date"
                     name="expiry date"
                     required
-                    rules={[
-                        ({ getFieldValue }) => ({
-                            validator(rule, value) {
-                                if (value?.length > 0) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(
-                                    "expiry date cannot be empty!"
-                                );
-                            }
-                        })
-                    ]}
                 >
                     <Input></Input>
                 </Form.Item>
@@ -80,18 +56,6 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     label="security code"
                     name="security code"
                     required
-                    rules={[
-                        ({ getFieldValue }) => ({
-                            validator(rule, value) {
-                                if (value?.length > 0) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(
-                                    "security code cannot be empty!"
-                                );
-                            }
-                        })
-                    ]}
                 >
                     <Input></Input>
                 </Form.Item>

@@ -12,7 +12,7 @@ const CreditCards = () => {
             const fetchedCreditCards = (await CreditCardsApi.getUserCreditCards()).data.data;
             setUserCreditCards(fetchedCreditCards);
         } catch (err) {
-            console.log("fetchPetCategories err", err);
+            console.log("fetchCreditCards err", err);
         }
     };
     // fetch only once
