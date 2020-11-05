@@ -71,6 +71,42 @@ export const caretaker_query = {
     ]
 };
 
+// TODO query bids and get monthly earnings
+export const payments_query = {
+    get_caretaker_payments: `
+    WITH month_bid as (
+        SELECT 
+        ct_price,
+        start_date,
+        end_date,
+        end_date-start_date as days,
+        to_char(start_date,'Mon') as mon, 
+        to_char(end_date,'Mon') as mon2, 
+        extract(year from start_date) as yy,
+        extract(year from end_date) as yy2
+        FROM bid
+    ),
+    month_sep as (
+        select start_date,end_date,(end_date-start_date) + 1 as days, ct_price, mon,mon2,yy,yy2 from month_bid where mon=mon2 AND yy=yy2
+        union 
+        select start_date,end_date,((date_trunc('month', start_date) + interval '1 month' - interval '1 day')::date-start_date) + 1 as days, ct_price, mon, mon, yy, yy from month_bid where mon!=mon2 AND yy=yy2
+        union
+        select start_date,end_date,(end_date - (date_trunc('month', end_date))::date) + 1 as days, ct_price, mon2, mon2, yy, yy from month_bid where mon!=mon2 AND yy=yy2
+        union
+        select start_date,end_date,((date_trunc('month', start_date) + interval '1 month' - interval '1 day')::date-start_date) + 1 as days, ct_price, mon, mon, yy, yy2 from month_bid where mon!=mon2 AND yy!=yy2
+        union
+        select start_date,end_date,(end_date - (date_trunc('month', end_date))::date) + 1 as days, ct_price, mon2, mon2, yy, yy2 from month_bid where mon!=mon2 AND yy!=yy2
+    )
+    select sum(days), mon,yy from month_sep GROUP BY 2,3
+    `,
+    diff_month: `
+    SELECT to_char(start_date,'Mon') as mon, 
+    to_char(end_date,'Mon') as mon2
+    from bid 
+    where to_char(start_date,'Mon') != to_char(end_date,'Mon')
+    `
+};
+
 export const specializes_query = {
     get_specializes: `SELECT type_name as typeName, ct_price_daily as ctPriceDaily FROM specializes_in WHERE email=$1`,
     delete_specializes: [
