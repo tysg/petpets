@@ -11,13 +11,11 @@ const fakePetCategories = [
     "Bearded Dragon",
     "Bird",
     "Burro",
-    "Cat",
     "Chameleons (Veiled)",
     "Chicken",
     "Chinchilla",
     "Chinese Water Dragon",
     "Cow",
-    "Dog",
     "Donkey",
     "Duck",
     "Ferret",
@@ -43,7 +41,7 @@ const fakePetCategories = [
     "Ponie",
     "Pot Bellied Pig",
     "Rabbit"
-];
+].map((c) => c.toLowerCase());
 const petCatEntries = fakePetCategories.map(
     (type) =>
         `INSERT INTO pet_category values ('${type}', ${faker.random.number(
