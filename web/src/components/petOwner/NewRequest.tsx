@@ -149,7 +149,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
                     state.selectedCareTaker &&
                     state.selectedDates &&
                     state.selectedPet &&
-                    state.isCash &&
+                    state.isCash !== undefined &&
                     state.transportMethod;
                 return (
                     <Button
