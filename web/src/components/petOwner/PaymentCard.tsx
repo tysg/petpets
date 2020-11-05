@@ -1,9 +1,7 @@
 import React from "react";
-import { Avatar, Card, Modal } from "antd";
+import { Card, Modal } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { CreditCard } from "../../../../models/creditCard";
-
-const { Meta } = Card;
 
 type CreditCardProps = {
     creditCard: CreditCard;
@@ -35,36 +33,11 @@ const PaymentCard = (props: CreditCardProps) => {
                     }}
                 />
             ]}
-            style={{ height: "100%" }}
+            style={{ height: "100%", width: 500}}
         >
-            <Meta
-                avatar={
-                    <Avatar
-                        style={{
-                            backgroundColor: "#f56a00",
-                            verticalAlign: "middle"
-                        }}
-                        size="large"
-                    >
-                        {creditCard.cardholder.charAt(0).toUpperCase()}
-                    </Avatar>
-                }
-                title={creditCard.cardholder + " / " + creditCard.cardNumber}
-                description={
-                    <>
-                        <p>
-                            {"Expiry Date: "}
-                            <br />
-                            {creditCard.expiryDate}
-                        </p>
-                        <p>
-                            {"Security Code: "}
-                            <br />
-                            {creditCard.securityCode}
-                        </p>
-                    </>
-                }
-            />
+            <p> card number: {creditCard.cardNumber}</p>
+            <p> expiry date: {creditCard.expiryDate}</p>
+            <p> security code: {creditCard.securityCode}</p>
         </Card>
     );
 };
