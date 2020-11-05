@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
+    MonthlyPayment,
     CareTaker,
     CareTakerDetails,
     SpecializesDetails,
@@ -8,11 +9,55 @@ import {
     SpecializesIn,
     IndexResponse,
     GetResponse,
-    StringResponse
+    StringResponse,
+    MonthlyPaymentsResponse
 } from "../models/careTaker";
 import { asyncQuery, asyncTransaction } from "./../utils/db";
-import { caretaker_query, specializes_query } from "./../sql/sql_query";
+import {
+    caretaker_query,
+    payments_query,
+    specializes_query
+} from "./../sql/sql_query";
 import { log } from "./../utils/logging";
+
+export const privateProfile = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.params;
+        // TODO check jwt email same as req.params.email
+        const ctQueryResult: QueryResult<CareTakerDetails> = await asyncQuery(
+            caretaker_query.get_caretaker,
+            [email]
+        );
+
+        const careTakerDetails = ctQueryResult.rows[0];
+        const queryMethod =
+            careTakerDetails.caretakerStatus == 1
+                ? payments_query.get_pt_caretaker_payments
+                : payments_query.get_pt_caretaker_payments; // TODO change for fulltimer
+
+        const ctPaymentQuery: QueryResult<MonthlyPayment> = await asyncQuery(
+            payments_query.get_pt_caretaker_payments,
+            [email]
+        );
+
+        console.log(ctPaymentQuery.rows);
+
+        const response: MonthlyPaymentsResponse = {
+            data: {
+                monthlyPayment: ctPaymentQuery.rows
+            },
+            error: ""
+        };
+        res.send(response);
+    } catch (error) {
+        log.error("get pet error", error);
+        const response: StringResponse = {
+            data: "",
+            error: error
+        };
+        res.status(400).send(response);
+    }
+};
 
 export const index = async (req: Request, res: Response) => {
     try {

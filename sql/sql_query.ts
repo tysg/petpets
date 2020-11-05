@@ -62,59 +62,62 @@ export const caretaker_query = {
             ) 
         ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
     `,
-    // AND EXISTS (
-    //     SELECT 1 FROM bids WHERE start_date <= $1 AND end_date >= $2 AND free_sched.email=ct_email GROUP BY ct_email HAVING COUNT(*) < 5
-    // )
     delete_caretaker: [
         `DELETE FROM part_time_ct where email=$1`,
         `DELETE FROM full_time_ct where email=$1`
     ]
 };
 
-const bidByMonthByEmail = `
-WITH month_bid as (
-    SELECT 
-    ct_price,
-    start_date,
-    end_date,
-    end_date-start_date as days,
-    to_char(start_date,'MM') as mon, 
-    to_char(end_date,'MM') as mon2, 
-    extract(year from start_date) as yy,
-    extract(year from end_date) as yy2
-    FROM bid
-    WHERE ct_email=$1
-),
-month_sep as (
-    select start_date,end_date,(end_date-start_date) + 1 as days, ct_price, mon,mon2,yy,yy2 from month_bid where mon=mon2 AND yy=yy2
-    union 
-    select start_date,end_date,((date_trunc('month', start_date) + interval '1 month' - interval '1 day')::date-start_date) + 1 as days, ct_price, mon, mon, yy, yy from month_bid where mon!=mon2 AND yy=yy2
-    union
-    select start_date,end_date,(end_date - (date_trunc('month', end_date))::date) + 1 as days, ct_price, mon2, mon2, yy, yy from month_bid where mon!=mon2 AND yy=yy2
-    union
-    select start_date,end_date,((date_trunc('month', start_date) + interval '1 month' - interval '1 day')::date-start_date) + 1 as days, ct_price, mon, mon, yy, yy2 from month_bid where mon!=mon2 AND yy!=yy2
-    union
-    select start_date,end_date,(end_date - (date_trunc('month', end_date))::date) + 1 as days, ct_price, mon2, mon2, yy, yy2 from month_bid where mon!=mon2 AND yy!=yy2
-)`;
+const ptPaymentMonthly = `
+    select sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75, endmonth from 
+        (select                                                                              
+            generate_series(
+                date_trunc('month', startend.sd),
+                startend.ed, '1 month'
+            )::date as startmonth,
+            (generate_series(
+                date_trunc('month', startend.sd),
+                startend.ed, '1 month'
+            ) + interval '1 month' - interval '1 day' )::date as endmonth
+            from
+            (select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email='ftct@gmail.com') as startend
+            order by 1
+    ) as sem, bid 
+    WHERE bid.start_date <= sem.endmonth
+    AND sem.startmonth <= bid.end_date
+    AND bid.bid_status = 'confirmed'
+    GROUP BY sem.endmonth
+    HAVING endmonth <= CURRENT_DATE
+`;
 
-// TODO query bids and get monthly earnings
-export const payments_query = {
-    get_pt_caretaker_payments: `
-    ${bidByMonthByEmail}
-    select  mon, yy, sum(days), 0.75*sum(days * ct_price) from month_sep GROUP BY mon, yy
-    `,
-    get_ft_caretaker_payments: `
+const ftPaymentMonthly = `
     WITH profile as (select * FROM bid WHERE ct_email='ftct@gmail.com')
-    select ac.Date 
-        from (
-          	select CURRENT_DATE - (a.a + (10 * b.a) + (100 * c.a) + (1000 * d.a) || ' days')::interval as Date
-            from (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
-            cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
-            cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
-            cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as d
-        ) as ac, profile as p
-        where ac.Date >= p.start_date and ac.Date <= p.end_date
-    `
+    select * FROM (
+        select ct_price, dd, mm, yy, rank() over (partition by mm, yy order by dd || pet_owner || pet_name || ct_email asc) as r FROM
+        (select
+            pet_owner,
+            pet_name,
+            ct_email,
+            ct_price,
+            to_char(ac.date,'DD') as dd, 
+            to_char(ac.date,'MM') as mm, 
+            extract(year from ac.date) as yy
+            from (
+                select CURRENT_DATE - (a.a + (10 * b.a) + (100 * c.a) + (1000 * d.a) || ' days')::interval as date
+                from (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
+                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
+                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
+                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as d
+            ) as ac, profile as p
+            where ac.Date >= p.start_date and ac.Date <= p.end_date 
+            ORDER BY ac.date) as monthdates
+        ) ranked
+    WHERE ranked.r>60
+`;
+
+export const payments_query = {
+    get_pt_caretaker_payments: ptPaymentMonthly,
+    get_ft_caretaker_payments: ftPaymentMonthly
 };
 
 export const specializes_query = {

@@ -6,6 +6,15 @@ export enum CaretakerStatus {
     fullTimeCt = 2
 }
 
+export interface MonthlyPayment {
+    MonthYear: string;
+    Amount: number;
+}
+
+export interface CareTakerPayment {
+    monthlyPayment: MonthlyPayment[];
+}
+
 export interface SpecializesIn {
     typeName: string;
     ctPriceDaily: number;
@@ -46,6 +55,8 @@ export interface SpecializesDetails extends CareTakerDetails {
     typeName: string;
     ctPriceDaily: number;
 }
+
+export type MonthlyPaymentsResponse = ApiResponse<CareTakerPayment, string>;
 
 /**
  * GET api/caretakers/
