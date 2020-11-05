@@ -46,7 +46,7 @@ const CreateOrder = (props: CreateOrderProps) => {
                             <Select.Option value="pickup">
                                 Pick Up
                             </Select.Option>
-                            <Select.Option value="deliver">
+                            <Select.Option value="delivery">
                                 Deliver
                             </Select.Option>
                             <Select.Option value="pcs">
