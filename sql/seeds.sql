@@ -40,8 +40,8 @@ INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-12-30', '2021-01-0
 
 -- bids
 -- INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-10-10', '2020-10-12', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'dog', 'confirmed');
-INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-10-10', '2020-10-12', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'dog', 'confirmed');
-INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-10-10', '2020-10-12', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'dog', 'confirmed');
+INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-10-10', '2020-10-12', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'dog', 'submitted');
+INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-10-10', '2020-10-12', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'dog', 'submitted');
 -- INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-10-10', '2020-10-12', 'true', NULL, 'pickup', 'jan@gmail.com', 'Apple', 'cat', 'confirmed');
 
 -- credit cards
