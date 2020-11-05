@@ -24,17 +24,16 @@ const CreditCards = () => {
     const [visibleModal, setVisibleModal] = useState(false);
     const showModal = () => setVisibleModal(true);
     const hideModal = () => setVisibleModal(false);
-    const [record, setRecord] = useState<Omit<CreditCard, "">>({
+    const [record, setRecord] = useState<Omit<CreditCard, "cardholder">>({
         cardNumber: 0,
-        cardholder: "",
         expiryDate: new Date(),
         securityCode: 505
     });
     const [title, setTitle] = useState("");
 
-    const onSubmit = async (values: Omit<CreditCard, "">) => {
+    const onSubmit = async (values: Omit<CreditCard, "cardholder">) => {
         try {
-            if (userCreditCards.find((c) => c.cardholder === values.cardholder)) {
+            if (userCreditCards.find((c) => c.cardNumber === values.cardNumber)) {
                 await CreditCardsApi.putCreditCard(values);
                 message.success("Successfully edited credit card!");
             } else {
@@ -49,7 +48,7 @@ const CreditCards = () => {
             hideModal();
         }
     };
-    const onDelete = (values: Omit<CreditCard, "">) => {
+    const onDelete = (values: Omit<CreditCard, "cardholder">) => {
         CreditCardsApi.deleteCreditCard(values)
             .then((res) => {
                 message.success("Successfully deleted credit card!");
@@ -68,13 +67,12 @@ const CreditCards = () => {
         setTitle("New Credit Card");
         setRecord({
             cardNumber: 0,
-            cardholder: "",
             expiryDate: new Date(),
             securityCode: 505
         });
         showModal();
     };
-    const generateModal = (record: Omit<CreditCard, "">) => {
+    const generateModal = (record: Omit<CreditCard, "cardholder">) => {
         setTitle("Edit CreditCard");
         setRecord(record);
         showModal();

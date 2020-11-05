@@ -27,7 +27,7 @@ function addOwnerField(pet: Omit<Pet, "owner">): Pet {
     return { ...pet, owner: email };
 }
 
-function addCardHolderField(creditCard: Omit<CreditCard, "cardholer">): CreditCard {
+function addCardHolderField(creditCard: Omit<CreditCard, "cardholder">): CreditCard {
     return { ...creditCard, cardholder: email };
 }
 
@@ -93,17 +93,17 @@ export const creditCards = {
     getUserCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
         get(`/api/creditCards/${email}`),
     postCreditCard: (
-        creditCard: Omit<CreditCard, "">
+        creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
-        return post(`/api/creditCards`, creditCard);
+        return post(`/api/creditCards`, addCardHolderField(creditCard));
     },
     putCreditCard: (
-        creditCard: Omit<CreditCard, "">
+        creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
-        return patch(`/api/creditCards/${email}/${creditCard.cardNumber}`, creditCard);
+        return patch(`/api/creditCards/${email}/${creditCard.cardNumber}`, addCardHolderField(creditCard));
     },
     deleteCreditCard: (
-        creditCard: Omit<CreditCard, "">
+        creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
         return remove(`/api/creditCards/${email}/${creditCard.cardNumber}`);
     }

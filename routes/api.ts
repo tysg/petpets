@@ -2,7 +2,7 @@ import { Router } from "express";
 import userController from "./../controllers/userController";
 import pets from "./pets";
 import petCategories from "./petCategories";
-import credit_cards from "./creditCards";
+import creditCards from "./creditCards";
 import { verifyToken } from "./../middleware/auth";
 import schedules from "./schedules";
 import careTakers from "./careTakers";
@@ -27,7 +27,7 @@ apiRouter.post("/verifyToken", verifyToken, (req, res) =>
 apiRouter.use("/admin", admin);
 apiRouter.use("/pets", pets);
 apiRouter.use("/petCategories", petCategories);
-apiRouter.use("/credit_cards", credit_cards);
+apiRouter.use("/creditCards", creditCards);
 apiRouter.use("/caretakers", careTakers);
 apiRouter.use("/schedules", schedules);
 apiRouter.use("/bids", bids);

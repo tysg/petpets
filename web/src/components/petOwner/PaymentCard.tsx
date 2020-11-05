@@ -7,8 +7,8 @@ const { Meta } = Card;
 
 type CreditCardProps = {
     creditCard: CreditCard;
-    generateModal: (rec: Omit<CreditCard, "">) => void;
-    onDelete: (rec: Omit<CreditCard, "">) => void;
+    generateModal: (rec: Omit<CreditCard, "cardholder">) => void;
+    onDelete: (rec: Omit<CreditCard, "cardholder">) => void;
 };
 
 const PaymentCard = (props: CreditCardProps) => {
