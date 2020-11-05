@@ -1,5 +1,14 @@
 import { ApiResponse } from "./index";
+import * as yup from "yup";
 
+export const CreditCardSchema: yup.ObjectSchema<CreditCard> = yup
+    .object({
+        cardNumber: yup.number().defined(),
+        securityCode: yup.number().defined(),
+        expiryDate: yup.date().defined(),
+        cardholder: yup.string().defined()
+    })
+    .defined();
 export interface CreditCard {
     cardnumber: number;
     cardholder: string;

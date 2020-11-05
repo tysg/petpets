@@ -4,7 +4,8 @@ import {
     IndexResponse as PetIndexResponse,
     PetCategoriesResponse,
     PetCategory,
-    StringResponse
+    StringResponse,
+    Pet
 } from "./../../../models/pet";
 import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
 import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
@@ -13,13 +14,21 @@ import { Moment } from "moment";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = getToken();
-const email = getUser()?.email;
+const email = getUser()?.email!;
 const authHeaderConfig: AxiosRequestConfig = {
     headers: { "x-access-token": token }
 };
 
-// const post = (endpoint: string, data: any) =>
-//     axios.post(endpoint, data, authHeaderConfig);
+function addOwnerField(pet: Omit<Pet, "owner">): Pet {
+    return { ...pet, owner: email };
+}
+
+const remove = (endpoint: string) => axios.delete(endpoint, authHeaderConfig);
+const post = (endpoint: string, data: any) =>
+    axios.post(endpoint, data, authHeaderConfig);
+const patch = (endpoint: string, data: any) =>
+    axios.patch(endpoint, data, authHeaderConfig);
+
 const get = (endpoint: string) => axios.get(endpoint, authHeaderConfig);
 
 export const user = {
@@ -55,7 +64,24 @@ export const pets = {
             `/api/caretakers/search?start_date=${formatDate(
                 startDate
             )}&end_date=${formatDate(endDate)}&pet_category=${petCategory}`
-        )
+        ),
+
+    postPet: (
+        pet: Omit<Pet, "owner">
+    ): Promise<AxiosResponse<StringResponse>> => {
+        return post(`/api/pets`, addOwnerField(pet));
+    },
+    putPet: (
+        pet: Omit<Pet, "owner">
+    ): Promise<AxiosResponse<StringResponse>> => {
+        return patch(`/api/pets/${email}/${pet.name}`, addOwnerField(pet));
+    },
+
+    deletePet: (
+        pet: Omit<Pet, "owner">
+    ): Promise<AxiosResponse<StringResponse>> => {
+        return remove(`/api/pets/${email}/${pet.name}`);
+    }
 };
 
 export const bid = {

@@ -7,6 +7,7 @@ import { verifyToken } from "./../middleware/auth";
 import schedules from "./schedules";
 import careTakers from "./careTakers";
 import admin from "./admin";
+import bids from "./bid";
 
 export const apiRouter = Router();
 
@@ -29,3 +30,4 @@ apiRouter.use("/petCategories", petCategories);
 apiRouter.use("/credit_cards", credit_cards);
 apiRouter.use("/caretakers", careTakers);
 apiRouter.use("/schedules", schedules);
+apiRouter.use("/bids", bids);

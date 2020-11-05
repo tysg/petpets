@@ -3,54 +3,69 @@ import { QueryResult } from "pg";
 import {
     CareTaker,
     CareTakerDetails,
+    SearchResponse,
+    CareTakerSpecializesInCategorySchema,
+    SpecializesIn,
     IndexResponse,
     GetResponse,
-    StringResponse
+    StringResponse,
+    CareTakerSchema,
+    SpecializesInSchema,
+    CareTakerSpecializesDetailsSchema,
+    CareTakerSpecializesDetails,
+    CareTakerDetailsSchema,
+    CareTakerSpecializesInCategory
 } from "../models/careTaker";
 import { asyncQuery, asyncTransaction } from "./../utils/db";
-import { caretaker_query } from "./../sql/sql_query";
+import { caretaker_query, specializes_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
+import * as yup from "yup";
 
-type CareTakerRow = Record<
-    | "fullname"
-    | "phone"
-    | "address"
-    | "email"
-    | "avatar_link"
-    | "caretaker_status"
-    | "rating"
-    | "ct_price_daily",
-    any
->;
-const careTakerRowToCareTakerDetails = (rows: CareTakerRow[]) =>
-    rows.map(
-        (r): CareTakerDetails => {
-            return {
-                fullname: r.fullname,
-                address: r.address,
-                caretakerStatus: r.caretaker_status,
-                email: r.email,
-                phone: r.phone,
-                rating: r.rating,
-                avatarUrl: r.avatar_link,
-                ctPriceDaily: r.ct_price_daily
-            };
-        }
-    );
+const mapCareTakerAttr = (r: any): CareTakerDetails => ({
+    email: r.email,
+    avatarUrl: r.avatarurl ?? undefined,
+    rating: r.rating,
+    phone: r.phone,
+    fullname: r.fullname,
+    caretakerStatus: r.caretakerstatus,
+    address: r.address
+});
+
+const mapSpecializes = (sp: any): SpecializesIn => ({
+    typeName: sp.typename,
+    ctPriceDaily: sp.ctpricedaily
+});
+
+const mapSearchResponse = (r: any) => ({
+    email: r.email,
+    avatarUrl: r.avatarurl ?? undefined,
+    rating: r.rating,
+    phone: r.phone,
+    fullname: r.fullname,
+    caretakerStatus: r.caretakerstatus,
+    address: r.address,
+    typeName: r.typename,
+    ctPriceDaily: r.ctpricedaily
+});
 
 export const index = async (req: Request, res: Response) => {
     try {
-        const qr: QueryResult<CareTakerRow> = await asyncQuery(
+        const qr: QueryResult<CareTakerDetails> = await asyncQuery(
             caretaker_query.index_caretaker,
             []
         );
-        console.log("hi");
-        const { rows } = qr;
-        const response: IndexResponse = {
-            data: careTakerRowToCareTakerDetails(rows),
-            error: ""
-        };
-        res.send(response);
+        const rows = qr.rows.map(mapCareTakerAttr);
+        yup.array(CareTakerDetailsSchema)
+            .defined()
+            .validate(rows)
+            .then((rows) => {
+                const response: IndexResponse = {
+                    data: rows,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
@@ -64,18 +79,24 @@ export const index = async (req: Request, res: Response) => {
 export const search = async (req: Request, res: Response) => {
     try {
         const { start_date, end_date, pet_category } = req.query;
-        const qr: QueryResult<CareTakerRow> = await asyncQuery(
+        const qr: QueryResult<CareTakerSpecializesInCategory> = await asyncQuery(
             caretaker_query.search_caretaker,
             [`${start_date}`, `${end_date}`, `${pet_category}`]
         );
         // TODO add check for no existing bookings
         // TODO add check for PT for rating > some value and caring < 5
-        const { rows } = qr;
-        const response: IndexResponse = {
-            data: careTakerRowToCareTakerDetails(rows),
-            error: ""
-        };
-        res.send(response);
+        const rows = qr.rows.map(mapSearchResponse);
+        yup.array(CareTakerSpecializesInCategorySchema)
+            .defined()
+            .validate(rows)
+            .then((rows) => {
+                const response: SearchResponse = {
+                    data: rows,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
@@ -89,15 +110,31 @@ export const search = async (req: Request, res: Response) => {
 export const get = async (req: Request, res: Response) => {
     try {
         const { email } = req.params;
-        const qr: QueryResult<CareTakerRow> = await asyncQuery(
+        const ctQueryResult: QueryResult<CareTakerDetails> = await asyncQuery(
             caretaker_query.get_caretaker,
             [email]
         );
-        const response: GetResponse = {
-            data: careTakerRowToCareTakerDetails(qr.rows)[0],
-            error: ""
+
+        const specialzesQueryResult: QueryResult<SpecializesIn> = await asyncQuery(
+            specializes_query.get_specializes,
+            [email]
+        );
+        const careTakerDetails = ctQueryResult.rows.map(mapCareTakerAttr);
+        const specializesIn = specialzesQueryResult.rows.map(mapSpecializes);
+        const data = {
+            ...careTakerDetails[0],
+            allSpecializes: specializesIn
         };
-        res.send(response);
+
+        CareTakerSpecializesDetailsSchema.validate(data)
+            .then((data) => {
+                const response: GetResponse = {
+                    data: data,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
@@ -129,73 +166,65 @@ export const remove = async (req: Request, res: Response) => {
     }
 };
 
-export const createPartTimer = async (req: Request, res: Response) => {
+const create = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
-        await asyncQuery(caretaker_query.create_part_time_ct, [
-            caretaker.email
-        ]);
-        const specializesParams = caretaker.specializesIn.map((petCategory) => [
-            caretaker.email,
-            petCategory
-        ]);
-        await asyncQuery(caretaker_query.delete_specializes, [caretaker.email]);
-        await specializesParams.map((params) =>
-            asyncQuery(caretaker_query.set_specializes, params)
+        const createQuery =
+            ctStatus == 1
+                ? caretaker_query.create_part_time_ct
+                : caretaker_query.create_part_time_ct;
+        await asyncQuery(createQuery, [caretaker.email]);
+
+        const specializesParams = caretaker.allSpecializes.map(
+            (specializes: SpecializesIn) => [
+                caretaker.email,
+                specializes.typeName,
+                specializes.ctPriceDaily
+            ]
         );
+
+        await specializesParams.map((params: any) =>
+            asyncQuery(specializes_query.set_pt_specializes, params)
+        );
+
         const response: StringResponse = {
             data: `${caretaker.email} created as caretaker`,
             error: ""
         };
+
         res.send(response);
     } catch (error) {
         const response: StringResponse = {
             data: "",
-            error: "User is already a full timer" + error
+            error: "User is already a part/full timer" + error
         };
         res.status(400).send(response);
     }
 };
 
-export const createFullTimer = async (req: Request, res: Response) => {
+const update = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
-        await asyncQuery(caretaker_query.create_full_time_ct, [
-            caretaker.email
-        ]);
-        console.log(await asyncQuery("SELECT * FROM count_sched", []));
-        const specializesParams = caretaker.specializesIn.map((petCategory) => [
-            caretaker.email,
-            petCategory
-        ]);
-        await specializesParams.map((params) =>
-            asyncQuery(caretaker_query.set_specializes, params)
-        );
-        const response: StringResponse = {
-            data: `${caretaker.email} created as caretaker`,
-            error: ""
-        };
-        res.send(response);
-    } catch (error) {
-        const response: StringResponse = {
-            data: "",
-            error: "User is already a part timer" + error
-        };
-        res.status(400).send(response);
-    }
-};
+        const query =
+            ctStatus == 1
+                ? specializes_query.set_pt_specializes
+                : specializes_query.set_ft_specializes;
 
-export const update = async (req: Request, res: Response) => {
-    try {
-        const caretaker: CareTaker = req.body;
-        const specializesParams = caretaker.specializesIn.map((petCategory) => [
-            caretaker.email,
-            petCategory
-        ]);
-        await asyncQuery(caretaker_query.delete_specializes, [caretaker.email]);
-        await specializesParams.map((params) =>
-            asyncQuery(caretaker_query.set_specializes, params)
+        const specializesParams = caretaker.allSpecializes.map(
+            (specializes: SpecializesIn) => [
+                caretaker.email,
+                specializes.typeName,
+                specializes.ctPriceDaily
+            ]
         );
+
+        await asyncTransaction(specializes_query.delete_specializes, [
+            [caretaker.email],
+            [caretaker.email]
+        ]);
+
+        await specializesParams.map((params: any) => asyncQuery(query, params));
+
         const response: StringResponse = {
             data: `${caretaker.email} specializations updated`,
             error: ""
@@ -204,8 +233,14 @@ export const update = async (req: Request, res: Response) => {
     } catch (error) {
         const response: StringResponse = {
             data: "",
-            error: "User is already a part timer" + error
+            error: error
         };
         res.status(400).send(response);
     }
 };
+
+export const createPartTimer = create(1);
+export const createFullTimer = create(2);
+
+export const updatePartTimer = update(1);
+export const updateFullTimer = update(2);

@@ -1,11 +1,13 @@
 import faker from "faker/locale/en_US";
 import bcrypt from "bcrypt";
+import fs from "fs";
+import { SignInRequest } from "../models/user";
 
-const fakerSeed = 69;
+const fakerSeed = 6969;
 faker.seed(fakerSeed);
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
-const NUM_PEOPLE = 100;
+const NUM_PEOPLE = 1000;
 
 const fakePetCategories = [
     "Bearded Dragon",
@@ -51,10 +53,13 @@ const petCatEntries = fakePetCategories.map(
         )});`
 );
 
+let accounts: SignInRequest[] = [];
+
 const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
     const password = faker.internet.password();
     const hashedPassword = bcrypt.hashSync(password, salt);
     const email = faker.internet.email();
+    accounts.push({ email, password });
     const sanitizedName = faker
         .fake("{{name.firstName}} {{name.lastName}}")
         .replace(/\'/g, "");
@@ -89,6 +94,14 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
         if (faker.random.boolean()) {
             // fulltime
             postfix += `INSERT INTO full_time_ct VALUES ('${email}');` + "\n";
+            faker.random
+                .arrayElements(fakePetCategories, faker.random.number(3))
+                .forEach((petCategory) => {
+                    const dailyPrice = faker.random.number(20);
+                    postfix +=
+                        `INSERT INTO ft_specializes_in VALUES ('${email}', '${petCategory}', ${dailyPrice});` +
+                        "\n";
+                });
         } else {
             // part time
             postfix += `INSERT INTO part_time_ct VALUES ('${email}');` + "\n";
@@ -100,19 +113,32 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
             postfix +=
                 `INSERT INTO pt_free_schedule VALUES ('${email}', '${startDate.toISOString()}', '${futureDate.toISOString()}');` +
                 "\n";
+            faker.random
+                .arrayElements(fakePetCategories, faker.random.number(3))
+                .forEach((petCategory) => {
+                    const dailyPrice = faker.random.number(20);
+                    postfix +=
+                        `INSERT INTO pt_specializes_in VALUES ('${email}', '${petCategory}', ${dailyPrice});` +
+                        "\n";
+                });
         }
-        faker.random
-            .arrayElements(fakePetCategories, faker.random.number(3))
-            .forEach((petCategory) => {
-                const dailyPrice = faker.random.number(20);
-                postfix +=
-                    `INSERT INTO specializes_in VALUES ('${email}', '${petCategory}', ${dailyPrice});` +
-                    "\n";
-            });
     }
     return `INSERT INTO person VALUES (${record});` + "\n" + postfix;
 });
 
 const seedString = petCatEntries.join("\n") + fakePeople.join("\n");
+// console.log(seedString);
+const MD_HEADER = `| email                          | password        |
+| ------------------------------ | --------------- |
+`;
+fs.writeFileSync("sql/generatedSeed.sql", seedString);
+fs.writeFileSync(
+    "accounts.md",
+    MD_HEADER +
+        accounts
+            .map(({ email, password }) => `| ${email} | ${password}| `)
+            .join("\n")
+);
 
-export default seedString;
+// export default seedString;
+// run command with yarn ts-node sql/seedgen.ts
