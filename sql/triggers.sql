@@ -159,12 +159,10 @@ DECLARE transgression INTEGER;
 BEGIN
 	select 
 		case 
-			when caretaker_status=2 then 4
+			when caretaker_status=2 OR rating > 4 then 4
 			else 1 end
 		into pet_count from caretaker where email=NEW.ct_email;
 
-
-	
 	select count(*) into transgression FROM 
 		(select
 			ac.date as date
@@ -178,9 +176,9 @@ BEGIN
 			where ac.Date >= p.start_date and ac.Date <= p.end_date 
 		ORDER BY ac.date) as overlapDates
 	group by overlapDates.date
-	having count(*) > 2;
+	having count(*) > pet_count;
 
-	insert into count_limit values (pet_count);
+	insert into count_limit values (transgression);
 
 	IF transgression > 0 THEN
 		RAISE EXCEPTION 'limit reached for period!';
