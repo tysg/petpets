@@ -8,10 +8,7 @@ import { bid as BidApi, formatDate } from "./../../common/api";
 import { getUser } from "./../../common/token";
 import { Bid } from "../../../../models";
 import { Pet } from "../../../../models/pet";
-import {
-    CareTakerDetails,
-    CareTakerSpecializesInCategory
-} from "../../../../models/careTaker";
+import { CareTakerDetails } from "../../../../models/careTaker";
 
 // components
 import SelectCareTaker from "./SelectCareTaker";
@@ -23,7 +20,7 @@ const { Step } = Steps;
 export type NewRequestState = {
     selectedPet?: Pet;
     selectedDates?: [moment.Moment, moment.Moment];
-    selectedCareTaker?: CareTakerSpecializesInCategory;
+    selectedCareTaker?: CareTakerDetails;
     transportMethod?: Bid["transport_method"];
     notes?: string;
     isCash?: boolean;

@@ -2,10 +2,7 @@ import React, { Dispatch, useEffect, useState } from "react";
 import { pets as PetsApi } from "../../common/api";
 import { Select, DatePicker, Col, Row, Empty, Spin } from "antd";
 import { Pet } from "../../../../models/pet";
-import {
-    CareTakerDetails,
-    CareTakerSpecializesInCategory
-} from "../../../../models/careTaker";
+import { CareTakerDetails } from "../../../../models/careTaker";
 import CareTakerCard from "./CareTakerCard";
 import { Action, NewRequestState } from "./NewRequest";
 
@@ -34,9 +31,7 @@ type SelectCareTakerProps = {
 const SelectCareTaker = (props: SelectCareTakerProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const [userPets, setUserPets] = useState<Pet[]>([]);
-    const [careTakers, setCareTakers] = useState<
-        CareTakerSpecializesInCategory[]
-    >([]);
+    const [careTakers, setCareTakers] = useState<CareTakerDetails[]>([]);
     const { state, dispatch } = props;
     const { selectedDates, selectedPet } = state;
 
