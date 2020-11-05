@@ -28,7 +28,9 @@ export type CreateBidRequest = Pick<
 export interface Bid {
     ct_email: string;
     ct_price: number;
+    /** YYYY-MM-DD */
     start_date: string;
+    /** YYYY-MM-DD */
     end_date: string;
     is_cash: boolean;
     credit_card: number | null;
