@@ -80,7 +80,7 @@ const ptPaymentMonthly = `
                 startend.ed, '1 month'
             ) + interval '1 month' - interval '1 day' )::date as endmonth
             from
-            (select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email='ftct@gmail.com') as startend
+            (select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1) as startend
             order by 1
     ) as sem, bid 
     WHERE bid.start_date <= sem.endmonth
@@ -91,7 +91,35 @@ const ptPaymentMonthly = `
 `;
 
 const ftPaymentMonthly = `
-    WITH profile as (select * FROM bid WHERE ct_email='ftct@gmail.com')
+  select sum(ct_price), mm, yy FROM (
+	select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by date || ct_price || pet_owner || pet_name || ct_email asc) as r FROM
+	(select
+		pet_owner,
+		pet_name,
+		ct_email,
+		ct_price,
+		to_char(ac.date,'DD') as dd, 
+		to_char(ac.date,'MM') as mm, 
+		extract(year from ac.date) as yy,
+		date
+		FROM 
+		(select                                                                              
+			generate_series(
+				date_trunc('month', startend.sd),
+				startend.ed, '1 day'
+			)::date as date
+			from
+			(select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1) as startend
+			order by 1
+		) as ac, (select * FROM bid WHERE ct_email=$1) as p
+		where ac.Date >= p.start_date and ac.Date <= p.end_date 
+		ORDER BY ac.date) as monthdates
+	) ranked
+    WHERE ranked.r > 60
+	group by mm, yy;
+`;
+
+const ftPaymentMonthly2 = `
     select * FROM (
         select ct_price, dd, mm, yy, rank() over (partition by mm, yy order by dd || pet_owner || pet_name || ct_email asc) as r FROM
         (select
@@ -102,13 +130,15 @@ const ftPaymentMonthly = `
             to_char(ac.date,'DD') as dd, 
             to_char(ac.date,'MM') as mm, 
             extract(year from ac.date) as yy
-            from (
-                select CURRENT_DATE - (a.a + (10 * b.a) + (100 * c.a) + (1000 * d.a) || ' days')::interval as date
-                from (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
-                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
-                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
-                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as d
-            ) as ac, profile as p
+            (select                                                                              
+                generate_series(
+                    date_trunc('month', startend.sd),
+                    startend.ed, '1 day'
+                )::date as day,
+                from
+                (select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email='ftct@gmail.com') as startend
+                order by 1
+            ) as ac, (select * FROM bid WHERE ct_email='ftct@gmail.com') as p
             where ac.Date >= p.start_date and ac.Date <= p.end_date 
             ORDER BY ac.date) as monthdates
         ) ranked
@@ -118,6 +148,30 @@ const ftPaymentMonthly = `
 export const payments_query = {
     get_pt_caretaker_payments: ptPaymentMonthly,
     get_ft_caretaker_payments: ftPaymentMonthly
+};
+
+export const admin_query = {
+    get_bids_by_month: `
+        select sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75, endmonth from 
+            (select                                                                              
+                generate_series(
+                    date_trunc('month', startend.sd),
+                    startend.ed, '1 month'
+                )::date as startmonth,
+                (generate_series(
+                    date_trunc('month', startend.sd),
+                    startend.ed, '1 month'
+                ) + interval '1 month' - interval '1 day' )::date as endmonth
+                from
+                (select min(start_date) as sd, max(end_date) as ed from bid) as startend
+                order by 1
+        ) as sem, bid 
+        WHERE bid.start_date <= sem.endmonth
+        AND sem.startmonth <= bid.end_date
+        AND bid.bid_status = 'confirmed'
+        GROUP BY sem.endmonth
+        HAVING endmonth <= CURRENT_DATE
+    `
 };
 
 export const specializes_query = {
