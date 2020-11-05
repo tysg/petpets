@@ -149,7 +149,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
                     state.selectedCareTaker &&
                     state.selectedDates &&
                     state.selectedPet &&
-                    state.isCash !== undefined &&
+                    (state.isCash || state.creditCardNumber) &&
                     state.transportMethod;
                 return (
                     <Button
@@ -171,7 +171,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
     return (
         <>
             {NextButton()}
-            {state.step > 0 && (
+            {state.step === 1 && (
                 <Button
                     style={{ margin: "0 8px" }}
                     onClick={() => dispatch({ type: "prev" })}
