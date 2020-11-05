@@ -90,38 +90,43 @@ const ptPaymentMonthly = `
     HAVING endmonth <= CURRENT_DATE
 `;
 
-const ftPaymentMonthly = `
-  select sum(ct_price), mm, yy FROM (
-	select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by date || pet_owner || pet_name || ct_email asc) as r FROM
-	(select
-		pet_owner,
-		pet_name,
-		ct_email,
-		ct_price,
-		to_char(ac.date,'DD') as dd, 
-		to_char(ac.date,'MM') as mm, 
-		extract(year from ac.date) as yy,
-		date
-		FROM 
-		(select                                                                              
-			generate_series(
-				date_trunc('month', startend.sd),
-				startend.ed, '1 day'
-			)::date as date
-			from
-			(select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1 AND end_date <= CURRENT_DATE AND bid_status='confirmed') as startend
-			order by 1
-		) as ac, (select * FROM bid WHERE ct_email=$1) as p
-		where ac.Date >= p.start_date and ac.Date <= p.end_date 
-		ORDER BY ac.date) as monthdates
-	) ranked
-    WHERE ranked.r > 60
-	group by mm, yy;
-`;
+// const ftPaymentMonthly = `
+// select count(*) as pet_days, sum(ct_price) as bonus, mm, yy FROM (
+// 	select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
+// 	(select
+// 		pet_owner,
+// 		pet_name,
+// 		ct_email,
+// 		ct_price,
+// 		to_char(ac.date,'DD') as dd,
+// 		to_char(ac.date,'MM') as mm,
+// 		extract(year from ac.date) as yy,
+// 		date
+// 		FROM
+// 		(select
+// 			generate_series(
+// 				date_trunc('month', startend.sd),
+// 				startend.ed, '1 day'
+// 			)::date as date
+// 			from
+// 			(select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1 AND end_date <= CURRENT_DATE AND bid_status='confirmed') as startend
+// 			order by 1
+// 		) as ac, (select * FROM bid WHERE ct_email=$1) as p
+// 		where ac.Date >= p.start_date and ac.Date <= p.end_date
+// 		ORDER BY ac.date) as monthdates
+// 	) ranked
+//     WHERE ranked.r > 60
+// 	group by mm, yy;
+// `;
 
-const ftPaymentMonthly2 = `
-    select * FROM (
-        select ct_price, dd, mm, yy, rank() over (partition by mm, yy order by dd || pet_owner || pet_name || ct_email asc) as r FROM
+const ftPaymentMonthly = `
+select sum(rank_price), mm, yy FROM
+    (select CASE WHEN ranked.r > 60 THEN 
+                ct_price
+            ELSE 0
+            END as rank_price,
+            mm, yy FROM (
+        select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
         (select
             pet_owner,
             pet_name,
@@ -129,20 +134,23 @@ const ftPaymentMonthly2 = `
             ct_price,
             to_char(ac.date,'DD') as dd, 
             to_char(ac.date,'MM') as mm, 
-            extract(year from ac.date) as yy
+            extract(year from ac.date) as yy,
+            date
+            FROM 
             (select                                                                              
                 generate_series(
                     date_trunc('month', startend.sd),
                     startend.ed, '1 day'
-                )::date as day,
+                )::date as date
                 from
-                (select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email='ftct@gmail.com') as startend
+                (select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1 AND end_date <= CURRENT_DATE AND bid_status='confirmed') as startend
                 order by 1
-            ) as ac, (select * FROM bid WHERE ct_email='ftct@gmail.com') as p
+            ) as ac, (select * FROM bid WHERE ct_email=$1) as p
             where ac.Date >= p.start_date and ac.Date <= p.end_date 
             ORDER BY ac.date) as monthdates
         ) ranked
-    WHERE ranked.r>60
+    ) rank_price
+group by mm, yy;
 `;
 
 export const payments_query = {
