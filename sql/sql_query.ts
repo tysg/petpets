@@ -73,18 +73,19 @@ export const caretaker_query = {
 
 // TODO query bids and get monthly earnings
 export const payments_query = {
-    get_caretaker_payments: `
+    get_pt_caretaker_payments: `
     WITH month_bid as (
         SELECT 
         ct_price,
         start_date,
         end_date,
         end_date-start_date as days,
-        to_char(start_date,'Mon') as mon, 
-        to_char(end_date,'Mon') as mon2, 
+        to_char(start_date,'MM') as mon, 
+        to_char(end_date,'MM') as mon2, 
         extract(year from start_date) as yy,
         extract(year from end_date) as yy2
         FROM bid
+        WHERE email=$1
     ),
     month_sep as (
         select start_date,end_date,(end_date-start_date) + 1 as days, ct_price, mon,mon2,yy,yy2 from month_bid where mon=mon2 AND yy=yy2
@@ -97,13 +98,7 @@ export const payments_query = {
         union
         select start_date,end_date,(end_date - (date_trunc('month', end_date))::date) + 1 as days, ct_price, mon2, mon2, yy, yy2 from month_bid where mon!=mon2 AND yy!=yy2
     )
-    select sum(days), mon,yy from month_sep GROUP BY 2,3
-    `,
-    diff_month: `
-    SELECT to_char(start_date,'Mon') as mon, 
-    to_char(end_date,'Mon') as mon2
-    from bid 
-    where to_char(start_date,'Mon') != to_char(end_date,'Mon')
+    select  mon, yy, sum(days), 0.75*sum(days * ct_price) from month_sep GROUP BY mon, yy
     `
 };
 
