@@ -141,6 +141,29 @@ CREATE TRIGGER close_pt_bid
 AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
+    WITH profile as (select * FROM bid WHERE ct_email='ftct@gmail.com')
+    select * FROM (
+        select ct_price, dd, mm, yy, rank() over (partition by mm, yy order by dd || pet_owner || pet_name || ct_email asc) as r FROM
+        (select
+            pet_owner,
+            pet_name,
+            ct_email,
+            ct_price,
+            to_char(ac.date,'DD') as dd, 
+            to_char(ac.date,'MM') as mm, 
+            extract(year from ac.date) as yy
+            from (
+                select CURRENT_DATE - (a.a + (10 * b.a) + (100 * c.a) + (1000 * d.a) || ' days')::interval as date
+                from (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
+                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
+                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
+                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as d
+            ) as ac, profile as p
+            where ac.Date >= p.start_date and ac.Date <= p.end_date 
+            ORDER BY ac.date) as monthdates
+        ) ranked
+    WHERE ranked.r>60
+
 -- TODO close bid if my limit is reached currently in node
 
 -- REMOVED cos caretaker overlap enforcement + FK constraint should already enforce this
