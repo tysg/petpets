@@ -10,17 +10,17 @@ export const CreditCardSchema: yup.ObjectSchema<CreditCard> = yup
     })
     .defined();
 export interface CreditCard {
-    cardnumber: number;
+    cardNumber: number;
     cardholder: string;
-    expirydate: Date;
-    securitycode: number;
+    expiryDate: Date;
+    securityCode: number;
 }
 
 export const sqlify = (creditCard: CreditCard) => [
-    creditCard.cardnumber,
+    creditCard.cardNumber,
     creditCard.cardholder,
-    creditCard.expirydate,
-    creditCard.securitycode
+    creditCard.expiryDate,
+    creditCard.securityCode
 ];
 export type IndexResponse = ApiResponse<CreditCard[], string>;
 export type CreditCardResponse = ApiResponse<CreditCard, string>;
