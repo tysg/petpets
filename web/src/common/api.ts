@@ -7,7 +7,7 @@ import {
     StringResponse,
     Pet
 } from "./../../../models/pet";
-import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
+import { SearchResponse as CareTakerSearchResponse } from "./../../../models/careTaker";
 import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
 import { Bid } from "./../../../models/index";
 import { Moment } from "moment";
@@ -59,7 +59,7 @@ export const pets = {
         startDate: Moment,
         endDate: Moment,
         petCategory: string
-    ): Promise<AxiosResponse<CareTakerIndexResponse>> =>
+    ): Promise<AxiosResponse<CareTakerSearchResponse>> =>
         get(
             `/api/caretakers/search?start_date=${formatDate(
                 startDate
