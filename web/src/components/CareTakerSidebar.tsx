@@ -11,15 +11,20 @@ const CareTakerSidebar = (props: RouteComponentProps) => {
         <ResponsiveSidebar
             {...props}
             defaultOpen="sitter"
-            defaultSelected="pastjobs"
+            defaultSelected="upcoming"
         >
             <ItemGroup key="sitter" title="Pet Sitter">
+                <Menu.Item key="upcoming">
+                    <Link to={`${path}/upcoming`}>Upcoming Assignments</Link>
+                </Menu.Item>
+                <Menu.Item key="pending">
+                    <Link to={`${path}/pending`}>Pending Requests</Link>
+                </Menu.Item>
                 <Menu.Item key="pastjobs">
                     <Link to={`${path}/pastjobs`}>Past Jobs</Link>
                 </Menu.Item>
-                <Menu.Item key="availability">Availability</Menu.Item>
-                <Menu.Item key="rates">
-                    <Link to={`${path}/rates`}>My Rates</Link>
+                <Menu.Item key="schedule">
+                    <Link to={`${path}/schedule`}>My Schedule</Link>
                 </Menu.Item>
             </ItemGroup>
         </ResponsiveSidebar>
