@@ -1,12 +1,6 @@
 import { ApiResponse } from "./index";
 import * as yup from "yup";
 
-<<<<<<< HEAD
-/**
- * POST api/creditCards, request;
- * PATCH api/creditCards/:cardholder/:cardNumber, request;
- */
-=======
 export const CreditCardSchema: yup.ObjectSchema<CreditCard> = yup
     .object({
         cardNumber: yup.number().defined(),
@@ -15,7 +9,7 @@ export const CreditCardSchema: yup.ObjectSchema<CreditCard> = yup
         cardholder: yup.string().defined()
     })
     .defined();
->>>>>>> master
+
 export interface CreditCard {
     cardnumber: number;
     cardholder: string;
