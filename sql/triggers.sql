@@ -88,11 +88,43 @@ CREATE TRIGGER get_avg_rating
 AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE avg_rating();
 
+-- Check that bid made isn't overlapping for pet
+CREATE OR REPLACE FUNCTION no_bid_overlap()
+RETURNS TRIGGER AS 
+$t$
+DECLARE overlap INTEGER;
+DECLARE pt_overlap INTEGER;
+BEGIN
+	-- only allow for multiple submitted bids with overlap and essentially are the same bid
+	SELECT COUNT(*)  INTO overlap FROM bid
+		WHERE NEW.start_date <= end_date 
+		AND NEW.end_date >= start_date
+		AND NEW.pet_owner=pet_owner
+		AND NEW.pet_name=pet_name;
+
+	SELECT COUNT(*) INTO pt_overlap FROM bid b
+		WHERE NEW.start_date=b.start_date
+		AND NEW.end_date=b.end_date
+		AND NEW.pet_owner=b.pet_owner
+		AND NEW.pet_name=b.pet_name
+		AND b.bid_status='submitted';
+
+	IF (overlap-pt_overlap) > 0 THEN
+		RAISE EXCEPTION 'Bid for pet overlaps!';
+	ELSE
+		RETURN NEW;
+	END IF;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_no_bid_overlap
+BEFORE INSERT ON bid
+FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
+
 CREATE OR REPLACE FUNCTION close_bid()
 RETURNS TRIGGER AS 
 $t$
-DECLARE avg_rating NUMERIC;
-DECLARE ct_status INTEGER;
 BEGIN
 	IF NEW.bid_status = 'confirmed' THEN
 		UPDATE bid SET bid_status='closed'
@@ -109,8 +141,7 @@ CREATE TRIGGER close_pt_bid
 AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
--- TODO bid overlap trigger for pet, owner, ct and 
--- TODO close bid if my limit is reached
+-- TODO close bid if my limit is reached currently in node
 
 -- REMOVED cos caretaker overlap enforcement + FK constraint should already enforce this
 -- -- NONOVERLAPPING constraints for schedule
@@ -174,7 +205,7 @@ BEFORE INSERT ON pt_free_schedule
 FOR EACH ROW EXECUTE PROCEDURE date_non_overlap_pt_schedule();
 
 
--- full tiem
+-- full time
 CREATE OR REPLACE FUNCTION date_non_overlap_ft_schedule()
 RETURNS TRIGGER AS 
 $t$ 

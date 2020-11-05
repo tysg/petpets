@@ -24,7 +24,13 @@ INSERT INTO ft_specializes_in VALUES ('ftct@gmail.com', 'dog', 3);
 -- PART TIME
 INSERT INTO person VALUES ('ptct@gmail.com', 'ptct', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '101 Johor Rd', '81003333', 'user');
 INSERT INTO part_time_ct VALUES ('ptct@gmail.com');
+INSERT INTO pt_specializes_in VALUES ('ptct@gmail.com', 'cat', 10);
 INSERT INTO pt_specializes_in VALUES ('ptct@gmail.com', 'dog', 4);
+
+INSERT INTO person VALUES ('ptct2@gmail.com', 'ptct2', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '101 Johor Rd', '81003333', 'user');
+INSERT INTO part_time_ct VALUES ('ptct2@gmail.com');
+INSERT INTO pt_specializes_in VALUES ('ptct2@gmail.com', 'cat', 10);
+INSERT INTO pt_specializes_in VALUES ('ptct2@gmail.com', 'dog', 4);
 
 -- schedules
 INSERT INTO pt_free_schedule VALUES ('ptct@gmail.com', '2020-11-05', '2020-11-10');
