@@ -7,9 +7,12 @@ import {
     StringResponse,
     Pet
 } from "./../../../models/pet";
-import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
+import {
+    IndexResponse as CareTakerIndexResponse,
+    SearchResponse
+} from "./../../../models/careTaker";
 import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
-import { Bid } from "./../../../models/index";
+import { CreateBidRequest } from "./../../../models/bid";
 import { Moment } from "moment";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
@@ -59,7 +62,7 @@ export const pets = {
         startDate: Moment,
         endDate: Moment,
         petCategory: string
-    ): Promise<AxiosResponse<CareTakerIndexResponse>> =>
+    ): Promise<AxiosResponse<SearchResponse>> =>
         get(
             `/api/caretakers/search?start_date=${formatDate(
                 startDate
@@ -85,10 +88,10 @@ export const pets = {
 };
 
 export const bid = {
-    createBid: (body: Bid) => {
+    createBid: (body: CreateBidRequest) => {
         console.log(body);
-        return Promise.resolve();
+        // return Promise.resolve();
         // return Promise.reject();
-        // return post(`/api/bids`, body);
+        return post(`/api/bids`, body);
     }
 };

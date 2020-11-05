@@ -11,22 +11,33 @@ export interface CtStatus {
     caretaker_status: number;
 }
 
-/**
- * POST api/bids, request;
- */
+export type CreateBidRequest = Pick<
+    Bid,
+    | "ct_email"
+    | "pet_owner"
+    | "pet_name"
+    | "pet_category"
+    | "ct_price"
+    | "start_date"
+    | "end_date"
+    | "is_cash"
+    | "credit_card"
+    | "transport_method"
+>;
+
 export interface Bid {
     ct_email: string;
     ct_price: number;
-    start_date: Date;
-    end_date: Date;
+    start_date: string;
+    end_date: string;
     is_cash: boolean;
-    credit_card: number;
+    credit_card: number | null;
     transport_method: TransportMethod;
     pet_owner: string;
     pet_name: string;
     pet_category: string;
     bid_status: BidStatus;
-    feedback: Text;
+    feedback: string;
 }
 
 export const sqlify = (bid: Bid) => [
