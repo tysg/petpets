@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, Space, Card, Rate } from "antd";
-import { CareTakerDetails } from "../../../../models/careTaker";
+import { CareTakerSpecializesInCategory } from "../../../../models/careTaker";
 import { NewRequestState, Action } from "./NewRequest";
 
 const { Meta } = Card;
@@ -19,7 +19,7 @@ const getCareTakerStatus = (s: number) => {
     }
 };
 
-const NameAndRating = (props: CareTakerDetails) => {
+const NameAndRating = (props: CareTakerSpecializesInCategory) => {
     // rating rounded the lower 0.5
     return (
         <Space size="middle">
@@ -34,7 +34,7 @@ const NameAndRating = (props: CareTakerDetails) => {
 };
 
 type CareTakerCardProps = {
-    ct: CareTakerDetails;
+    ct: CareTakerSpecializesInCategory;
     state: NewRequestState;
     dispatch: React.Dispatch<Action>;
 };

@@ -46,7 +46,7 @@ const CreateOrder = (props: CreateOrderProps) => {
                             <Select.Option value="pickup">
                                 Pick Up
                             </Select.Option>
-                            <Select.Option value="deliver">
+                            <Select.Option value="delivery">
                                 Deliver
                             </Select.Option>
                             <Select.Option value="pcs">
@@ -93,10 +93,10 @@ const CreateOrder = (props: CreateOrderProps) => {
                                 }
                             >
                                 {creditCards?.map((c) => (
-                                    <Select.Option value={c.cardnumber}>
-                                        {c.cardnumber +
+                                    <Select.Option value={c.cardNumber}>
+                                        {c.cardNumber +
                                             "  EXP:" +
-                                            moment(c.expirydate).format(
+                                            moment(c.expiryDate).format(
                                                 "MM/YYYY"
                                             )}
                                     </Select.Option>

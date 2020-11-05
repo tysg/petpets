@@ -6,9 +6,12 @@ import { Spin, Result, Button, Steps, message } from "antd";
 // utils
 import { bid as BidApi, formatDate } from "./../../common/api";
 import { getUser } from "./../../common/token";
-import { Bid } from "../../../../models";
+import { Bid } from "../../../../models/bid";
 import { Pet } from "../../../../models/pet";
-import { CareTakerDetails } from "../../../../models/careTaker";
+import {
+    CareTakerDetails,
+    CareTakerSpecializesInCategory
+} from "../../../../models/careTaker";
 
 // components
 import SelectCareTaker from "./SelectCareTaker";
@@ -20,11 +23,11 @@ const { Step } = Steps;
 export type NewRequestState = {
     selectedPet?: Pet;
     selectedDates?: [moment.Moment, moment.Moment];
-    selectedCareTaker?: CareTakerDetails;
+    selectedCareTaker?: CareTakerSpecializesInCategory;
     transportMethod?: Bid["transport_method"];
     notes?: string;
     isCash?: boolean;
-    creditCardNumber?: string;
+    creditCardNumber?: number;
     step: number;
     isProcessingOrder?: boolean;
     isOrderSuccessful?: boolean;
@@ -117,10 +120,10 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
             // TODO: do something about the response
             await BidApi.createBid({
                 ct_email: state.selectedCareTaker?.email!,
-                owner_email: getUser()?.email!,
+                pet_owner: getUser()?.email!,
                 pet_name: state.selectedPet?.name!,
                 ct_price: state.selectedCareTaker?.ctPriceDaily!,
-                credit_card: state.creditCardNumber,
+                credit_card: state.creditCardNumber ?? null,
                 transport_method: state.transportMethod!,
                 start_date: formatDate(state.selectedDates![0]),
                 end_date: formatDate(state.selectedDates![1]),
@@ -146,7 +149,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
                     state.selectedCareTaker &&
                     state.selectedDates &&
                     state.selectedPet &&
-                    state.isCash &&
+                    (state.isCash || state.creditCardNumber) &&
                     state.transportMethod;
                 return (
                     <Button
@@ -168,7 +171,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
     return (
         <>
             {NextButton()}
-            {state.step > 0 && (
+            {state.step === 1 && (
                 <Button
                     style={{ margin: "0 8px" }}
                     onClick={() => dispatch({ type: "prev" })}
