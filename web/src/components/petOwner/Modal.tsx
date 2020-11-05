@@ -5,7 +5,7 @@ import { CreditCard } from "../../../../models/creditCard";
 export interface CreditCardModalFormProps {
     title: string;
     visible: boolean;
-    onSubmit: (value: Omit<CreditCard, "">) => void;
+    onSubmit: (value: Omit<CreditCard, "cardholder">) => void;
     onCancel: () => void;
 }
 
@@ -23,13 +23,11 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     .then((values) => {
                         form.resetFields();
                         const {
-                            cardholder,
                             cardNumber,
                             expiryDate,
                             securityCode
                         } = values;
-                        const record = {
-                            cardholder,
+                        const record: Omit<CreditCard, "cardholder"> = {
                             cardNumber,
                             expiryDate,
                             securityCode
@@ -40,25 +38,6 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
             }}
         >
             <Form form={form}>
-                <Form.Item
-                    label="card holder"
-                    name="card holder"
-                    required
-                    rules={[
-                        () => ({
-                            validator(rule, value) {
-                                if (value) {
-                                    return Promise.resolve();
-                                }
-                                return Promise.reject(
-                                    "card holder cannot be empty"
-                                );
-                            }
-                        })
-                    ]}
-                >
-                    <Input></Input>
-                </Form.Item>
                 <Form.Item
                     label="card number"
                     name="card number"
