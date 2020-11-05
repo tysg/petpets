@@ -14,9 +14,11 @@ import {
     CreditCard
 } from "./../../../models/creditCard";
 import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
+import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
+import { Bid } from "./../../../models/index";
 import { Moment } from "moment";
 
-const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
+export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = getToken();
 const email = getUser()?.email!;
 const authHeaderConfig: AxiosRequestConfig = {
@@ -36,13 +38,16 @@ const post = (endpoint: string, data: any) =>
     axios.post(endpoint, data, authHeaderConfig);
 const patch = (endpoint: string, data: any) =>
     axios.patch(endpoint, data, authHeaderConfig);
+
 const get = (endpoint: string) => axios.get(endpoint, authHeaderConfig);
 
 export const user = {
     verify: () => axios.post("/api/verifyToken", token, authHeaderConfig),
     post: (endpoint: string, data: any) =>
         axios.post("/api" + endpoint, data, authHeaderConfig),
-    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
+    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig),
+    getCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
+        axios.get(`/api/credit_cards/${email}`)
 };
 
 const PET_CATEGORY_ENDPOINT = "/api/petCategories";
@@ -89,6 +94,7 @@ export const pets = {
     }
 };
 
+<<<<<<< HEAD
 export const creditCards = {
     getUserCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
         get(`/api/creditCards/${email}`),
@@ -109,3 +115,13 @@ export const creditCards = {
     }
 };
 
+=======
+export const bid = {
+    createBid: (body: Bid) => {
+        console.log(body);
+        return Promise.resolve();
+        // return Promise.reject();
+        // return post(`/api/bids`, body);
+    }
+};
+>>>>>>> master

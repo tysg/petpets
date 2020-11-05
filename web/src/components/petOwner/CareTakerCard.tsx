@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar, Space, Card, Rate } from "antd";
 import { CareTakerDetails } from "../../../../models/careTaker";
+import { NewRequestState, Action } from "./NewRequest";
 
 const { Meta } = Card;
 
@@ -32,10 +33,22 @@ const NameAndRating = (props: CareTakerDetails) => {
     );
 };
 
-const CareTakerCard = (props: CareTakerDetails) => {
+type CareTakerCardProps = {
+    ct: CareTakerDetails;
+    state: NewRequestState;
+    dispatch: React.Dispatch<Action>;
+};
+
+const CareTakerCard = (props: CareTakerCardProps) => {
+    const { ct, dispatch } = props;
     return (
-        // TODO: bind onClick to the next stage
-        <Card hoverable onClick={console.log}>
+        <Card
+            hoverable
+            onClick={() => {
+                dispatch({ type: "setCareTaker", param: ct });
+                dispatch({ type: "next" });
+            }}
+        >
             <Meta
                 avatar={
                     <Avatar
@@ -45,12 +58,13 @@ const CareTakerCard = (props: CareTakerDetails) => {
                         }}
                         size="large"
                     >
-                        {props.fullname.charAt(0).toUpperCase()}
+                        {ct.fullname.charAt(0).toUpperCase()}
                     </Avatar>
                 }
-                title={<NameAndRating {...props} />}
-                description={getCareTakerStatus(props.caretakerStatus)}
+                title={<NameAndRating {...ct} />}
+                description={getCareTakerStatus(ct.caretakerStatus)}
             />
+            {`$${ct.ctPriceDaily}/day`}
         </Card>
     );
 };
