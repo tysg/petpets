@@ -5,7 +5,8 @@ import {
     PageHeader,
     Space,
     Table,
-    Form
+    Form,
+    message
 } from "antd";
 import FormItem from "antd/lib/form/FormItem";
 import Modal from "antd/lib/modal/Modal";
@@ -128,16 +129,16 @@ const Settings = () => {
             );
         }
     };
-    // petTypes[0].
     const onSubmit = (values: PetCategory) => {
-        // TODO:axios here
         petsApi
             .putCategory(values)
             .then((res) => {
                 console.log(res);
+                message.success("Success!");
             })
             .catch((err) => {
                 console.log(err);
+                message.error("Something went wrong...");
             })
             .finally(() => {
                 pollCategories();
@@ -145,14 +146,15 @@ const Settings = () => {
             });
     };
     const onDelete = (values: PetCategory) => {
-        // TODO:axios here
         petsApi
             .removeCategory(values)
             .then((res) => {
                 console.log(res);
+                message.success("Success!");
             })
             .catch((err) => {
                 console.log(err);
+                message.error("Cannot delete Pet Category with pets in it...");
             })
             .finally(() => {
                 pollCategories();

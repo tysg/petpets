@@ -14,6 +14,7 @@ import {
     CreditCard
 } from "./../../../models/creditCard";
 import { SearchResponse } from "./../../../models/careTaker";
+import { CreateBidRequest } from "../../../models/bid";
 import { Moment } from "moment";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
@@ -27,7 +28,9 @@ function addOwnerField(pet: Omit<Pet, "owner">): Pet {
     return { ...pet, owner: email };
 }
 
-function addCardHolderField(creditCard: Omit<CreditCard, "cardholder">): CreditCard {
+function addCardHolderField(
+    creditCard: Omit<CreditCard, "cardholder">
+): CreditCard {
     return { ...creditCard, cardholder: email };
 }
 
@@ -103,11 +106,23 @@ export const creditCards = {
     putCreditCard: (
         creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
-        return patch(`/api/creditCards/${email}/${creditCard.cardNumber}`, addCardHolderField(creditCard));
+        return patch(
+            `/api/creditCards/${email}/${creditCard.cardNumber}`,
+            addCardHolderField(creditCard)
+        );
     },
     deleteCreditCard: (
         creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
         return remove(`/api/creditCards/${email}/${creditCard.cardNumber}`);
+    }
+};
+
+export const bid = {
+    createBid: (body: CreateBidRequest) => {
+        console.log(body);
+        // return Promise.resolve();
+        // return Promise.reject();
+        return post(`/api/bids`, body);
     }
 };

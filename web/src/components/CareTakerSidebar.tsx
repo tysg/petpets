@@ -1,12 +1,11 @@
 import React from "react";
 import { Menu } from "antd";
-import { LaptopOutlined } from "@ant-design/icons";
 import { Link, RouteComponentProps, useRouteMatch } from "react-router-dom";
 import ResponsiveSidebar from "./ResponsiveSidebar";
 
-const { SubMenu } = Menu;
+const { ItemGroup } = Menu;
 
-const SitterSidebar = (props: RouteComponentProps) => {
+const CareTakerSidebar = (props: RouteComponentProps) => {
     const { path } = useRouteMatch();
     return (
         <ResponsiveSidebar
@@ -14,17 +13,17 @@ const SitterSidebar = (props: RouteComponentProps) => {
             defaultOpen="sitter"
             defaultSelected="pastjobs"
         >
-            <SubMenu key="sitter" icon={<LaptopOutlined />} title="Pet Sitter">
+            <ItemGroup key="sitter" title="Pet Sitter">
                 <Menu.Item key="pastjobs">
                     <Link to={`${path}/pastjobs`}>Past Jobs</Link>
                 </Menu.Item>
-                <Menu.Item key="sitter-2">Availability</Menu.Item>
-                <Menu.Item key="profile">
-                    <Link to={`${path}/profile`}>My Profile</Link>
+                <Menu.Item key="availability">Availability</Menu.Item>
+                <Menu.Item key="rates">
+                    <Link to={`${path}/rates`}>My Rates</Link>
                 </Menu.Item>
-            </SubMenu>
+            </ItemGroup>
         </ResponsiveSidebar>
     );
 };
 
-export default SitterSidebar;
+export default CareTakerSidebar;
