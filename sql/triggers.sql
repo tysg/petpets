@@ -96,8 +96,8 @@ DECLARE overlap INTEGER;
 DECLARE pt_overlap INTEGER;
 BEGIN
 	-- only allow for multiple submitted bids with overlap and essentially are the same bid
-	SELECT COUNT(*)  INTO overlap FROM bid
-		WHERE NEW.start_date <= end_date 
+	SELECT COUNT(*) INTO overlap FROM bid
+		WHERE NEW.start_date <= end_date
 		AND NEW.end_date >= start_date
 		AND NEW.pet_owner=pet_owner
 		AND NEW.pet_name=pet_name;
@@ -141,66 +141,96 @@ CREATE TRIGGER close_pt_bid
 AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
-    WITH profile as (select * FROM bid WHERE ct_email='ftct@gmail.com')
-    select * FROM (
-        select ct_price, dd, mm, yy, rank() over (partition by mm, yy order by dd || pet_owner || pet_name || ct_email asc) as r FROM
-        (select
-            pet_owner,
-            pet_name,
-            ct_email,
-            ct_price,
-            to_char(ac.date,'DD') as dd, 
-            to_char(ac.date,'MM') as mm, 
-            extract(year from ac.date) as yy
-            from (
-                select CURRENT_DATE - (a.a + (10 * b.a) + (100 * c.a) + (1000 * d.a) || ' days')::interval as date
-                from (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
-                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
-                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
-                cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as d
-            ) as ac, profile as p
-            where ac.Date >= p.start_date and ac.Date <= p.end_date 
-            ORDER BY ac.date) as monthdates
-        ) ranked
-    WHERE ranked.r>60
+
+-- for debugging
+DROP TABLE IF EXISTS count_limit;
+
+CREATE TABLE count_limit (
+	c1 int
+);
+
+
+
+CREATE OR REPLACE FUNCTION pet_limit()
+RETURNS TRIGGER AS 
+$t$
+BEGIN
+	select 
+		case 
+			when caretaker_status=2 then 5
+			else 2 end
+		into pet_count from caretaker where email=NEW.ct_email;
+
+	select count(*) FROM 
+		(select
+			ac.date as date
+			from (
+				select CURRENT_DATE - (a.a + (10 * b.a) + (100 * c.a) + (1000 * d.a) || ' days')::interval as date
+				from (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
+				cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
+				cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
+				cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as d
+			) as ac, (select * FROM bid WHERE ct_email='ptct@gmail.com') as p
+			where ac.Date >= p.start_date and ac.Date <= p.end_date 
+		ORDER BY ac.date) as overlapDates
+	group by overlapDates.date
+	having count(*) > 2;
+
+	insert into count_limit values (pet_count);
+
+	IF transgression > 0 THEN
+		RAISE EXCEPTION 'limit reached for period!';
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+
+CREATE OR REPLACE FUNCTION pet_limit()
+RETURNS TRIGGER AS 
+$t$
+DECLARE pet_count INTEGER;
+DECLARE transgression INTEGER;
+
+BEGIN
+	select 
+		case 
+			when caretaker_status=2 then 5
+			else 2 end
+		into pet_count from caretaker where email=NEW.ct_email;
+
+	select count(*) into transgression FROM 
+		(select
+			ac.date as date
+			from (
+				select CURRENT_DATE - (a.a + (10 * b.a) + (100 * c.a) + (1000 * d.a) || ' days')::interval as date
+				from (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as a
+				cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as b
+				cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as c
+				cross join (select 0 as a union all select 1 union all select 2 union all select 3 union all select 4 union all select 5 union all select 6 union all select 7 union all select 8 union all select 9) as d
+			) as ac, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
+			where ac.Date >= p.start_date and ac.Date <= p.end_date 
+		ORDER BY ac.date) as overlapDates
+	group by overlapDates.date
+	having count(*) > pet_count;
+
+	insert into count_limit values (pet_count);
+
+	IF transgression > 0 THEN
+		RAISE EXCEPTION 'limit reached for period!';
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_pet_limit
+AFTER INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE pet_limit();
+
 
 -- TODO close bid if my limit is reached currently in node
-
--- REMOVED cos caretaker overlap enforcement + FK constraint should already enforce this
--- -- NONOVERLAPPING constraints for schedule
--- CREATE OR REPLACE FUNCTION not_in_pt_schedule()
--- RETURNS TRIGGER AS 
--- $t$ 
--- DECLARE overlap NUMERIC;
--- BEGIN 
--- 	SELECT COUNT(*) INTO overlap FROM pt_free_schedule WHERE email=NEW.email;
--- 	IF overlap > 0 THEN
--- 		RAISE EXCEPTION 'User is already a part timer!';
--- 	ELSE
--- 		RETURN NEW;
--- 	END IF;
--- END;
--- $t$ LANGUAGE PLpgSQL;
--- CREATE TRIGGER check_pt_schedule
--- BEFORE INSERT ON ft_leave_schedule
--- FOR EACH ROW EXECUTE PROCEDURE not_in_pt_schedule();
-
--- CREATE OR REPLACE FUNCTION not_in_ft_schedule()
--- RETURNS TRIGGER AS 
--- $t$ 
--- DECLARE overlap NUMERIC;
--- BEGIN 
--- 	SELECT COUNT(*) INTO overlap FROM ft_leave_schedule WHERE email=NEW.email;
--- 	IF overlap > 0 THEN
--- 		RAISE EXCEPTION 'User is already a full timer!';
--- 	ELSE
--- 		RETURN NEW;
--- 	END IF;
--- END;
--- $t$ LANGUAGE PLpgSQL;
--- CREATE TRIGGER check_ft_schedule
--- BEFORE INSERT ON pt_free_schedule
--- FOR EACH ROW EXECUTE PROCEDURE not_in_ft_schedule();
 
 -- Schedule Overlap check
 -- part time
@@ -346,3 +376,41 @@ $t$ LANGUAGE PLpgSQL;
 CREATE TRIGGER check_ft_150
 AFTER INSERT ON ft_leave_schedule
 FOR EACH ROW EXECUTE PROCEDURE ft_150_constraint();
+
+
+
+-- REMOVED cos caretaker overlap enforcement + FK constraint should already enforce this
+-- -- NONOVERLAPPING constraints for schedule
+-- CREATE OR REPLACE FUNCTION not_in_pt_schedule()
+-- RETURNS TRIGGER AS 
+-- $t$ 
+-- DECLARE overlap NUMERIC;
+-- BEGIN 
+-- 	SELECT COUNT(*) INTO overlap FROM pt_free_schedule WHERE email=NEW.email;
+-- 	IF overlap > 0 THEN
+-- 		RAISE EXCEPTION 'User is already a part timer!';
+-- 	ELSE
+-- 		RETURN NEW;
+-- 	END IF;
+-- END;
+-- $t$ LANGUAGE PLpgSQL;
+-- CREATE TRIGGER check_pt_schedule
+-- BEFORE INSERT ON ft_leave_schedule
+-- FOR EACH ROW EXECUTE PROCEDURE not_in_pt_schedule();
+
+-- CREATE OR REPLACE FUNCTION not_in_ft_schedule()
+-- RETURNS TRIGGER AS 
+-- $t$ 
+-- DECLARE overlap NUMERIC;
+-- BEGIN 
+-- 	SELECT COUNT(*) INTO overlap FROM ft_leave_schedule WHERE email=NEW.email;
+-- 	IF overlap > 0 THEN
+-- 		RAISE EXCEPTION 'User is already a full timer!';
+-- 	ELSE
+-- 		RETURN NEW;
+-- 	END IF;
+-- END;
+-- $t$ LANGUAGE PLpgSQL;
+-- CREATE TRIGGER check_ft_schedule
+-- BEFORE INSERT ON pt_free_schedule
+-- FOR EACH ROW EXECUTE PROCEDURE not_in_ft_schedule();
