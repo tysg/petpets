@@ -120,7 +120,7 @@ const ptPaymentMonthly = `
 // `;
 
 const ftPaymentMonthly = `
-select sum(rank_price), mm, yy FROM
+select sum(rank_price)+3000 as fullpay, sum(rank_price) as bonus, mm, yy FROM
     (select CASE WHEN ranked.r > 60 THEN 
                 ct_price
             ELSE 0
@@ -128,16 +128,12 @@ select sum(rank_price), mm, yy FROM
             mm, yy FROM (
         select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
         (select
-            pet_owner,
-            pet_name,
-            ct_email,
-            ct_price,
+            pet_owner, pet_name, ct_email, ct_price,
             to_char(ac.date,'DD') as dd, 
             to_char(ac.date,'MM') as mm, 
             extract(year from ac.date) as yy,
             date
-            FROM 
-            (select                                                                              
+            FROM (select                                                                              
                 generate_series(
                     date_trunc('month', startend.sd),
                     startend.ed, '1 day'
