@@ -7,10 +7,15 @@ import {
     StringResponse,
     Pet
 } from "./../../../models/pet";
-import { IndexResponse as CareTakerIndexResponse } from "./../../../models/careTaker";
+import {
+    IndexResponse as CareTakerIndexResponse,
+    SearchResponse
+} from "./../../../models/careTaker";
+import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
+import { CreateBidRequest } from "./../../../models/bid";
 import { Moment } from "moment";
 
-const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
+export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = getToken();
 const email = getUser()?.email!;
 const authHeaderConfig: AxiosRequestConfig = {
@@ -26,13 +31,16 @@ const post = (endpoint: string, data: any) =>
     axios.post(endpoint, data, authHeaderConfig);
 const patch = (endpoint: string, data: any) =>
     axios.patch(endpoint, data, authHeaderConfig);
+
 const get = (endpoint: string) => axios.get(endpoint, authHeaderConfig);
 
 export const user = {
     verify: () => axios.post("/api/verifyToken", token, authHeaderConfig),
     post: (endpoint: string, data: any) =>
         axios.post("/api" + endpoint, data, authHeaderConfig),
-    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
+    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig),
+    getCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
+        axios.get(`/api/credit_cards/${email}`)
 };
 
 const PET_CATEGORY_ENDPOINT = "/api/petCategories";
@@ -54,7 +62,7 @@ export const pets = {
         startDate: Moment,
         endDate: Moment,
         petCategory: string
-    ): Promise<AxiosResponse<CareTakerIndexResponse>> =>
+    ): Promise<AxiosResponse<SearchResponse>> =>
         get(
             `/api/caretakers/search?start_date=${formatDate(
                 startDate
@@ -76,5 +84,14 @@ export const pets = {
         pet: Omit<Pet, "owner">
     ): Promise<AxiosResponse<StringResponse>> => {
         return remove(`/api/pets/${email}/${pet.name}`);
+    }
+};
+
+export const bid = {
+    createBid: (body: CreateBidRequest) => {
+        console.log(body);
+        // return Promise.resolve();
+        // return Promise.reject();
+        return post(`/api/bids`, body);
     }
 };

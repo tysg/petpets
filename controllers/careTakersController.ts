@@ -4,14 +4,20 @@ import {
     MonthlyPayment,
     CareTaker,
     CareTakerDetails,
-    SpecializesDetails,
-    SpecializesIndexResponse,
+    SearchResponse,
+    CareTakerSpecializesInCategorySchema,
     SpecializesIn,
     IndexResponse,
     GetResponse,
     StringResponse,
     MonthlyPaymentsResponse,
     CaretakerStatus
+    CareTakerSchema,
+    SpecializesInSchema,
+    CareTakerSpecializesDetailsSchema,
+    CareTakerSpecializesDetails,
+    CareTakerDetailsSchema,
+    CareTakerSpecializesInCategory
 } from "../models/careTaker";
 import { asyncQuery, asyncTransaction } from "./../utils/db";
 import {
@@ -20,6 +26,34 @@ import {
     specializes_query
 } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
+import * as yup from "yup";
+
+const mapCareTakerAttr = (r: any): CareTakerDetails => ({
+    email: r.email,
+    avatarUrl: r.avatarurl ?? undefined,
+    rating: r.rating,
+    phone: r.phone,
+    fullname: r.fullname,
+    caretakerStatus: r.caretakerstatus,
+    address: r.address
+});
+
+const mapSpecializes = (sp: any): SpecializesIn => ({
+    typeName: sp.typename,
+    ctPriceDaily: sp.ctpricedaily
+});
+
+const mapSearchResponse = (r: any) => ({
+    email: r.email,
+    avatarUrl: r.avatarurl ?? undefined,
+    rating: r.rating,
+    phone: r.phone,
+    fullname: r.fullname,
+    caretakerStatus: r.caretakerstatus,
+    address: r.address,
+    typeName: r.typename,
+    ctPriceDaily: r.ctpricedaily
+});
 
 export const privateProfile = async (req: Request, res: Response) => {
     try {
@@ -66,12 +100,18 @@ export const index = async (req: Request, res: Response) => {
             caretaker_query.index_caretaker,
             []
         );
-        const { rows } = qr;
-        const response: IndexResponse = {
-            data: rows,
-            error: ""
-        };
-        res.send(response);
+        const rows = qr.rows.map(mapCareTakerAttr);
+        yup.array(CareTakerDetailsSchema)
+            .defined()
+            .validate(rows)
+            .then((rows) => {
+                const response: IndexResponse = {
+                    data: rows,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
@@ -85,18 +125,24 @@ export const index = async (req: Request, res: Response) => {
 export const search = async (req: Request, res: Response) => {
     try {
         const { start_date, end_date, pet_category } = req.query;
-        const qr: QueryResult<SpecializesDetails> = await asyncQuery(
+        const qr: QueryResult<CareTakerSpecializesInCategory> = await asyncQuery(
             caretaker_query.search_caretaker,
             [`${start_date}`, `${end_date}`, `${pet_category}`]
         );
         // TODO add check for no existing bookings
         // TODO add check for PT for rating > some value and caring < 5
-        const { rows } = qr;
-        const response: SpecializesIndexResponse = {
-            data: rows,
-            error: ""
-        };
-        res.send(response);
+        const rows = qr.rows.map(mapSearchResponse);
+        yup.array(CareTakerSpecializesInCategorySchema)
+            .defined()
+            .validate(rows)
+            .then((rows) => {
+                const response: SearchResponse = {
+                    data: rows,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
@@ -119,15 +165,22 @@ export const get = async (req: Request, res: Response) => {
             specializes_query.get_specializes,
             [email]
         );
-
-        const response: GetResponse = {
-            data: {
-                ...ctQueryResult.rows[0],
-                allSpecializes: specialzesQueryResult.rows
-            },
-            error: ""
+        const careTakerDetails = ctQueryResult.rows.map(mapCareTakerAttr);
+        const specializesIn = specialzesQueryResult.rows.map(mapSpecializes);
+        const data = {
+            ...careTakerDetails[0],
+            allSpecializes: specializesIn
         };
-        res.send(response);
+
+        CareTakerSpecializesDetailsSchema.validate(data)
+            .then((data) => {
+                const response: GetResponse = {
+                    data: data,
+                    error: ""
+                };
+                res.send(response);
+            })
+            .catch(console.log);
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
