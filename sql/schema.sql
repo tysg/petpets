@@ -64,9 +64,9 @@ CREATE TABLE full_time_ct (
 );
 
 CREATE VIEW caretaker (email, caretaker_status, rating) AS (
-	SELECT email, 1, 4.1 FROM  part_time_ct 
+	SELECT email, 1, rating FROM  part_time_ct 
 	UNION 
-	SELECT email, 2, 4.2 FROM full_time_ct
+	SELECT email, 2, rating FROM full_time_ct
 );
 
 CREATE TABLE pt_specializes_in (
