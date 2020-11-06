@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar, Space, Card, Rate } from "antd";
-import { CareTakerDetails } from "../../../../models/careTaker";
+import { CareTakerSpecializesInCategory } from "../../../../models/careTaker";
+import { NewRequestState, Action } from "./NewRequest";
 
 const { Meta } = Card;
 
@@ -18,24 +19,37 @@ const getCareTakerStatus = (s: number) => {
     }
 };
 
-const NameAndRating = (props: CareTakerDetails) => {
+const NameAndRating = (props: CareTakerSpecializesInCategory) => {
     // rating rounded the lower 0.5
     return (
-        <Space size="middle">
-            <>{props.fullname}</>
+        <Space size="small" direction="vertical">
+            {props.fullname}
             <Rate
                 disabled
                 allowHalf
                 defaultValue={Math.floor(props.rating * 2) / 2}
+                // defaultValue={4.5}
             />
         </Space>
     );
 };
 
-const CareTakerCard = (props: CareTakerDetails) => {
+type CareTakerCardProps = {
+    ct: CareTakerSpecializesInCategory;
+    state: NewRequestState;
+    dispatch: React.Dispatch<Action>;
+};
+
+const CareTakerCard = (props: CareTakerCardProps) => {
+    const { ct, dispatch } = props;
     return (
-        // TODO: bind onClick to the next stage
-        <Card hoverable onClick={console.log}>
+        <Card
+            hoverable
+            onClick={() => {
+                dispatch({ type: "setCareTaker", param: ct });
+                dispatch({ type: "next" });
+            }}
+        >
             <Meta
                 avatar={
                     <Avatar
@@ -45,12 +59,13 @@ const CareTakerCard = (props: CareTakerDetails) => {
                         }}
                         size="large"
                     >
-                        {props.fullname.charAt(0).toUpperCase()}
+                        {ct.fullname.charAt(0).toUpperCase()}
                     </Avatar>
                 }
-                title={<NameAndRating {...props} />}
-                description={getCareTakerStatus(props.caretakerStatus)}
+                title={<NameAndRating {...ct} />}
+                description={getCareTakerStatus(ct.caretakerStatus)}
             />
+            {`$${ct.ctPriceDaily}/day`}
         </Card>
     );
 };

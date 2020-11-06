@@ -11,5 +11,6 @@ router.patch("/part_timer/:email", careTakersController.updatePartTimer);
 router.patch("/full_timer/:email", careTakersController.updateFullTimer);
 router.post("/part_timer", careTakersController.createPartTimer);
 router.post("/full_timer", careTakersController.createFullTimer);
+router.get("/payment/:email", careTakersController.payments);
 
 export default router;

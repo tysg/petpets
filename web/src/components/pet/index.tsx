@@ -103,7 +103,7 @@ const PetPage = () => {
             ) : (
                 <Row gutter={8}>
                     {userPets.map((c) => (
-                        <Col span={12}>
+                        <Col span={12} style={{ marginBottom: 8 }}>
                             <PetsCard
                                 pet={c}
                                 generateModal={generateModal}

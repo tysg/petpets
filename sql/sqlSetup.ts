@@ -1,11 +1,11 @@
 import fs from "fs";
 import pg from "pg";
-import seedString from "./seedgen";
 
 console.log("Setting up database...");
 const schema = fs.readFileSync("sql/schema.sql").toString();
 const triggers = fs.readFileSync("sql/triggers.sql").toString();
 const seed = fs.readFileSync("sql/seeds.sql").toString();
+const genSeed = fs.readFileSync("sql/generatedSeed.sql").toString();
 
 const pool = new pg.Pool({
     connectionString: process.env.DATABASE_URL
@@ -13,7 +13,7 @@ const pool = new pg.Pool({
 
 // console.log(seedString);
 
-pool.query(schema + triggers + seed + seedString, (err, res) => {
+pool.query(schema + triggers + genSeed + seed, (err, res) => {
     if (err) {
         console.log("Setup database failed: ", err);
         pool.end(() => {

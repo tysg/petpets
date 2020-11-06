@@ -1,15 +1,38 @@
 import { ApiResponse } from "./index";
+import * as yup from "yup";
 
 export enum CaretakerStatus {
-    not_ct = 0,
-    part_time_ct = 1,
-    full_time_ct = 2
+    notCt = 0,
+    partTimeCt = 1,
+    fullTimeCt = 2
+}
+
+/**
+ * GET api/caretakers/payment
+ */
+export interface MonthlyPayment {
+    monthYear: Date;
+    bonus: number;
+    fullPay: number;
+}
+
+/**
+ * GET api/caretakers/payment
+ */
+export interface CareTakerPayment {
+    monthly_payment: MonthlyPayment[];
 }
 
 export interface SpecializesIn {
     typeName: string;
     ctPriceDaily: number;
 }
+export const SpecializesInSchema: yup.ObjectSchema<SpecializesIn> = yup
+    .object({
+        typeName: yup.string().defined(),
+        ctPriceDaily: yup.number().defined()
+    })
+    .defined();
 
 /**
  * PATCH api/caretakers/
@@ -21,6 +44,13 @@ export interface CareTaker {
     email: string;
     allSpecializes: SpecializesIn[];
 }
+
+export const CareTakerSchema: yup.ObjectSchema<CareTaker> = yup
+    .object({
+        email: yup.string().defined(),
+        allSpecializes: yup.array(SpecializesInSchema).defined()
+    })
+    .defined();
 
 /**
  * GET api/caretakers/
@@ -35,6 +65,18 @@ export interface CareTakerDetails {
     rating: number;
 }
 
+export const CareTakerDetailsSchema: yup.ObjectSchema<CareTakerDetails> = yup
+    .object({
+        fullname: yup.string().defined(),
+        phone: yup.number().defined(),
+        address: yup.string().defined(),
+        email: yup.string().defined(),
+        avatarUrl: yup.string().optional(),
+        caretakerStatus: yup.number().defined(),
+        rating: yup.number().defined()
+    })
+    .defined();
+
 /**
  * GET api/caretakers/:email
  */
@@ -42,10 +84,30 @@ export interface CareTakerSpecializesDetails extends CareTakerDetails {
     allSpecializes: SpecializesIn[];
 }
 
-export interface SpecializesDetails extends CareTakerDetails {
+export interface CareTakerSpecializesInCategory
+    extends CareTakerDetails,
+        SpecializesIn {}
+
+export const CareTakerSpecializesInCategorySchema: yup.ObjectSchema<CareTakerSpecializesInCategory> = CareTakerDetailsSchema.concat(
+    SpecializesInSchema
+).defined();
+
+export interface SpecializesIn {
     typeName: string;
     ctPriceDaily: number;
 }
+
+export const CareTakerSpecializesDetailsSchema: yup.ObjectSchema<CareTakerSpecializesDetails> = yup
+    .object({
+        allSpecializes: yup.array(SpecializesInSchema).defined()
+    })
+    .concat(CareTakerDetailsSchema)
+    .defined();
+
+/**
+ * GET api/caretakers/payment
+ */
+export type MonthlyPaymentsResponse = ApiResponse<CareTakerPayment, string>;
 
 /**
  * GET api/caretakers/
@@ -55,8 +117,8 @@ export type IndexResponse = ApiResponse<CareTakerDetails[], string>;
 /**
  * GET api/caretakers/search?start_date=2020-11-06&end_date=2020-11-08&pet_category=dog
  */
-export type SpecializesIndexResponse = ApiResponse<
-    SpecializesDetails[],
+export type SearchResponse = ApiResponse<
+    CareTakerSpecializesInCategory[],
     string
 >;
 

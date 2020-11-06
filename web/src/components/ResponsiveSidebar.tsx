@@ -10,15 +10,8 @@ interface ResponsiveSidebarProps
 
 const ResponsiveSidebar = (props: ResponsiveSidebarProps) => {
     const paths = props.location.pathname.split("/");
-    const selected =
-        paths[3] === "" || paths[3] === undefined
-            ? props.defaultSelected
-            : paths[3];
-    const open =
-        paths[2] === "" || paths[2] === undefined
-            ? props.defaultOpen
-            : paths[2];
-    console.log("responsive sidebar", selected, open);
+    const selected = paths[3] || props.defaultSelected;
+    const open = paths[2] || props.defaultOpen;
     return (
         <Menu
             mode="inline"

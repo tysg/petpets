@@ -4,7 +4,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { Link, RouteComponentProps, useRouteMatch } from "react-router-dom";
 import ResponsiveSidebar from "./ResponsiveSidebar";
 
-const { SubMenu } = Menu;
+const { ItemGroup } = Menu;
 
 const OwnerSidebar = (props: RouteComponentProps) => {
     const { path } = useRouteMatch();
@@ -12,20 +12,19 @@ const OwnerSidebar = (props: RouteComponentProps) => {
         <ResponsiveSidebar
             {...props}
             defaultOpen="owner"
-            defaultSelected="petsUpdate "
+            defaultSelected="pets"
         >
-            <SubMenu key="owner" icon={<UserOutlined />} title="Pet Owner">
+            <ItemGroup key="owner" title="Pet Owner">
                 <Menu.Item key="pets">
                     <Link to={`${path}/pets`}>My Pets</Link>
-                </Menu.Item>
-                <Menu.Item key="profile">
-                    <Link to={`${path}/profile`}>My Profile</Link>
                 </Menu.Item>
                 <Menu.Item key="new-request">
                     <Link to={`${path}/new-request`}>New Request</Link>
                 </Menu.Item>
-                <Menu.Item key="owner-4">Arrangements</Menu.Item>
-            </SubMenu>
+                <Menu.Item key="orders">
+                    <Link to={`${path}/orders`}>My Orders</Link>
+                </Menu.Item>
+            </ItemGroup>
         </ResponsiveSidebar>
     );
 };

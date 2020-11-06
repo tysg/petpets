@@ -1,31 +1,41 @@
 import { ApiResponse } from "./index";
 
 export type BidStatus = "submitted" | "confirmed" | "reviewed" | "closed";
+export type TransportMethod = "delivery" | "pickup" | "pcs";
 
-export interface CtPrice {
+export interface CtStatusAndSpecializes {
     ct_price_daily: number;
-}
-
-export interface CtStatus {
     caretaker_status: number;
 }
 
-/**
- * POST api/bids, request;
- */
+export type CreateBidRequest = Pick<
+    Bid,
+    | "ct_email"
+    | "pet_owner"
+    | "pet_name"
+    | "ct_price"
+    | "start_date"
+    | "end_date"
+    | "is_cash"
+    | "credit_card"
+    | "transport_method"
+>;
+
 export interface Bid {
     ct_email: string;
     ct_price: number;
-    start_date: Date;
-    end_date: Date;
+    /** YYYY-MM-DD */
+    start_date: string;
+    /** YYYY-MM-DD */
+    end_date: string;
     is_cash: boolean;
-    credit_card: number;
-    transport_method: string;
+    credit_card: number | null;
+    transport_method: TransportMethod;
     pet_owner: string;
     pet_name: string;
-    pet_category: string;
     bid_status: BidStatus;
     feedback: Text;
+    rating: number;
 }
 
 export const sqlify = (bid: Bid) => [
@@ -38,10 +48,17 @@ export const sqlify = (bid: Bid) => [
     bid.transport_method,
     bid.pet_owner,
     bid.pet_name,
-    bid.pet_category,
     bid.bid_status,
-    bid.feedback
+    bid.feedback,
+    bid.rating
 ];
+
+export interface BidPeriod {
+    ct_email: string;
+    ct_status: number;
+    start_date: Date;
+    end_date: Date;
+}
 
 export const sqlify_price_query = (arg1: string, arg2: string) => [arg1, arg2];
 

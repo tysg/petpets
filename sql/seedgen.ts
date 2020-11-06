@@ -1,23 +1,23 @@
 import faker from "faker/locale/en_US";
 import bcrypt from "bcrypt";
+import fs from "fs";
+import { SignInRequest } from "../models/user";
 
-const fakerSeed = 69;
+const fakerSeed = 6969;
 faker.seed(fakerSeed);
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
-const NUM_PEOPLE = 100;
+const NUM_PEOPLE = 1000;
 
 const fakePetCategories = [
     "Bearded Dragon",
     "Bird",
     "Burro",
-    "Cat",
     "Chameleons (Veiled)",
     "Chicken",
     "Chinchilla",
     "Chinese Water Dragon",
     "Cow",
-    "Dog",
     "Donkey",
     "Duck",
     "Ferret",
@@ -43,7 +43,7 @@ const fakePetCategories = [
     "Ponie",
     "Pot Bellied Pig",
     "Rabbit"
-];
+].map((c) => c.toLowerCase());
 const petCatEntries = fakePetCategories.map(
     (type) =>
         `INSERT INTO pet_category values ('${type}', ${faker.random.number(
@@ -51,10 +51,13 @@ const petCatEntries = fakePetCategories.map(
         )});`
 );
 
+let accounts: SignInRequest[] = [];
+
 const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
     const password = faker.internet.password();
     const hashedPassword = bcrypt.hashSync(password, salt);
     const email = faker.internet.email();
+    accounts.push({ email, password });
     const sanitizedName = faker
         .fake("{{name.firstName}} {{name.lastName}}")
         .replace(/\'/g, "");
@@ -122,5 +125,18 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
 });
 
 const seedString = petCatEntries.join("\n") + fakePeople.join("\n");
+// console.log(seedString);
+const MD_HEADER = `| email                          | password        |
+| ------------------------------ | --------------- |
+`;
+fs.writeFileSync("sql/generatedSeed.sql", seedString);
+fs.writeFileSync(
+    "accounts.md",
+    MD_HEADER +
+        accounts
+            .map(({ email, password }) => `| ${email} | ${password}| `)
+            .join("\n")
+);
 
-export default seedString;
+// export default seedString;
+// run command with yarn ts-node sql/seedgen.ts

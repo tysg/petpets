@@ -1,6 +1,12 @@
-import React, { PropsWithChildren } from "react";
-import { Layout, Menu, Button } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import React, { PropsWithChildren, useState } from "react";
+import { Layout, Menu, Button, Drawer } from "antd";
+import {
+    LogoutOutlined,
+    UserOutlined,
+    HomeOutlined,
+    SmileOutlined,
+    BarChartOutlined
+} from "@ant-design/icons";
 import { clearSession, getUser } from "./token";
 import {
     Link,
@@ -13,27 +19,10 @@ import {
 import AdminRoute from "../auth/AdminRoute";
 import AdminSidebar from "../components/AdminSidebar";
 import OwnerSidebar from "../components/OwnerSidebar";
-import SitterSidebar from "../components/SitterSidebar";
+import CareTakerSidebar from "../components/CareTakerSidebar";
+import Profile from "../components/petOwner/Profile";
 
 const { Header, Content, Sider } = Layout;
-
-const NavItem = (path: string) => {
-    return (
-        <>
-            <Menu.Item key="owner">
-                <Link to={`${path}/owner`}>Pet Owner</Link>
-            </Menu.Item>
-            <Menu.Item key="sitter">
-                <Link to={`${path}/sitter`}>Pet Sitter</Link>
-            </Menu.Item>
-            {getUser()?.isAdmin() && (
-                <Menu.Item key="admin">
-                    <Link to={`${path}/admin`}>Admin</Link>
-                </Menu.Item>
-            )}
-        </>
-    );
-};
 
 interface SiteLayoutProps extends PropsWithChildren<RouteComponentProps> {
     path: string;
@@ -46,8 +35,11 @@ const SiteLayout = (props: SiteLayoutProps) => {
     };
     const { path } = useRouteMatch();
     const paths = props.location.pathname.split("/");
-    const selected =
-        paths[2] === "" || paths[2] === undefined ? "owner" : paths[2];
+    const selected = paths[2] || "owner";
+    const [selectedKey, setSelectedKey] = useState(selected);
+    const [showDrawer, setShowDrawer] = useState(false);
+    const onOpen = () => setShowDrawer(true);
+    const onClose = () => setShowDrawer(false);
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className="header">
@@ -55,9 +47,39 @@ const SiteLayout = (props: SiteLayoutProps) => {
                 <Menu
                     theme="dark"
                     mode="horizontal"
-                    defaultSelectedKeys={[selected]}
+                    selectedKeys={[selectedKey]}
                 >
-                    {NavItem(props.path)}
+                    <Menu.Item
+                        key="profile"
+                        unselectable="off"
+                        onClick={onOpen}
+                    >
+                        <UserOutlined />
+                        My Profile
+                    </Menu.Item>
+                    <Menu.Item
+                        key="owner"
+                        onClick={() => setSelectedKey("owner")}
+                    >
+                        <HomeOutlined />
+                        <Link to={`${path}/owner`}>Pet Owner</Link>
+                    </Menu.Item>
+                    <Menu.Item
+                        key="sitter"
+                        onClick={() => setSelectedKey("sitter")}
+                    >
+                        <SmileOutlined />
+                        <Link to={`${path}/sitter`}>Pet Sitter</Link>
+                    </Menu.Item>
+                    {getUser()?.isAdmin() && (
+                        <Menu.Item
+                            key="admin"
+                            onClick={() => setSelectedKey("admin")}
+                        >
+                            <BarChartOutlined />
+                            <Link to={`${path}/admin`}>Admin</Link>
+                        </Menu.Item>
+                    )}
                     <Button onClick={logout}>
                         <LogoutOutlined />
                         Logout
@@ -74,7 +96,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
                             <OwnerSidebar {...props} />
                         </Route>
                         <Route path={`${path}/sitter`}>
-                            <SitterSidebar {...props} />
+                            <CareTakerSidebar {...props} />
                         </Route>
                         <AdminRoute path={`${path}/admin`}>
                             <AdminSidebar {...props} />
@@ -95,6 +117,16 @@ const SiteLayout = (props: SiteLayoutProps) => {
                     </Content>
                 </Layout>
             </Layout>
+            <Drawer
+                width={480}
+                placement="right"
+                closable={false}
+                onClose={onClose}
+                visible={showDrawer}
+                // visible
+            >
+                <Profile />
+            </Drawer>
         </Layout>
     );
 };
