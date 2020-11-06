@@ -1,5 +1,9 @@
-import React, { FunctionComponent, ReactComponentElement } from "react";
-import { List, Space, Avatar } from "antd";
+import React, {
+    FunctionComponent,
+    ReactComponentElement,
+    useEffect
+} from "react";
+import { List, Space, Avatar, message } from "antd";
 import {
     StarOutlined,
     LikeOutlined,
@@ -44,12 +48,17 @@ const IconText = (props: IconTextProps) => {
 
 interface AssignmentsProps {
     dataSource: Bid[];
-    predicate: (bid: Bid) => boolean;
+    emptyMsg: string;
 }
 
 const Assignments = (props: AssignmentsProps) => {
-    const { dataSource, predicate } = props;
-    const renderedData = dataSource.filter(predicate);
+    const { dataSource, emptyMsg } = props;
+    console.log(dataSource);
+    useEffect(() => {
+        if (dataSource.length <= 0) {
+            message.info(emptyMsg);
+        }
+    }, [dataSource]);
     return (
         <List
             itemLayout="vertical"

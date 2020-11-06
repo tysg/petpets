@@ -216,7 +216,7 @@ const create = (ctStatus: number) => async (req: Request, res: Response) => {
         const careTakerQuery =
             ctStatus == CaretakerStatus.partTimeCt
                 ? caretaker_query.create_part_time_ct
-                : caretaker_query.create_part_time_ct;
+                : caretaker_query.create_full_time_ct;
 
         const specializesQuery =
             ctStatus == CaretakerStatus.partTimeCt

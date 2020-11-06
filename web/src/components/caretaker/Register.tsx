@@ -21,10 +21,11 @@ import {
 } from "../../../../models/pet";
 import { AxiosResponse } from "axios";
 import { SpecializesIn } from "../../../../models/careTaker";
+import { RouteComponentProps } from "react-router-dom";
 
 interface NewCareTaker {
     careTakerStatus: "ft" | "pt";
-    // allSpecializesIn: SpecializesIn[];
+    allSpecializesIn: SpecializesIn[];
 }
 interface ModalFormProps extends ModalProps {
     onSubmit: (value: NewCareTaker) => void;
@@ -50,10 +51,10 @@ const ModalForm = (props: ModalFormProps) => {
             onOk={() => {
                 form.validateFields().then((values) => {
                     form.resetFields();
-                    const { careTakerStatus } = values;
+                    const { careTakerStatus, allSpecializesIn } = values;
                     const res = {
-                        careTakerStatus
-                        // allSpecializesIn: [specializesIn]
+                        careTakerStatus,
+                        allSpecializesIn
                     };
                     onSubmit(res);
                 });
@@ -66,10 +67,11 @@ const ModalForm = (props: ModalFormProps) => {
                         <Radio value="pt">Part-Time</Radio>
                     </Radio.Group>
                 </FormItem>
-                {/* <FormItem label="Specialty" name="specializesIn">
+                <FormItem label="Specialty" name="allSpecializesIn">
                     <Select
                         placeholder="Select Specialty"
                         style={{ width: "100%" }}
+                        mode="multiple"
                         onChange={(value) => console.log(value)}
                     >
                         {petTypes.map(({ typeName }) => (
@@ -78,24 +80,25 @@ const ModalForm = (props: ModalFormProps) => {
                             </Select.Option>
                         ))}
                     </Select>
-                </FormItem> */}
+                </FormItem>
             </Form>
         </Modal>
     );
 };
 
-const Register = () => {
+const Register = (props: RouteComponentProps) => {
     const [visibleModal, setVisibleModal] = useState(false);
     const showModal = () => setVisibleModal(true);
     const hideModal = () => setVisibleModal(false);
     const onSubmit = (formResult: NewCareTaker) => {
-        const promise =
+        const endpoint =
             formResult.careTakerStatus === "ft"
-                ? careTakerApi.newFulltimer()
-                : careTakerApi.newParttimer();
-        promise
+                ? careTakerApi.newFulltimer
+                : careTakerApi.newParttimer;
+        endpoint(formResult.allSpecializesIn)
             .then((res) => {
-                console.log("Successfully created new CareTaker");
+                message.success(res.data.data);
+                props.history.push("/dashboard/sitter");
             })
             .catch((err) => {
                 message.error(err.response.data.err);
@@ -110,6 +113,7 @@ const Register = () => {
                     title="New Pet Sitter"
                     visible={visibleModal}
                     onSubmit={onSubmit}
+                    onCancel={hideModal}
                 ></ModalForm>
                 <Typography.Paragraph>
                     You are not registered as a Pet Sitter yet.

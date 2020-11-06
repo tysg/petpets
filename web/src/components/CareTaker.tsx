@@ -12,7 +12,6 @@ import { CareTakerSpecializesDetails } from "../../../models/careTaker";
 import CareTakerRoute from "../auth/CareTakerRoute";
 import { bid as bidApi, careTaker as careTakerApi } from "../common/api";
 import Assignments from "./caretaker/Assignments";
-import PastJobs from "./caretaker/PastJobs";
 import Rates from "./caretaker/Rates";
 import Register from "./caretaker/Register";
 
@@ -33,7 +32,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 bidApi
                     .getForCareTaker(careTaker.email)
                     .then((res) => {
-                        setBids(res.data);
+                        setBids(res.data.data);
                     })
                     .catch((err) => {
                         console.log("There are no bids for this user");
@@ -51,26 +50,36 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                     <Redirect to={`${path}/upcoming`} />
                 ) : (
                     // TODO:
-                    <Register />
+                    <Register {...props} />
                 )}
             </Route>
             <CareTakerRoute
                 path={`${path}/upcoming`}
                 careTakerDetails={careTaker}
             >
-                <Assignments dataSource={bids} predicate={() => true} />
+                <Assignments
+                    dataSource={bids.filter((bid) => true)}
+                    emptyMsg="No upcoming jobs"
+                />
             </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/pending`}
                 careTakerDetails={careTaker}
             >
-                <Assignments dataSource={bids} predicate={() => true} />
+                <Assignments
+                    dataSource={bids.filter((bid) => true)}
+                    emptyMsg="No pending jobs"
+                />
             </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/pastjobs`}
-                component={PastJobs}
                 careTakerDetails={careTaker}
-            ></CareTakerRoute>
+            >
+                <Assignments
+                    dataSource={bids.filter((bid) => true)}
+                    emptyMsg="No past jobs"
+                />
+            </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/schedule`}
                 component={Rates}

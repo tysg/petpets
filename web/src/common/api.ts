@@ -15,9 +15,10 @@ import {
 } from "./../../../models/creditCard";
 import {
     CareTakerSpecializesDetails,
-    SearchResponse
+    SearchResponse,
+    SpecializesIn
 } from "./../../../models/careTaker";
-import { CreateBidRequest, Bid } from "../../../models/bid";
+import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
 import { Moment } from "moment";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
@@ -137,7 +138,9 @@ export const bid = {
         // return Promise.reject();
         return post(`/api/bids`, body);
     },
-    getForCareTaker: (email: string): Promise<AxiosResponse<Bid[]>> => {
+    getForCareTaker: (
+        email: string
+    ): Promise<AxiosResponse<CareTakerResponse>> => {
         return get("/api/bids/caretaker/" + email);
     }
 };
@@ -147,10 +150,20 @@ export const careTaker = {
     getCareTaker: (): Promise<AxiosResponse<CareTakerSpecializesDetails>> => {
         return get(CARETAKER_ENDPOINT + email);
     },
-    newFulltimer: (): Promise<AxiosResponse<StringResponse>> => {
-        return post(CARETAKER_ENDPOINT + "full_timer", email);
+    newFulltimer: (
+        allSpecializes: SpecializesIn[]
+    ): Promise<AxiosResponse<StringResponse>> => {
+        return post(CARETAKER_ENDPOINT + "full_timer", {
+            email,
+            allSpecializes
+        });
     },
-    newParttimer: (): Promise<AxiosResponse<StringResponse>> => {
-        return post(CARETAKER_ENDPOINT + "part_timer", email);
+    newParttimer: (
+        allSpecializes: SpecializesIn[]
+    ): Promise<AxiosResponse<StringResponse>> => {
+        return post(CARETAKER_ENDPOINT + "part_timer", {
+            email,
+            allSpecializes
+        });
     }
 };
