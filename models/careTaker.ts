@@ -11,9 +11,9 @@ export enum CaretakerStatus {
  * GET api/caretakers/payment
  */
 export interface MonthlyPayment {
-    month_year: Date;
+    monthYear: Date;
     bonus: number;
-    full_pay: number;
+    fullPay: number;
 }
 
 /**
