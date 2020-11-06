@@ -41,7 +41,6 @@ FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 
 -- TODO set constraint for bids for schedule -> can't bid for leave
 -- TODO set constraint for schedule with bids -> can't take leave if bids
--- TODO declare availability only for next year as well (for part timers)
 -- TODO set constraint on not updating bid if 'closed'
 
 -- CREATE OR REPLACE FUNCTION ft_rating()
@@ -267,19 +266,6 @@ BEGIN
 	SELECT extract(year from NEW.end_date) into end_y;
 	SELECT extract(year from NEW.start_date) into start_y;
 
-	-- somehow can't create view with NEW.end_date inside the WHERE clause, 
-	-- so we expanded the view into the queries used for checking constraint
-	
-	-- CREATE VIEW start_year (email, start_date, end_date) AS (
-	-- 	SELECT * FROM ft_leave_schedule ft
-	-- 	WHERE (SELECT extract(year from new.end_date)) = (select extract(year FROM ft.start_date))
-	-- );
-
-	-- CREATE VIEW end_year (email, start_date, end_date) AS (
-	-- 	SELECT * FROM ft_leave_schedule ft
-	-- 	WHERE (select extract(year FROM ft.end_date)) = (select extract(year FROM NEW.end_date))
-	-- );
-
 	SELECT COUNT(*) INTO stretch_start FROM ft_leave_schedule s1
 		WHERE extract(year from (s1.start_date - '150 day'::interval)) = extract(year from NEW.start_date)
 		AND extract(year FROM s1.start_date) = (start_y)
@@ -320,8 +306,6 @@ BEGIN
 		AND extract(year FROM s2.end_date) = (end_y)
 		AND s2.end_date > s1.end_date
 	);
-
-	-- INSERT INTO count_sched VALUES (stretch_start + stretch_start2 + stretch_end + stretch_end2);
 
 	IF start_y = end_y THEN
 		IF stretch_start + stretch_start2 + stretch_end + stretch_end2 < 2 THEN
