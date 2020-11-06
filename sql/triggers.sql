@@ -325,7 +325,52 @@ CREATE TRIGGER check_ft_150
 AFTER INSERT ON ft_leave_schedule
 FOR EACH ROW EXECUTE PROCEDURE ft_150_constraint();
 
+CREATE OR REPLACE FUNCTION ft_150_constraint()
+RETURNS TRIGGER AS 
+$t$ 
+DECLARE 
+	count_150 NUMERIC;
+	count_300 NUMERIC;
+	start_year NUMERIC;
+	end_year NUMERIC;
+BEGIN
 
+	SELECT extract(year from NEW.start_date) into new_start_year;
+	SELECT extract(year from NEW.end_date) into new_end_year;
+
+	select COUNT(*) INTO count_150 FROM ( 
+		select *, row_number() over (partition by 1) as r1 from (
+				select end_date as ed1,start_date as sd1 from (
+				SELECT * FROM ft_leave_schedule f1
+				WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date DESC offset 1
+				) as dsc order by start_date asc
+			) as ord1,
+			(select *, row_number() over (partition by 1) as r2 from (
+			select end_date as ed2,start_date as sd2 FROM ft_leave_schedule f2
+			WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date ASC offset 1) as ord2) as c
+	) as cc
+	where cc.r1=cc.r2
+	AND (cc.sd2-cc.ed1 >= 150 OR cc.sd2-cc.ed1 >= 300);
+
+	select COUNT(*) INTO count_300 FROM ( 
+	select *, row_number() over (partition by 1) as r1 from (
+			select end_date as ed1,start_date as sd1 from (
+			SELECT * FROM ft_leave_schedule f1
+			WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date DESC offset 1
+			) as dsc order by start_date asc
+		) as ord1,
+		(select *, row_number() over (partition by 1) as r2 from (
+		select end_date as ed2,start_date as sd2 FROM ft_leave_schedule f2
+		WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date ASC offset 1) as ord2) as c
+	) as cc
+	where cc.r1=cc.r2
+	AND cc.sd2-cc.ed1 >= 300;
+	
+END;
+$t$ LANGUAGE PLpgSQL;
+CREATE TRIGGER check_ft_150
+AFTER INSERT ON ft_leave_schedule
+FOR EACH ROW EXECUTE PROCEDURE ft_150_constraint();
 
 -- REMOVED cos caretaker overlap enforcement + FK constraint should already enforce this
 -- -- NONOVERLAPPING constraints for schedule
