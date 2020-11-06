@@ -127,8 +127,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
                 transport_method: state.transportMethod!,
                 start_date: formatDate(state.selectedDates![0]),
                 end_date: formatDate(state.selectedDates![1]),
-                is_cash: state.isCash ?? false,
-                pet_category: state.selectedPet?.category!
+                is_cash: state.isCash ?? false
             });
 
             dispatch({ type: "setIsOrderSuccessful", param: true });

@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
     BidPeriod,
-    CtPrice,
-    CtStatus,
+    CtStatusAndSpecializes,
     Bid,
     OwnerResponse,
     CareTakerResponse,
@@ -101,18 +100,13 @@ export const test = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
     try {
         var bid: Bid = req.body;
-        const priceRow: QueryResult<CtPrice> = await asyncQuery(
-            bid_query.query_price,
-            [bid.ct_email, bid.pet_category]
+        const priceStatusRow: QueryResult<CtStatusAndSpecializes> = await asyncQuery(
+            bid_query.query_price_role,
+            [bid.ct_email, bid.pet_name, bid.pet_owner]
         );
 
-        const roleRow: QueryResult<CtStatus> = await asyncQuery(
-            bid_query.query_role,
-            [bid.ct_email]
-        );
-
-        const ctPrice = priceRow.rows[0].ct_price_daily;
-        const ctStatus = roleRow.rows[0].caretaker_status;
+        const ctPrice = priceStatusRow.rows[0].ct_price_daily;
+        const ctStatus = priceStatusRow.rows[0].caretaker_status;
         bid.bid_status =
             ctStatus === CaretakerStatus.partTimeCt ? "submitted" : "confirmed";
         bid.ct_price = ctPrice;
