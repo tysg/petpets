@@ -70,8 +70,8 @@ export const caretaker_query = {
 
 const ptPaymentMonthly = `
     SELECT 
-        sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75 as fullPay,
-        to_char(startmonth, 'YYYY-MM') as monthYear
+        sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75 as full_pay,
+        to_char(startmonth, 'YYYY-MM') as month_year
         FROM (SELECT                                                                              
             generate_series(
                 date_trunc('month', startend.sd),
@@ -93,7 +93,7 @@ const ptPaymentMonthly = `
 `;
 
 const ftPaymentMonthly = `
-SELECT coalesce(d4.fullpay, 3000.0) as fullPay, coalesce(d4.bonus, 0) as bonus, d3.month as monthYear from 
+SELECT coalesce(d4.fullpay, 3000.0) as full_pay, coalesce(d4.bonus, 0) as bonus, d3.month as month_year from 
     (SELECT sum(ct_price)*0.8+3000 as fullpay, sum(ct_price)*0.8 as bonus, concat(yy, '-', mm) as month FROM
         (SELECT ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy ORDER BY concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
             (SELECT

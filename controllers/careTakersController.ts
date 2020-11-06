@@ -77,7 +77,7 @@ export const payments = async (req: Request, res: Response) => {
 
         const response: MonthlyPaymentsResponse = {
             data: {
-                monthlypayment: ctPaymentQuery.rows
+                monthly_payment: ctPaymentQuery.rows
             },
             error: ""
         };
