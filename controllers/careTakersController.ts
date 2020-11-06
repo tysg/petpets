@@ -11,7 +11,7 @@ import {
     GetResponse,
     StringResponse,
     MonthlyPaymentsResponse,
-    CaretakerStatus
+    CaretakerStatus,
     CareTakerSchema,
     SpecializesInSchema,
     CareTakerSpecializesDetailsSchema,
@@ -64,7 +64,7 @@ export const privateProfile = async (req: Request, res: Response) => {
             [email]
         );
 
-        const careTakerDetails = ctQueryResult.rows[0];
+        const careTakerDetails = mapCareTakerAttr(ctQueryResult.rows[0]);
         const paymentQuery =
             careTakerDetails.caretakerStatus == CaretakerStatus.partTimeCt
                 ? payments_query.get_pt_caretaker_payments
@@ -75,7 +75,7 @@ export const privateProfile = async (req: Request, res: Response) => {
             [email]
         );
 
-        console.log(ctPaymentQuery.rows);
+        console.log(ctPaymentQuery, careTakerDetails.caretakerStatus);
 
         const response: MonthlyPaymentsResponse = {
             data: {
@@ -285,8 +285,8 @@ const update = (ctStatus: number) => async (req: Request, res: Response) => {
     }
 };
 
-export const createPartTimer = create(1);
-export const createFullTimer = create(2);
+export const createPartTimer = create(CaretakerStatus.partTimeCt);
+export const createFullTimer = create(CaretakerStatus.fullTimeCt);
 
-export const updatePartTimer = update(1);
-export const updateFullTimer = update(2);
+export const updatePartTimer = update(CaretakerStatus.partTimeCt);
+export const updateFullTimer = update(CaretakerStatus.fullTimeCt);

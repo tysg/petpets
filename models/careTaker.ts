@@ -8,7 +8,7 @@ export enum CaretakerStatus {
 }
 
 export interface MonthlyPayment {
-    MonthYear: string;
+    MonthYear: Date;
     Amount: number;
 }
 
