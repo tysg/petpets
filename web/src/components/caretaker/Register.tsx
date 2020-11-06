@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "antd/dist/antd.css";
-import { Typography, Row, Col, Button, Input, Select, Radio } from "antd";
+import {
+    Typography,
+    Row,
+    Col,
+    Button,
+    Input,
+    Select,
+    Radio,
+    message
+} from "antd";
 import Modal, { ModalProps } from "antd/lib/modal/Modal";
 import Form, { useForm } from "antd/lib/form/Form";
 import FormItem from "antd/lib/form/FormItem";
@@ -89,8 +98,7 @@ const Register = () => {
                 console.log("Successfully created new CareTaker");
             })
             .catch((err) => {
-                console.log("something went wrong");
-                console.log(err);
+                message.error(err.response.data.err);
             })
             .finally(hideModal);
     };

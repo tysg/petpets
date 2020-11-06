@@ -41,7 +41,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
             })
             .catch((err) => {
                 console.log(err);
-                message.error("You are not yet a Care Taker");
+                message.error(err.response.data.err);
             });
     }, []);
     return (
