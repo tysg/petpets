@@ -118,14 +118,14 @@ const SiteLayout = (props: SiteLayoutProps) => {
                 </Layout>
             </Layout>
             <Drawer
-                width={640}
+                width={480}
                 placement="right"
                 closable={false}
                 onClose={onClose}
                 visible={showDrawer}
                 // visible
             >
-                <Profile></Profile>
+                <Profile />
             </Drawer>
         </Layout>
     );

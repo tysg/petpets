@@ -13,7 +13,10 @@ import {
     StringResponse as CreditCardStringIndexResponse,
     CreditCard
 } from "./../../../models/creditCard";
-import { SearchResponse } from "./../../../models/careTaker";
+import {
+    CareTakerSpecializesDetails,
+    SearchResponse
+} from "./../../../models/careTaker";
 import { CreateBidRequest } from "../../../models/bid";
 import { Moment } from "moment";
 
@@ -124,5 +127,12 @@ export const bid = {
         // return Promise.resolve();
         // return Promise.reject();
         return post(`/api/bids`, body);
+    }
+};
+
+const CARETAKER_ENDPOINT = "/api/caretakers/";
+export const careTaker = {
+    getCareTaker: (): Promise<AxiosResponse<CareTakerSpecializesDetails>> => {
+        return get(CARETAKER_ENDPOINT + email);
     }
 };
