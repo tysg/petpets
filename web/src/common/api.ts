@@ -146,5 +146,11 @@ const CARETAKER_ENDPOINT = "/api/caretakers/";
 export const careTaker = {
     getCareTaker: (): Promise<AxiosResponse<CareTakerSpecializesDetails>> => {
         return get(CARETAKER_ENDPOINT + email);
+    },
+    newFulltimer: (): Promise<AxiosResponse<StringResponse>> => {
+        return post(CARETAKER_ENDPOINT + "full_timer", email);
+    },
+    newParttimer: (): Promise<AxiosResponse<StringResponse>> => {
+        return post(CARETAKER_ENDPOINT + "part_timer", email);
     }
 };
