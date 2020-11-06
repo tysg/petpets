@@ -8,8 +8,9 @@ export enum CaretakerStatus {
 }
 
 export interface MonthlyPayment {
-    MonthYear: Date;
-    Amount: number;
+    monthYear: Date;
+    bonus: number;
+    fullPay: number;
 }
 
 export interface CareTakerPayment {

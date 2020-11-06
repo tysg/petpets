@@ -70,9 +70,8 @@ export const caretaker_query = {
 
 const ptPaymentMonthly = `
     SELECT 
-        sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75 as fullpay, 
-        to_char(startmonth, 'YYYY-MM'), 
-        to_char(endmonth, 'YYYY-MM') 
+        sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75 as fullPay,
+        to_char(startmonth, 'YYYY-MM') as monthYear
         FROM (SELECT                                                                              
             generate_series(
                 date_trunc('month', startend.sd),
@@ -94,14 +93,9 @@ const ptPaymentMonthly = `
 `;
 
 const ftPaymentMonthly = `
-SELECT coalesce(d4.fullpay, 3000.0) as fullpay, coalesce(d4.bonus, 0) as bonus, d3.month from 
-    (SELECT sum(rank_price)*0.8+3000 as fullpay, sum(rank_price)*0.8 as bonus, concat(yy, '-', mm) as month FROM
-        (SELECT CASE WHEN ranked.r > 60 THEN 
-                    ct_price
-                ELSE 0
-                END as rank_price,
-                mm, yy FROM (
-            SELECT ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy ORDER BY concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
+SELECT coalesce(d4.fullpay, 3000.0) as fullPay, coalesce(d4.bonus, 0) as bonus, d3.month as monthYear from 
+    (SELECT sum(ct_price)*0.8+3000 as fullpay, sum(ct_price)*0.8 as bonus, concat(yy, '-', mm) as month FROM
+        (SELECT ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy ORDER BY concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
             (SELECT
                 pet_owner, pet_name, ct_email, ct_price,
                 to_char(ac.date,'DD') as dd, 
@@ -122,8 +116,7 @@ SELECT coalesce(d4.fullpay, 3000.0) as fullpay, coalesce(d4.bonus, 0) as bonus, 
                 ) AS ac, (SELECT * FROM bid WHERE ct_email=$1) AS p
                 WHERE ac.Date >= p.start_date and ac.Date <= p.end_date 
                 ORDER BY ac.date) AS monthdates
-            ) ranked
-        ) rank_price GROUP BY mm, yy
+		) rank_price WHERE r > 60 GROUP BY mm, yy
     ) as d4
     RIGHT JOIN 
     (SELECT                                                                              
@@ -211,30 +204,47 @@ export const bid_query = {
 export default { user_query, pet_query, credit_card_query };
 
 // const ftPaymentMonthly = `
-// SELECT count(*) as pet_days, sum(ct_price) as bonus, mm, yy FROM (
-// 	SELECT ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
-// 	(SELECT
-// 		pet_owner,
-// 		pet_name,
-// 		ct_email,
-// 		ct_price,
-// 		to_char(ac.date,'DD') as dd,
-// 		to_char(ac.date,'MM') as mm,
-// 		extract(year from ac.date) as yy,
-// 		date
-// 		FROM
-// 		(SELECT
-// 			generate_series(
-// 				date_trunc('month', startend.sd),
-// 				startend.ed, '1 day'
-// 			)::date as date
-// 			from
-// 			(SELECT min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1 AND end_date <= CURRENT_DATE AND bid_status='confirmed') as startend
-// 			order by 1
-// 		) as ac, (SELECT * FROM bid WHERE ct_email=$1) as p
-// 		where ac.Date >= p.start_date and ac.Date <= p.end_date
-// 		ORDER BY ac.date) as monthdates
-// 	) ranked
-//     WHERE ranked.r > 60
-// 	group by mm, yy;
+// SELECT coalesce(d4.fullpay, 3000.0) as fullpay, coalesce(d4.bonus, 0) as bonus, d3.month from
+//     (SELECT sum(rank_price)*0.8+3000 as fullpay, sum(rank_price)*0.8 as bonus, concat(yy, '-', mm) as month FROM
+//         (SELECT CASE WHEN ranked.r > 60 THEN
+//                     ct_price
+//                 ELSE 0
+//                 END as rank_price,
+//                 mm, yy FROM (
+//             SELECT ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy ORDER BY concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
+//             (SELECT
+//                 pet_owner, pet_name, ct_email, ct_price,
+//                 to_char(ac.date,'DD') as dd,
+//                 to_char(ac.date,'MM') as mm,
+//                 to_char(ac.date, 'YYYY') as yy,
+//                 date
+//                 FROM (SELECT
+//                     generate_series(
+//                         date_trunc('month', startend.sd),
+//                         startend.ed, '1 day'
+//                     )::date as date
+//                     FROM (SELECT min(start_date) as sd, max(end_date) as ed
+//                         FROM bid
+//                         WHERE ct_email=$1
+//                         AND end_date <= CURRENT_DATE
+//                         AND bid_status='confirmed'
+//                     ) as startend ORDER BY sd
+//                 ) AS ac, (SELECT * FROM bid WHERE ct_email=$1) AS p
+//                 WHERE ac.Date >= p.start_date and ac.Date <= p.end_date
+//                 ORDER BY ac.date) AS monthdates
+//             ) ranked
+//         ) rank_price GROUP BY mm, yy
+//     ) as d4
+//     RIGHT JOIN
+//     (SELECT
+//         to_char(generate_series(
+//             date_trunc('month', startend.sd),
+//             startend.ed, '1 month'
+//         )::date, 'YYYY-MM') AS month
+//         FROM
+//         (SELECT min(start_date) AS sd, max(end_date) AS ed
+//         FROM bid
+//         WHERE ct_email=$1) AS startend
+//     ) as d3
+//     on d4.month=d3.month
 // `;

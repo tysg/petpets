@@ -55,7 +55,7 @@ const mapSearchResponse = (r: any) => ({
     ctPriceDaily: r.ctpricedaily
 });
 
-export const privateProfile = async (req: Request, res: Response) => {
+export const payments = async (req: Request, res: Response) => {
     try {
         const { email } = req.params;
         // TODO check jwt email same as req.params.email
@@ -74,8 +74,6 @@ export const privateProfile = async (req: Request, res: Response) => {
             paymentQuery,
             [email]
         );
-
-        console.log(ctPaymentQuery, careTakerDetails.caretakerStatus);
 
         const response: MonthlyPaymentsResponse = {
             data: {
