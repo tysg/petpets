@@ -120,7 +120,7 @@ const SelectCareTaker = (props: SelectCareTakerProps) => {
             ) : (
                 <Row gutter={8}>
                     {careTakers.map((c) => (
-                        <Col span={8}>
+                        <Col span={8} style={{ marginBottom: 8 }}>
                             <CareTakerCard
                                 ct={c}
                                 state={state}
