@@ -107,7 +107,7 @@ export const create = async (req: Request, res: Response) => {
             bid_query.query_price_role,
             [bid.ct_email, bid.pet_name, bid.pet_owner]
         );
-
+        
         const ctPrice = priceStatusRow.rows[0].ct_price_daily;
         const ctStatus = priceStatusRow.rows[0].caretaker_status;
         bid.bid_status =

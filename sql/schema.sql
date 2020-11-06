@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS bid CASCADE;
-DROP VIEW IF EXISTS pet_owner CASCADE;
 DROP TABLE IF EXISTS credit_card CASCADE;
 DROP VIEW IF EXISTS specializes_in CASCADE;
 DROP TABLE IF EXISTS pt_specializes_in CASCADE;
@@ -12,7 +10,10 @@ DROP VIEW IF EXISTS caretaker CASCADE;
 DROP TABLE IF EXISTS full_time_ct CASCADE;
 DROP TABLE IF EXISTS part_time_ct CASCADE;
 DROP TABLE IF EXISTS person CASCADE;
+<<<<<<< HEAD
 
+=======
+>>>>>>> f1af6f6ecdc365bb2a882dc2ac9c98d2b4d7ef6a
 DROP TABLE IF EXISTS bid;
 DROP TYPE IF EXISTS user_role;
 DROP TYPE IF EXISTS transport_method;
@@ -67,9 +68,15 @@ CREATE TABLE full_time_ct (
 );
 
 CREATE VIEW caretaker (email, caretaker_status, rating) AS (
+<<<<<<< HEAD
 	SELECT email, 1, rating FROM  part_time_ct 
 	UNION 
 	SELECT email, 2, rating FROM full_time_ct
+=======
+	SELECT email, 1, 4.1 FROM  part_time_ct 
+	UNION 
+	SELECT email, 2, 4.2 FROM full_time_ct
+>>>>>>> f1af6f6ecdc365bb2a882dc2ac9c98d2b4d7ef6a
 );
 
 CREATE TABLE pt_specializes_in (
@@ -113,7 +120,10 @@ CREATE VIEW pet_owner (email, pet_name) AS (
 );
 
 CREATE TABLE bid (
+<<<<<<< HEAD
 
+=======
+>>>>>>> f1af6f6ecdc365bb2a882dc2ac9c98d2b4d7ef6a
 	ct_email varchar(64) REFERENCES person(email),
 	ct_price int NOT NULL,
 	start_date DATE NOT NULL,
@@ -123,9 +133,15 @@ CREATE TABLE bid (
 	transport_method transport_method NOT NULL,
 	pet_owner varchar(64),
 	pet_name varchar(64),
+<<<<<<< HEAD
 	bid_status bid_status NOT NULL,
 	feedback text DEFAULT NULL,
 	rating int DEFAULT NULL,
+=======
+	pet_category varchar(64) REFERENCES pet_category(type_name),
+	bid_status bid_status NOT NULL,
+	feedback text,
+>>>>>>> f1af6f6ecdc365bb2a882dc2ac9c98d2b4d7ef6a
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number),
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name),
 	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date),
