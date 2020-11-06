@@ -187,10 +187,6 @@ export const schedule_query = {
 export const bid_query = {
     owner_get_bids: `SELECT * FROM bid WHERE pet_owner = $1`,
     caretaker_get_bids: `SELECT * FROM bid WHERE ct_email = $1`,
-    query_price: `SELECT ct_price_daily 
-        FROM specializes_in
-        WHERE email= $1 AND type_name= $2`,
-
     query_price_role: `SELECT caretaker_status, ct_price_daily
         FROM caretaker 
         NATURAL JOIN specializes_in 
@@ -202,7 +198,7 @@ export const bid_query = {
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         `,
     delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`,
-    update_bid: `UPDATE bid SET bid_status = $5 WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`
+    update_bid: `UPDATE bid SET (bid_status, rating, feedback) = ($5, $6, $7) WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`
 };
 
 export default { user_query, pet_query, credit_card_query };

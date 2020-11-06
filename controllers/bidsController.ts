@@ -3,6 +3,7 @@ import { QueryResult } from "pg";
 import {
     BidPeriod,
     CtStatusAndSpecializes,
+    PetCategory,
     Bid,
     OwnerResponse,
     CareTakerResponse,
@@ -15,7 +16,6 @@ import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
 import moment from "moment";
-import { exception } from "console";
 
 export const owner_get = async (req: Request, res: Response) => {
     try {
@@ -101,6 +101,8 @@ export const test = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
     try {
         var bid: Bid = req.body;
+
+        // query for the price & role of the CareTaker
         const priceStatusRow: QueryResult<CtStatusAndSpecializes> = await asyncQuery(
             bid_query.query_price_role,
             [bid.ct_email, bid.pet_name, bid.pet_owner]
@@ -134,15 +136,18 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
     try {
         const { ct_email, owner_email, pet_name, start_date } = req.params;
+        var bid: Bid = req.body;
         await asyncQuery(bid_query.update_bid, [
             ct_email,
             owner_email,
             pet_name,
             start_date,
-            "success"
+            bid.bid_status,
+            bid.rating,
+            bid.feedback,
         ]);
         const response: StringResponse = {
-            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been updated `,
+            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been updated. The new status is ${bid.bid_status}.`,
             error: ""
         };
         res.send(response);

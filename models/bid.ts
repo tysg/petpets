@@ -8,6 +8,10 @@ export interface CtStatusAndSpecializes {
     caretaker_status: number;
 }
 
+export interface PetCategory {
+    pet_category: string;
+}
+
 export type CreateBidRequest = Pick<
     Bid,
     | "ct_email"

@@ -140,6 +140,22 @@ CREATE TRIGGER close_pt_bid
 AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
+CREATE OR REPLACE FUNCTION prevent_update_bid()
+RETURNS TRIGGER AS
+$t$
+BEGIN
+	IF OLD.bid_status = 'closed' THEN
+		RAISE EXCEPTION 'The bid is already closed';
+	ELSE
+		RETURN NEW;
+	END IF;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER prevent_bid
+BEFORE UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE prevent_update_bid();
+
 
 -- for debugging
 DROP TABLE IF EXISTS count_limit;
