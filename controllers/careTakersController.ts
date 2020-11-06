@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
+    MonthlyPayment,
     CareTaker,
     CareTakerDetails,
     SearchResponse,
@@ -9,6 +10,8 @@ import {
     IndexResponse,
     GetResponse,
     StringResponse,
+    MonthlyPaymentsResponse,
+    CaretakerStatus,
     CareTakerSchema,
     SpecializesInSchema,
     CareTakerSpecializesDetailsSchema,
@@ -17,7 +20,11 @@ import {
     CareTakerSpecializesInCategory
 } from "../models/careTaker";
 import { asyncQuery, asyncTransaction } from "./../utils/db";
-import { caretaker_query, specializes_query } from "./../sql/sql_query";
+import {
+    caretaker_query,
+    payments_query,
+    specializes_query
+} from "./../sql/sql_query";
 import { log } from "./../utils/logging";
 import * as yup from "yup";
 
@@ -47,6 +54,43 @@ const mapSearchResponse = (r: any) => ({
     typeName: r.typename,
     ctPriceDaily: r.ctpricedaily
 });
+
+export const payments = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.params;
+        // TODO check jwt email same as req.params.email
+        const ctQueryResult: QueryResult<CareTakerDetails> = await asyncQuery(
+            caretaker_query.get_caretaker,
+            [email]
+        );
+
+        const careTakerDetails = mapCareTakerAttr(ctQueryResult.rows[0]);
+        const paymentQuery =
+            careTakerDetails.caretakerStatus == CaretakerStatus.partTimeCt
+                ? payments_query.get_pt_caretaker_payments
+                : payments_query.get_ft_caretaker_payments;
+
+        const ctPaymentQuery: QueryResult<MonthlyPayment> = await asyncQuery(
+            paymentQuery,
+            [email]
+        );
+
+        const response: MonthlyPaymentsResponse = {
+            data: {
+                monthly_payment: ctPaymentQuery.rows
+            },
+            error: ""
+        };
+        res.send(response);
+    } catch (error) {
+        log.error("get pet error", error);
+        const response: StringResponse = {
+            data: "",
+            error: error
+        };
+        res.status(400).send(response);
+    }
+};
 
 export const index = async (req: Request, res: Response) => {
     try {
@@ -170,7 +214,7 @@ const create = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
         const createQuery =
-            ctStatus == 1
+            ctStatus == CaretakerStatus.partTimeCt
                 ? caretaker_query.create_part_time_ct
                 : caretaker_query.create_part_time_ct;
         await asyncQuery(createQuery, [caretaker.email]);
@@ -206,7 +250,7 @@ const update = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
         const query =
-            ctStatus == 1
+            ctStatus == CaretakerStatus.partTimeCt
                 ? specializes_query.set_pt_specializes
                 : specializes_query.set_ft_specializes;
 
@@ -239,8 +283,8 @@ const update = (ctStatus: number) => async (req: Request, res: Response) => {
     }
 };
 
-export const createPartTimer = create(1);
-export const createFullTimer = create(2);
+export const createPartTimer = create(CaretakerStatus.partTimeCt);
+export const createFullTimer = create(CaretakerStatus.fullTimeCt);
 
-export const updatePartTimer = update(1);
-export const updateFullTimer = update(2);
+export const updatePartTimer = update(CaretakerStatus.partTimeCt);
+export const updateFullTimer = update(CaretakerStatus.fullTimeCt);

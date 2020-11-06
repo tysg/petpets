@@ -1,5 +1,4 @@
-
--- Non-overlapping constraints for caretaker
+ -- Non-overlapping constraints for caretaker
 
 -- NOTE, functions not allowed to take parameters when used in triggers, so no choice. 
 -- WAC, lots of dasani
