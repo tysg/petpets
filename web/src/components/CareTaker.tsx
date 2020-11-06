@@ -36,6 +36,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                     })
                     .catch((err) => {
                         console.log("There are no bids for this user");
+                        console.log(err.response.data.err);
                     });
             })
             .catch((err) => {
