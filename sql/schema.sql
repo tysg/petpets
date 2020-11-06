@@ -119,7 +119,6 @@ CREATE TABLE bid (
 	transport_method transport_method NOT NULL,
 	pet_owner varchar(64),
 	pet_name varchar(64),
-	pet_category varchar(64) REFERENCES pet_category(type_name),
 	bid_status bid_status NOT NULL,
 	feedback text DEFAULT NULL,
 	rating int DEFAULT NULL,
