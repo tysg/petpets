@@ -58,10 +58,19 @@ const PET_CATEGORY_ENDPOINT = "/api/petCategories";
 export const pets = {
     getCategories: (): Promise<AxiosResponse<PetCategoriesResponse>> =>
         axios.get(PET_CATEGORY_ENDPOINT, authHeaderConfig),
-    putCategory: (
+    postCategory: (
         data: PetCategory
     ): Promise<AxiosResponse<PetCategoriesResponse>> =>
-        axios.put(PET_CATEGORY_ENDPOINT, data, authHeaderConfig),
+        axios.post(PET_CATEGORY_ENDPOINT, data, authHeaderConfig),
+    patchCategory: (
+        oldData: PetCategory,
+        newData: PetCategory
+    ): Promise<AxiosResponse<PetCategoriesResponse>> =>
+        axios.patch(
+            PET_CATEGORY_ENDPOINT + `/${oldData.typeName}`,
+            newData,
+            authHeaderConfig
+        ),
     removeCategory: ({
         typeName
     }: PetCategory): Promise<AxiosResponse<StringResponse>> =>

@@ -46,14 +46,15 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
             </Route>
             <CareTakerRoute
                 path={`${path}/upcoming`}
-                component={Assignments}
                 careTakerDetails={careTaker}
-            ></CareTakerRoute>
+            >
+                <Assignments dataSource={bids} predicate={() => true} />
+            </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/pending`}
                 careTakerDetails={careTaker}
             >
-                <Assignments dataSource={bids} />
+                <Assignments dataSource={bids} predicate={() => true} />
             </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/pastjobs`}

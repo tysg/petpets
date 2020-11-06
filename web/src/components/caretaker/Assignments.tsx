@@ -44,10 +44,12 @@ const IconText = (props: IconTextProps) => {
 
 interface AssignmentsProps {
     dataSource: Bid[];
+    predicate: (bid: Bid) => boolean;
 }
 
 const Assignments = (props: AssignmentsProps) => {
-    const { dataSource } = props;
+    const { dataSource, predicate } = props;
+    const renderedData = dataSource.filter(predicate);
     return (
         <List
             itemLayout="vertical"
