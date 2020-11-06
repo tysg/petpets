@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
+    BidPeriod,
     CtPrice,
     CtStatus,
     Bid,
@@ -14,11 +15,12 @@ import { CaretakerStatus } from "../models/careTaker";
 import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
+import moment from "moment";
+import { exception } from "console";
 
 export const owner_get = async (req: Request, res: Response) => {
     try {
         const { owner_email } = req.params;
-        console.log([owner_email]);
         const qr: QueryResult<Bid> = await asyncQuery(
             bid_query.owner_get_bids,
             [owner_email]
@@ -89,6 +91,11 @@ export const remove = async (req: Request, res: Response) => {
         };
         res.status(400).send(response);
     }
+};
+
+export const test = async (req: Request, res: Response) => {
+    const { startDate, endDate } = req.body;
+    res.send(moment(startDate));
 };
 
 export const create = async (req: Request, res: Response) => {

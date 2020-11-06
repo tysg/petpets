@@ -39,7 +39,8 @@ export interface Bid {
     pet_name: string;
     pet_category: string;
     bid_status: BidStatus;
-    feedback: string;
+    feedback: Text;
+    rating: number;
 }
 
 export const sqlify = (bid: Bid) => [
@@ -54,8 +55,16 @@ export const sqlify = (bid: Bid) => [
     bid.pet_name,
     bid.pet_category,
     bid.bid_status,
-    bid.feedback
+    bid.feedback,
+    bid.rating
 ];
+
+export interface BidPeriod {
+    ct_email: string;
+    ct_status: number;
+    start_date: Date;
+    end_date: Date;
+}
 
 export const sqlify_price_query = (arg1: string, arg2: string) => [arg1, arg2];
 
