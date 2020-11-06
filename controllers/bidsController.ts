@@ -21,7 +21,6 @@ import { exception } from "console";
 export const owner_get = async (req: Request, res: Response) => {
     try {
         const { owner_email } = req.params;
-        console.log([owner_email]);
         const qr: QueryResult<Bid> = await asyncQuery(
             bid_query.owner_get_bids,
             [owner_email]
@@ -117,7 +116,6 @@ export const create = async (req: Request, res: Response) => {
         bid.bid_status =
             ctStatus === CaretakerStatus.partTimeCt ? "submitted" : "confirmed";
         bid.ct_price = ctPrice;
-        console.log(bid);
 
         await asyncQuery(bid_query.create_bid, sqlify(bid));
         const response: BidResponse = {
