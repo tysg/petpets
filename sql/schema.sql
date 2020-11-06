@@ -105,10 +105,6 @@ CREATE TABLE ft_leave_schedule (
 	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
 
-CREATE VIEW pet_owner (email, pet_name) AS (
-	SELECT email, name as pet_name
-	FROM person NATURAL JOIN pet
-);
 
 CREATE TABLE bid (
 	ct_email varchar(64) REFERENCES person(email),
