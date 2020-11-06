@@ -26,11 +26,11 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
         careTakerApi
             .getCareTaker()
             .then((res) => {
-                const careTaker = res.data;
+                const careTaker = res.data.data;
                 setCareTaker(careTaker);
                 // TODO: get all bids for this caretaker
                 bidApi
-                    .getForCareTaker(careTaker.email)
+                    .getForCareTaker()
                     .then((res) => {
                         setBids(res.data.data);
                     })

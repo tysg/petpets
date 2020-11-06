@@ -20,6 +20,7 @@ import {
 } from "./../../../models/careTaker";
 import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
 import { Moment } from "moment";
+import { ApiResponse } from "../../../models";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = getToken();
@@ -136,16 +137,16 @@ export const bid = {
         // return Promise.reject();
         return post(`/api/bids`, body);
     },
-    getForCareTaker: (
-        email: string
-    ): Promise<AxiosResponse<CareTakerResponse>> => {
+    getForCareTaker: (): Promise<AxiosResponse<CareTakerResponse>> => {
         return get("/api/bids/caretaker/" + email);
     }
 };
 
 const CARETAKER_ENDPOINT = "/api/caretakers/";
 export const careTaker = {
-    getCareTaker: (): Promise<AxiosResponse<CareTakerSpecializesDetails>> => {
+    getCareTaker: (): Promise<
+        AxiosResponse<ApiResponse<CareTakerSpecializesDetails, string>>
+    > => {
         return get(CARETAKER_ENDPOINT + email);
     },
     newFulltimer: (
