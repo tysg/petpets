@@ -7,6 +7,26 @@ export enum CaretakerStatus {
     fullTimeCt = 2
 }
 
+/**
+ * GET api/caretakers/payment
+ */
+export interface MonthlyPayment {
+    month_year: Date;
+    bonus: number;
+    full_pay: number;
+}
+
+/**
+ * GET api/caretakers/payment
+ */
+export interface CareTakerPayment {
+    monthly_payment: MonthlyPayment[];
+}
+
+export interface SpecializesIn {
+    typeName: string;
+    ctPriceDaily: number;
+}
 export const SpecializesInSchema: yup.ObjectSchema<SpecializesIn> = yup
     .object({
         typeName: yup.string().defined(),
@@ -83,6 +103,11 @@ export const CareTakerSpecializesDetailsSchema: yup.ObjectSchema<CareTakerSpecia
     })
     .concat(CareTakerDetailsSchema)
     .defined();
+
+/**
+ * GET api/caretakers/payment
+ */
+export type MonthlyPaymentsResponse = ApiResponse<CareTakerPayment, string>;
 
 /**
  * GET api/caretakers/
