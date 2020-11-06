@@ -38,9 +38,10 @@ INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-12-30', '2021-01-0
 INSERT INTO bid VALUES('ftct@gmail.com', '50', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'Dog', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Apple', 'Cat', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'Dog', 'confirmed', '');
+INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Brandt_Metz10@yahoo.com', 'Jailyn', 'Dog', 'confirmed', '');
 INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-05', '2020-09-08', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'Dog', 'submitted', '');
 INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'Dog', 'submitted', '');
-INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'Dog', 'confirmed', '');
+-- INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'Dog', 'confirmed', '');
 INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'Dog', 'submitted', '');
 INSERT INTO bid VALUES('ptct2@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'Dog', 'confirmed', '');
 

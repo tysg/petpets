@@ -117,26 +117,7 @@ export const create = async (req: Request, res: Response) => {
         bid.bid_status =
             ctStatus === CaretakerStatus.partTimeCt ? "submitted" : "confirmed";
         bid.ct_price = ctPrice;
-
-        const overlappingBidRows: QueryResult<BidPeriod> = await asyncQuery(
-            bid_query.get_overlapping_bids,
-            [bid.ct_email, bid.start_date, bid.end_date]
-        );
-
-        const petLimit = 5; // TODO remove hard code
-        const overlappingBids = overlappingBidRows.rows;
-        const bidStart = moment(bid.start_date);
-        const bidEnd = moment(bid.end_date);
-        for (let m = bidStart; m.isBefore(bidEnd); m.add(1, "days")) {
-            const overlapDay = overlappingBids.filter(
-                (b) =>
-                    m.isBetween(moment(b.start_date), moment(b.end_date)) ||
-                    m.isSame(moment(b.start_date)) ||
-                    m.isSame(moment(b.end_date))
-            );
-            if (overlapDay.length > petLimit)
-                throw `${petLimit} for careTaker ${bid.ct_email} reached!`;
-        }
+        console.log(bid);
 
         await asyncQuery(bid_query.create_bid, sqlify(bid));
         const response: BidResponse = {
