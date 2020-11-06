@@ -59,7 +59,7 @@ export const caretaker_query = {
             ) as free_sched
             WHERE EXISTS (
                 SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
-            ) 
+            )
         ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
     `,
     delete_caretaker: [
@@ -190,9 +190,12 @@ export const bid_query = {
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
         WHERE email= $1 AND type_name= $2`,
-    query_role: `SELECT caretaker_status 
+    query_price_role: `SELECT caretaker_status, ct_price_daily
         FROM caretaker 
-        WHERE email = $1`,
+        NATURAL JOIN specializes_in 
+        NATURAL JOIN 
+        (select category as type_name FROM pet where name=$2 AND owner=$3) as ownerpet
+        WHERE email=$1`,
     create_bid: `
     INSERT INTO bid VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)

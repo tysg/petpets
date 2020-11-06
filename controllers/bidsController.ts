@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
-    CtPrice,
-    CtStatus,
+    BidPeriod,
+    CtStatusAndSpecializes,
     Bid,
     OwnerResponse,
     CareTakerResponse,
@@ -14,11 +14,12 @@ import { CaretakerStatus } from "../models/careTaker";
 import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
+import moment from "moment";
+import { exception } from "console";
 
 export const owner_get = async (req: Request, res: Response) => {
     try {
         const { owner_email } = req.params;
-        console.log([owner_email]);
         const qr: QueryResult<Bid> = await asyncQuery(
             bid_query.owner_get_bids,
             [owner_email]
@@ -91,21 +92,21 @@ export const remove = async (req: Request, res: Response) => {
     }
 };
 
+export const test = async (req: Request, res: Response) => {
+    const { startDate, endDate } = req.body;
+    res.send(moment(startDate));
+};
+
 export const create = async (req: Request, res: Response) => {
     try {
         var bid: Bid = req.body;
-        const priceRow: QueryResult<CtPrice> = await asyncQuery(
-            bid_query.query_price,
-            [bid.ct_email, bid.pet_category]
+        const priceStatusRow: QueryResult<CtStatusAndSpecializes> = await asyncQuery(
+            bid_query.query_price_role,
+            [bid.ct_email, bid.pet_name, bid.pet_owner]
         );
 
-        const roleRow: QueryResult<CtStatus> = await asyncQuery(
-            bid_query.query_role,
-            [bid.ct_email]
-        );
-
-        const ctPrice = priceRow.rows[0].ct_price_daily;
-        const ctStatus = roleRow.rows[0].caretaker_status;
+        const ctPrice = priceStatusRow.rows[0].ct_price_daily;
+        const ctStatus = priceStatusRow.rows[0].caretaker_status;
         bid.bid_status =
             ctStatus === CaretakerStatus.partTimeCt ? "submitted" : "confirmed";
         bid.ct_price = ctPrice;

@@ -22,12 +22,13 @@ const getCareTakerStatus = (s: number) => {
 const NameAndRating = (props: CareTakerSpecializesInCategory) => {
     // rating rounded the lower 0.5
     return (
-        <Space size="middle">
-            <>{props.fullname}</>
+        <Space size="small" direction="vertical">
+            {props.fullname}
             <Rate
                 disabled
                 allowHalf
                 defaultValue={Math.floor(props.rating * 2) / 2}
+                // defaultValue={4.5}
             />
         </Space>
     );

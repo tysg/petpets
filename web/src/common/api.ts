@@ -50,9 +50,7 @@ export const user = {
     verify: () => axios.post("/api/verifyToken", token, authHeaderConfig),
     post: (endpoint: string, data: any) =>
         axios.post("/api" + endpoint, data, authHeaderConfig),
-    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig),
-    getCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
-        axios.get(`/api/credit_cards/${email}`)
+    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
 };
 
 const PET_CATEGORY_ENDPOINT = "/api/petCategories";

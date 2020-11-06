@@ -3,11 +3,8 @@ import { ApiResponse } from "./index";
 export type BidStatus = "submitted" | "confirmed" | "reviewed" | "closed";
 export type TransportMethod = "delivery" | "pickup" | "pcs";
 
-export interface CtPrice {
+export interface CtStatusAndSpecializes {
     ct_price_daily: number;
-}
-
-export interface CtStatus {
     caretaker_status: number;
 }
 
@@ -16,7 +13,6 @@ export type CreateBidRequest = Pick<
     | "ct_email"
     | "pet_owner"
     | "pet_name"
-    | "pet_category"
     | "ct_price"
     | "start_date"
     | "end_date"
@@ -37,9 +33,9 @@ export interface Bid {
     transport_method: TransportMethod;
     pet_owner: string;
     pet_name: string;
-    pet_category: string;
     bid_status: BidStatus;
-    feedback: string;
+    feedback: Text;
+    rating: number;
 }
 
 export const sqlify = (bid: Bid) => [
@@ -52,10 +48,17 @@ export const sqlify = (bid: Bid) => [
     bid.transport_method,
     bid.pet_owner,
     bid.pet_name,
-    bid.pet_category,
     bid.bid_status,
-    bid.feedback
+    bid.feedback,
+    bid.rating
 ];
+
+export interface BidPeriod {
+    ct_email: string;
+    ct_status: number;
+    start_date: Date;
+    end_date: Date;
+}
 
 export const sqlify_price_query = (arg1: string, arg2: string) => [arg1, arg2];
 

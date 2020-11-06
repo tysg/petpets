@@ -55,6 +55,12 @@ const mapSearchResponse = (r: any) => ({
     ctPriceDaily: r.ctpricedaily
 });
 
+const mapMonthlyPayments = (r: any): MonthlyPayment => ({
+    monthYear: r.month_year,
+    bonus: r.bonus,
+    fullPay: r.full_pay
+});
+
 export const payments = async (req: Request, res: Response) => {
     try {
         const { email } = req.params;
@@ -75,9 +81,13 @@ export const payments = async (req: Request, res: Response) => {
             [email]
         );
 
+        const ctPaymentData = ctPaymentQuery.rows.map((r) =>
+            mapMonthlyPayments(r)
+        );
+
         const response: MonthlyPaymentsResponse = {
             data: {
-                monthly_payment: ctPaymentQuery.rows
+                monthly_payment: ctPaymentData
             },
             error: ""
         };
