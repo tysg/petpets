@@ -90,37 +90,8 @@ const ptPaymentMonthly = `
     HAVING endmonth <= CURRENT_DATE
 `;
 
-// const ftPaymentMonthly = `
-// select count(*) as pet_days, sum(ct_price) as bonus, mm, yy FROM (
-// 	select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
-// 	(select
-// 		pet_owner,
-// 		pet_name,
-// 		ct_email,
-// 		ct_price,
-// 		to_char(ac.date,'DD') as dd,
-// 		to_char(ac.date,'MM') as mm,
-// 		extract(year from ac.date) as yy,
-// 		date
-// 		FROM
-// 		(select
-// 			generate_series(
-// 				date_trunc('month', startend.sd),
-// 				startend.ed, '1 day'
-// 			)::date as date
-// 			from
-// 			(select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1 AND end_date <= CURRENT_DATE AND bid_status='confirmed') as startend
-// 			order by 1
-// 		) as ac, (select * FROM bid WHERE ct_email=$1) as p
-// 		where ac.Date >= p.start_date and ac.Date <= p.end_date
-// 		ORDER BY ac.date) as monthdates
-// 	) ranked
-//     WHERE ranked.r > 60
-// 	group by mm, yy;
-// `;
-
 const ftPaymentMonthly = `
-select sum(rank_price)+3000 as fullpay, sum(rank_price) as bonus, mm, yy FROM
+select sum(rank_price)+3000 as fullpay, sum(rank_price) as bonus, concat(mm, '-', yy) FROM
     (select CASE WHEN ranked.r > 60 THEN 
                 ct_price
             ELSE 0
@@ -156,7 +127,7 @@ export const payments_query = {
 
 export const admin_query = {
     get_bids_by_month: `
-        select sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75, endmonth from 
+        select sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price), endmonth from 
             (select                                                                              
                 generate_series(
                     date_trunc('month', startend.sd),
@@ -219,3 +190,32 @@ export const bid_query = {
 };
 
 export default { user_query, pet_query, credit_card_query };
+
+// const ftPaymentMonthly = `
+// select count(*) as pet_days, sum(ct_price) as bonus, mm, yy FROM (
+// 	select ct_price, dd, mm, yy, ROW_NUMBER() over (partition by mm, yy order by concat(date, ct_price, pet_owner, pet_name, ct_email) asc) as r FROM
+// 	(select
+// 		pet_owner,
+// 		pet_name,
+// 		ct_email,
+// 		ct_price,
+// 		to_char(ac.date,'DD') as dd,
+// 		to_char(ac.date,'MM') as mm,
+// 		extract(year from ac.date) as yy,
+// 		date
+// 		FROM
+// 		(select
+// 			generate_series(
+// 				date_trunc('month', startend.sd),
+// 				startend.ed, '1 day'
+// 			)::date as date
+// 			from
+// 			(select min(start_date) as sd, max(end_date) as ed from bid WHERE ct_email=$1 AND end_date <= CURRENT_DATE AND bid_status='confirmed') as startend
+// 			order by 1
+// 		) as ac, (select * FROM bid WHERE ct_email=$1) as p
+// 		where ac.Date >= p.start_date and ac.Date <= p.end_date
+// 		ORDER BY ac.date) as monthdates
+// 	) ranked
+//     WHERE ranked.r > 60
+// 	group by mm, yy;
+// `;

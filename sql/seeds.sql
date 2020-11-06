@@ -37,6 +37,7 @@ INSERT INTO bid VALUES('ftct@gmail.com', '20', '2020-10-10', '2020-10-30', 'true
 INSERT INTO bid VALUES('ftct@gmail.com', '50', '2020-10-12', '2020-10-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'dog', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-10-01', '2020-10-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Apple', 'cat', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-08-15', '2020-08-20', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'dog', 'confirmed', '');
+INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-15', '2020-09-20', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'dog', 'confirmed', '');
 
 -- credit cards
 -- Postgresql uses the yyyy-mm-dd format

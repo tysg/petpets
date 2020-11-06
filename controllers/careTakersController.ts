@@ -10,7 +10,8 @@ import {
     IndexResponse,
     GetResponse,
     StringResponse,
-    MonthlyPaymentsResponse
+    MonthlyPaymentsResponse,
+    CaretakerStatus
 } from "../models/careTaker";
 import { asyncQuery, asyncTransaction } from "./../utils/db";
 import {
@@ -30,13 +31,13 @@ export const privateProfile = async (req: Request, res: Response) => {
         );
 
         const careTakerDetails = ctQueryResult.rows[0];
-        const queryMethod =
-            careTakerDetails.caretakerStatus == 1
+        const paymentQuery =
+            careTakerDetails.caretakerStatus == CaretakerStatus.partTimeCt
                 ? payments_query.get_pt_caretaker_payments
-                : payments_query.get_pt_caretaker_payments; // TODO change for fulltimer
+                : payments_query.get_ft_caretaker_payments;
 
         const ctPaymentQuery: QueryResult<MonthlyPayment> = await asyncQuery(
-            payments_query.get_pt_caretaker_payments,
+            paymentQuery,
             [email]
         );
 
@@ -162,7 +163,7 @@ const create = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
         const createQuery =
-            ctStatus == 1
+            ctStatus == CaretakerStatus.partTimeCt
                 ? caretaker_query.create_part_time_ct
                 : caretaker_query.create_part_time_ct;
         await asyncQuery(createQuery, [caretaker.email]);
@@ -198,7 +199,7 @@ const update = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
         const query =
-            ctStatus == 1
+            ctStatus == CaretakerStatus.partTimeCt
                 ? specializes_query.set_pt_specializes
                 : specializes_query.set_ft_specializes;
 
