@@ -8,11 +8,16 @@ import {
     Pet
 } from "./../../../models/pet";
 import {
-    IndexResponse as CareTakerIndexResponse,
+    IndexResponse as CreditCardIndexResponse,
+    CreditCardResponse,
+    StringResponse as CreditCardStringIndexResponse,
+    CreditCard
+} from "./../../../models/creditCard";
+import {
+    CareTakerSpecializesDetails,
     SearchResponse
 } from "./../../../models/careTaker";
-import { IndexResponse as CreditCardIndexResponse } from "./../../../models/creditCard";
-import { CreateBidRequest } from "./../../../models/bid";
+import { CreateBidRequest } from "../../../models/bid";
 import { Moment } from "moment";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
@@ -24,6 +29,12 @@ const authHeaderConfig: AxiosRequestConfig = {
 
 function addOwnerField(pet: Omit<Pet, "owner">): Pet {
     return { ...pet, owner: email };
+}
+
+function addCardHolderField(
+    creditCard: Omit<CreditCard, "cardholder">
+): CreditCard {
+    return { ...creditCard, cardholder: email };
 }
 
 const remove = (endpoint: string) => axios.delete(endpoint, authHeaderConfig);
@@ -87,11 +98,41 @@ export const pets = {
     }
 };
 
+export const creditCards = {
+    getUserCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
+        get(`/api/creditCards/${email}`),
+    postCreditCard: (
+        creditCard: Omit<CreditCard, "cardholder">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return post(`/api/creditCards`, addCardHolderField(creditCard));
+    },
+    putCreditCard: (
+        creditCard: Omit<CreditCard, "cardholder">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return patch(
+            `/api/creditCards/${email}/${creditCard.cardNumber}`,
+            addCardHolderField(creditCard)
+        );
+    },
+    deleteCreditCard: (
+        creditCard: Omit<CreditCard, "cardholder">
+    ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
+        return remove(`/api/creditCards/${email}/${creditCard.cardNumber}`);
+    }
+};
+
 export const bid = {
     createBid: (body: CreateBidRequest) => {
         console.log(body);
         // return Promise.resolve();
         // return Promise.reject();
         return post(`/api/bids`, body);
+    }
+};
+
+const CARETAKER_ENDPOINT = "/api/caretakers/";
+export const careTaker = {
+    getCareTaker: (): Promise<AxiosResponse<CareTakerSpecializesDetails>> => {
+        return get(CARETAKER_ENDPOINT + email);
     }
 };

@@ -4,7 +4,7 @@ import { LaptopOutlined } from "@ant-design/icons";
 import { Link, RouteComponentProps, useRouteMatch } from "react-router-dom";
 import ResponsiveSidebar from "./ResponsiveSidebar";
 
-const { SubMenu } = Menu;
+const { ItemGroup } = Menu;
 
 const AdminSidebar = (props: RouteComponentProps) => {
     const { path } = useRouteMatch();
@@ -14,7 +14,7 @@ const AdminSidebar = (props: RouteComponentProps) => {
             defaultOpen="admin"
             defaultSelected="settings"
         >
-            <SubMenu key="admin" icon={<LaptopOutlined />} title="Admin">
+            <ItemGroup key="admin" title="Admin">
                 {/* <Menu.Item key="default">
                     <Link to={`${path}/`}>Welcome</Link>
                 </Menu.Item> */}
@@ -24,7 +24,7 @@ const AdminSidebar = (props: RouteComponentProps) => {
                 <Menu.Item key="summary">
                     <Link to={`${path}/summary`}>Summary</Link>
                 </Menu.Item>
-            </SubMenu>
+            </ItemGroup>
         </ResponsiveSidebar>
     );
 };
