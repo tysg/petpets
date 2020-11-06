@@ -340,19 +340,25 @@ BEGIN
 
 	select COUNT(*) INTO count_150 FROM ( 
 		select *, row_number() over (partition by 1) as r1 from (
-				select end_date as ed1,start_date as sd1 from (
-				SELECT * FROM ft_leave_schedule f1
-				WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date DESC offset 1
-				) as dsc order by start_date asc
-			) as ord1,
-			(select *, row_number() over (partition by 1) as r2 from (
-			select end_date as ed2,start_date as sd2 FROM ft_leave_schedule f2
-			WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date ASC offset 1) as ord2) as c
+			select Date('2020-01-01') as sd1, (Date('2020'||'-01-01')-'1 day'::interval) as ed1
+			union
+			select start_date as sd1, end_date as ed1 from (
+			SELECT * FROM ft_leave_schedule f1
+			WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date DESC offset 1
+			) as dsc order by sd1 asc
+		) as ord1,
+		(select *, row_number() over (partition by 1) as r2 from (
+
+		union
+		select end_date as ed2,start_date as sd2 FROM ft_leave_schedule f2
+		WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date ASC offset 1) as ord2) as c
 	) as cc
 	where cc.r1=cc.r2
-	AND (cc.sd2-cc.ed1 >= 150 OR cc.sd2-cc.ed1 >= 300);
+	AND (cc.sd2-cc.ed1 >= 150;
 
-	select COUNT(*) INTO count_300 FROM ( 
+
+	
+	select COUNT(*) FROM ( 
 	select *, row_number() over (partition by 1) as r1 from (
 			select end_date as ed1,start_date as sd1 from (
 			SELECT * FROM ft_leave_schedule f1
@@ -362,6 +368,26 @@ BEGIN
 		(select *, row_number() over (partition by 1) as r2 from (
 		select end_date as ed2,start_date as sd2 FROM ft_leave_schedule f2
 		WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date ASC offset 1) as ord2) as c
+	) as cc
+	where cc.r1=cc.r2
+	AND cc.sd2-cc.ed1 >= 300;
+
+
+	select * FROM ( 
+	select *, row_number() over (partition by 1) as r1 from (
+			select Date('2020-01-01') as sd1, (Date('2020'||'-01-01')-'1 day'::interval) as ed1
+			union
+			select start_date as sd1, end_date as ed1 from (
+			SELECT * FROM ft_leave_schedule f1
+			WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date ASC
+			) as dsc
+		) as ord1,
+		(
+			select *, row_number() over (partition by 1) as r2 from (
+				select  (Date('2020'||'-01-01')+'1 year'::interval) as sd2, Date('2020-01-01') as ed2
+				union
+				(select start_date as sd2, end_date as ed2 FROM ft_leave_schedule f2
+				WHERE email='ftct@gmail.com' AND start_date >= Date('2020'||'-01-01') order by start_date ASC)) as ord2) as c
 	) as cc
 	where cc.r1=cc.r2
 	AND cc.sd2-cc.ed1 >= 300;
