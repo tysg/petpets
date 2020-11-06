@@ -42,7 +42,7 @@ FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 -- TODO set constraint for bids for schedule -> can't bid for leave
 -- TODO set constraint for schedule with bids -> can't take leave if bids
 -- TODO declare availability only for next year as well (for part timers)
-
+-- TODO set constraint on not updating bid if 'closed'
 
 -- CREATE OR REPLACE FUNCTION ft_rating()
 -- RETURNS TRIGGER AS 
