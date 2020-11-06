@@ -148,7 +148,7 @@ export const getCategories = async (req: Request, res: Response) => {
 export const putCategory = async (req: Request, res: Response) => {
     const { typeName, baseDailyPrice } = req.body;
     try {
-        const qr = await asyncQuery(pet_query.select_pet_category, [typeName]);
+        const qr = await asyncQuery(pet_query.get_pet_category, [typeName]);
         const { rows } = qr;
 
         if (rows[0]) {

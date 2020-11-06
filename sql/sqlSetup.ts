@@ -13,7 +13,7 @@ const pool = new pg.Pool({
 
 // console.log(seedString);
 
-pool.query(schema + triggers + seed + genSeed, (err, res) => {
+pool.query(schema + triggers + genSeed + seed, (err, res) => {
     if (err) {
         console.log("Setup database failed: ", err);
         pool.end(() => {
