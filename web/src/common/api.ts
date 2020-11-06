@@ -17,7 +17,7 @@ import {
     CareTakerSpecializesDetails,
     SearchResponse
 } from "./../../../models/careTaker";
-import { CreateBidRequest } from "../../../models/bid";
+import { CreateBidRequest, Bid } from "../../../models/bid";
 import { Moment } from "moment";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
@@ -136,6 +136,9 @@ export const bid = {
         // return Promise.resolve();
         // return Promise.reject();
         return post(`/api/bids`, body);
+    },
+    getForCareTaker: (email: string): Promise<AxiosResponse<Bid[]>> => {
+        return get("/api/bids/caretaker/" + email);
     }
 };
 
