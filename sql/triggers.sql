@@ -137,7 +137,7 @@ END;
 $t$ LANGUAGE PLpgSQL;
 
 CREATE TRIGGER close_pt_bid
-BEFORE INSERT OR UPDATE ON bid
+AFTER INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
 
@@ -171,7 +171,7 @@ BEGIN
 						date_trunc('month', NEW.start_date),
 						NEW.end_date, '1 day'
 					)::date as date
-			) as ac, (select * FROM bid WHERE ct_email='ptct@gmail.com') as p
+			) as ac, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
 			where ac.Date >= p.start_date and ac.Date <= p.end_date 
 		ORDER BY ac.date) as overlapDates
 	group by overlapDates.date
