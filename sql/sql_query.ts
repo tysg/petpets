@@ -70,10 +70,10 @@ export const caretaker_query = {
 
 const ptPaymentMonthly = `
     SELECT 
-        sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75 as full_pay,
+        sum( (least(ct_bid.end_date, endmonth) + 1 - greatest(ct_bid.start_date, startmonth)) * ct_price) * 0.75 as full_pay,
         to_char(startmonth, 'YYYY-MM') as month_year
-        FROM (SELECT                                                                              
-            generate_series(
+        FROM (
+            SELECT generate_series(
                 date_trunc('month', startend.sd),
                 startend.ed, '1 month'
             )::date AS startmonth,
@@ -82,17 +82,16 @@ const ptPaymentMonthly = `
                 startend.ed, '1 month'
             ) + interval '1 month' - interval '1 day' )::date AS endmonth
             FROM
-            (SELECT min(start_date) AS sd, max(end_date) AS ed 
-            FROM bid 
-            WHERE ct_email=$1 AND bid_status='confirmed') AS startend
-            ORDER BY 1
-    ) AS monthly, bid 
-    WHERE bid.start_date <= monthly.endmonth
-    AND bid.ct_email=$1
-    AND monthly.startmonth <= bid.end_date
-    AND bid.bid_status = 'confirmed'
-    GROUP BY monthly.endmonth, monthly.startmonth
-    HAVING monthly.endmonth <= CURRENT_DATE
+                (SELECT min(start_date) AS sd, max(end_date) as ed
+                FROM bid 
+                WHERE ct_email=$1 AND bid_status='confirmed') AS startend
+                ORDER BY sd
+        ) AS monthly, (SELECT * FROM bid WHERE bid.ct_email=$1 AND bid.bid_status='confirmed') as ct_bid
+        WHERE ct_bid.start_date <= monthly.endmonth
+        AND monthly.startmonth <= ct_bid.end_date
+        AND ct_bid.start_date <= CURRENT_DATE
+        GROUP BY monthly.endmonth, monthly.startmonth
+        HAVING monthly.endmonth <= CURRENT_DATE
 `;
 
 const ftPaymentMonthly = `
