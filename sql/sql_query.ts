@@ -65,7 +65,28 @@ export const caretaker_query = {
     delete_caretaker: [
         `DELETE FROM part_time_ct where email=$1`,
         `DELETE FROM full_time_ct where email=$1`
-    ]
+    ],
+    pet_limit_check: `
+        select count(*) as t FROM 
+            (select
+                dates.date
+                from (
+                    select
+                        generate_series(
+                            date_trunc('month', Date($2)),
+                            Date($3), '1 day'
+                        )::date as date
+                ) as dates, (select * FROM bid WHERE ct_email=$1) as p
+                where dates.date >= p.start_date and dates.date <= p.end_date 
+            ORDER BY dates.date) as overlapDates
+        group by overlapDates.date
+        having count(*) > 
+        (select 
+            case 
+                when caretaker_status=2 OR rating > 4 then 4
+                else 1 end
+            from caretaker where email=$1)
+    `
 };
 
 const ptPaymentMonthly = `
