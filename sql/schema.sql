@@ -93,6 +93,7 @@ CREATE TABLE pt_free_schedule (
 	email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
+	CONSTRAINT pt_schedule_id PRIMARY KEY (email, start_date, end_date),
 	CONSTRAINT end_after_start CHECK (end_date >= start_date),
 	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
@@ -101,6 +102,7 @@ CREATE TABLE ft_leave_schedule (
 	email varchar(64) REFERENCES full_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
+	CONSTRAINT ft_schedule_id PRIMARY KEY (email, start_date, end_date),
 	CONSTRAINT end_after_start CHECK (end_date >= start_date),
 	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
