@@ -123,7 +123,7 @@ CREATE TABLE bid (
 	rating int DEFAULT NULL,
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number),
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name),
-	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date),
+	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date, end_date),
 	CONSTRAINT valid_date CHECK(end_date >= start_date),
 	CONSTRAINT xor_cash_credit CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
 );
