@@ -627,7 +627,8 @@ user type:
   Users cannot register for an account if their email already exists in
   the database
 \item
-  Users have a role that must be ``admin'' or ``user''
+  Users have a role that must be \passthrough{\lstinline!admin!} or
+  \passthrough{\lstinline!user!}
 \end{enumerate}
 
 \hypertarget{pet}{%
@@ -652,8 +653,6 @@ user type:
 \item
   Must reference a user account
 \item
-  Must be either full-time or part-time, not both
-\item
   A Care Taker's rating is a floating point number between 1 and 5 that
   is the average of all the ratings that he/she has received
 \end{enumerate}
@@ -673,21 +672,22 @@ user type:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{1}
 \tightlist
 \item
-  Bids have a status of \{`submitted', `confirmed', `reviewed',
-  `closed'\}
+  Bids have a status of \{\passthrough{\lstinline!submitted!},
+  \passthrough{\lstinline!confirmed!},
+  \passthrough{\lstinline!reviewed!}, \passthrough{\lstinline!closed!}\}
 
   \begin{enumerate}
   \def\labelenumii{\arabic{enumii}.}
   \tightlist
   \item
-    The necessity of `submitted' is due to the option for Part Timers to
-    reject the bid
+    The necessity of \passthrough{\lstinline!submitted!} is due to the
+    option for Part Timers to reject the bid
   \end{enumerate}
 \item
-  A Bid's transport method is either ``delivery'', ``pickup'', ``pcs''
+  A Bid's transport method is either \passthrough{\lstinline!delivery!},
+  \passthrough{\lstinline!pickup!}, \passthrough{\lstinline!pcs!}
 \item
   End date cannot be before start date
 \item
@@ -726,11 +726,11 @@ user type:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{3}
 \tightlist
 \item
   A non-overlapping constraint of Part Timers and Full Timers is placed
-  over Care Takers
+  over Care Takers (i.e., Care Takers can either be Part-time or
+  Full-time but not both)
 \end{enumerate}
 
 \hypertarget{bids-1}{%
@@ -738,10 +738,9 @@ user type:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\setcounter{enumi}{4}
 \tightlist
 \item
-  A Bid cannot be updated if it is `closed'
+  A Bid cannot be updated if it is \passthrough{\lstinline!closed!}
 \item
   Pet owners can only make a bid request for a CareTaker during a time
   period if Caretaker is not taking care of more than n pets during any
@@ -827,10 +826,28 @@ constraints, random data needs to be generated procedurally. This is
 done using the node module ``faker'', that provides realistic data such
 as names and email, while also being deterministic once supplied a seed.
 
-For each randomly generated user, * randomly generate 0 - 5 pets from a
-randomly chosen pet category * Randomly generate 3 pets * Randomly
-decide whether the user is a part-time or full-time caretaker * Randomly
-generate 0 - 3 pet categories that the caretaker specializes in
+For each randomly generated user,
+
+\begin{itemize}
+\tightlist
+\item
+  Randomly generate 0 - 5 pets from a randomly chosen pet category
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Randomly generate 3 pets
+  \end{itemize}
+\item
+  Randomly decide whether the user is a part-time or full-time caretaker
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Randomly generate 0 - 3 pet categories that the caretaker
+    specializes in
+  \end{itemize}
+\end{itemize}
 
 \hypertarget{tackling-60-pet-days-in-sql-for-full-timer-monthly-payments}{%
 \subsection{Tackling 60 Pet days in SQL for Full Timer monthly
@@ -865,7 +882,7 @@ first 60 pet days of every month and pay Full Timers accordingly.
 
 \begin{figure}
 \centering
-\includegraphics{./er_diagram.png}
+\includegraphics[width=0.95\textwidth,height=\textheight]{./er_diagram.png}
 \caption{ER Diagram}
 \end{figure}
 
@@ -1060,6 +1077,7 @@ CREATE TABLE pt_free_schedule (
    email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
    start_date date NOT NULL,
    end_date date NOT NULL,
+    CONSTRAINT pt_schedule_id PRIMARY KEY (email, start_date, end_date),
    CONSTRAINT end_after_start CHECK (end_date >= start_date),
    CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
@@ -1163,51 +1181,26 @@ superkeys of the table.
 \item
   Both the Pet Owner and Care Taker should agree on how to transfer the
   Pet, which can only be one of the following three:
-
-  \begin{enumerate}
-  \def\labelenumii{\arabic{enumii}.}
-  \tightlist
-  \item
-    Pet Owner deliver
-  \item
-    Care Taker pick up
-  \item
-    Transfer through the physical building of PCS administrator
-  \end{enumerate}
+\item
+  Pet Owner deliver
+\item
+  Care Taker pick up
+\item
+  Transfer through the physical building of PCS administrator
 \item
   Transaction can only be cash or credit card
 \item
   A Bid can only progress through status via one of the following
   routes:
-
-  \begin{enumerate}
-  \def\labelenumii{\arabic{enumii}.}
-  \tightlist
-  \item
-    Full Timers
-
-    \begin{enumerate}
-    \def\labelenumiii{\arabic{enumiii}.}
-    \tightlist
-    \item
-      \passthrough{\lstinline!confirmed!} \(\rightarrow\)
-      \passthrough{\lstinline!reviewed!}
-    \end{enumerate}
-  \item
-    Part Timers
-
-    \begin{enumerate}
-    \def\labelenumiii{\arabic{enumiii}.}
-    \tightlist
-    \item
-      \passthrough{\lstinline!submitted!} \(\rightarrow\)
-      \passthrough{\lstinline!confirmed!}
-      \(\rightarrow\)\passthrough{\lstinline!reviewed!}
-    \item
-      \passthrough{\lstinline!submitted!} \(\rightarrow\)
-      \passthrough{\lstinline!closed!}
-    \end{enumerate}
-  \end{enumerate}
+\item
+  Full Timers 1. \passthrough{\lstinline!confirmed!} \(\rightarrow\)
+  \passthrough{\lstinline!reviewed!}
+\item
+  Part Timers 1. \passthrough{\lstinline!submitted!} \(\rightarrow\)
+  \passthrough{\lstinline!confirmed!}
+  \(\rightarrow\)\passthrough{\lstinline!reviewed!} 2.
+  \passthrough{\lstinline!submitted!} \(\rightarrow\)
+  \passthrough{\lstinline!closed!}
 \item
   A Full-time Care Taker will receive a salary of \$3000 per month for
   the first 60 pet-days (number of pets taken care of for how many
@@ -1225,7 +1218,7 @@ superkeys of the table.
 Timers}\label{calculating-the-monthly-salary-of-part-timers}}
 
 \begin{lstlisting}[language=SQL]
-SELECT 
+SELECT
    sum( (least(ct_bid.end_date, endmonth) + 1 - greatest(ct_bid.start_date, startmonth)) * ct_price) * 0.75 as full_pay,
    to_char(startmonth, 'YYYY-MM') as month_year
    FROM (
@@ -1239,7 +1232,7 @@ SELECT
       ) + interval '1 month' - interval '1 day' )::date AS endmonth
       FROM
             (SELECT min(start_date) AS sd, max(end_date) as ed
-            FROM bid 
+            FROM bid
             WHERE ct_email=$1 AND bid_status='confirmed') AS startend
             ORDER BY sd
    ) AS monthly, (SELECT * FROM bid WHERE bid.ct_email=$1 AND bid.bid_status='confirmed') as ct_bid
@@ -1277,23 +1270,23 @@ category}\label{searching-for-valid-care-takers-based-on-schedule-and-category}}
 
 \begin{lstlisting}[language=SQL]
 SELECT fullname, phone, address, email, avatar_link as avatarUrl, caretaker_status as caretakerStatus, rating, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
-      SELECT email, $3 as type_name FROM 
-         (SELECT DISTINCT email 
-               FROM pt_free_schedule 
-               WHERE start_date <= $1 AND end_date >= $2
-         UNION
-         SELECT email FROM full_time_ct ftct
-               WHERE NOT EXISTS (
-                  SELECT 1 FROM ft_leave_schedule fts
-                  WHERE fts.email = ftct.email
-                  AND start_date <= $1
-                  AND end_date >= $2
-               )
-         ) as free_sched
-         WHERE EXISTS (
-               SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
-         )
-      ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
+   SELECT email, $3 as type_name FROM 
+      (SELECT DISTINCT email 
+            FROM pt_free_schedule 
+            WHERE start_date <= $1 AND end_date >= $2
+      UNION
+      SELECT email FROM full_time_ct ftct
+            WHERE NOT EXISTS (
+               SELECT 1 FROM ft_leave_schedule fts
+               WHERE fts.email = ftct.email
+               AND start_date <= $1
+               AND end_date >= $2
+            )
+      ) as free_sched
+      WHERE EXISTS (
+            SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
+      )
+   ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
 \end{lstlisting}
 
 \begin{itemize}
@@ -1313,25 +1306,25 @@ SELECT fullname, phone, address, email, avatar_link as avatarUrl, caretaker_stat
   \end{itemize}
 \item
   Then it checks that those Care Takers do specialize in that pet
-  category via type\_name
+  category via \passthrough{\lstinline!type\_name!}
 \end{itemize}
 
 \hypertarget{calculating-full-time-pay}{%
 \subsection{Calculating Full Time Pay}\label{calculating-full-time-pay}}
 
 \begin{lstlisting}[language=SQL]
-SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay, 
-        COALESCE(d4.bonus, 0) AS bonus, 
+SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
+        COALESCE(d4.bonus, 0) AS bonus,
         d3.month AS month_year FROM
-            (SELECT SUM(ct_price)*0.8+3000 AS fullpay, 
-                    SUM(ct_price)*0.8 AS bonus, 
+            (SELECT SUM(ct_price)*0.8+3000 AS fullpay,
+                    SUM(ct_price)*0.8 AS bonus,
                     concat(yy, '-', mm) AS month FROM
-                (SELECT ct_price, dd, mm, yy, 
-                        ROW_NUMBER() OVER (PARTITION BY mm, yy 
+                (SELECT ct_price, dd, mm, yy,
+                        ROW_NUMBER() OVER (PARTITION BY mm, yy
                         ORDER BY concat(date, ct_price, pet_owner, pet_name, ct_email) ASC) AS r FROM
                     (SELECT pet_owner, pet_name, ct_email, ct_price,
-                            to_char(gen_dates.date,'DD') AS dd, 
-                            to_char(gen_dates.date,'MM') AS mm, 
+                            to_char(gen_dates.date,'DD') AS dd,
+                            to_char(gen_dates.date,'MM') AS mm,
                             to_char(gen_dates.date, 'YYYY') AS yy,
                             date FROM
                         (SELECT generate_series(
@@ -1339,22 +1332,22 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
                                     startend.ed, '1 day'
                                 )::date AS date FROM
                             (SELECT min(start_date) AS sd, CURRENT_DATE as ed FROM
-                                bid 
-                                WHERE ct_email=$1 
+                                bid
+                                WHERE ct_email=$1
                             ) AS startend ORDER BY sd
                         ) AS gen_dates, (SELECT * FROM bid WHERE ct_email=$1) AS p
-                        WHERE gen_dates.date >= p.start_date AND gen_dates.date <= p.end_date 
+                        WHERE gen_dates.date >= p.start_date AND gen_dates.date <= p.end_date
                         ORDER BY gen_dates.date
                     ) AS monthdates
                 ) rank_price WHERE r > 60 GROUP BY mm, yy
             ) AS d4
-            RIGHT JOIN 
-            (SELECT                                                                              
+            RIGHT JOIN
+            (SELECT
                     to_char(generate_series(
                         date_trunc('month', startend.sd),
                         startend.ed, '1 month'
                     )::date, 'YYYY-MM') AS month FROM
-                (SELECT min(start_date) AS sd, CURRENT_DATE AS ed FROM bid 
+                (SELECT min(start_date) AS sd, CURRENT_DATE AS ed FROM bid
                     WHERE ct_email=$1
                 ) AS startend
             ) AS d3
@@ -1381,15 +1374,17 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
   bid period
 \item
   we then did a partition by month, year as well as generated an
-  enumeration over each partition with (ROW\_NUMBER) so that we could
-  get the first 60 pet days
+  enumeration over each partition with
+  (\passthrough{\lstinline!ROW\_NUMBER!}) so that we could get the first
+  60 pet days
 
   \begin{itemize}
   \tightlist
   \item
     We've also done it such that we've ordered each partition by date
-    first then ct\_price (Care Taker Price) in ascending order within
-    each (month, year)
+    first then \passthrough{\lstinline!ct\_price!} (Care Taker Price) in
+    ascending order within each (\passthrough{\lstinline!month!},
+    \passthrough{\lstinline!year!})
   \item
     So we hope to have very happy Full Timers who get the better rates
     beyond the first 60 pet days
@@ -1410,31 +1405,34 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
 \hypertarget{interesting-triggers}{%
 \section{Interesting Triggers}\label{interesting-triggers}}
 
+\hypertarget{pet-limit-for-care-takers}{%
+\subsection{Pet Limit for Care Takers}\label{pet-limit-for-care-takers}}
+
 \begin{lstlisting}[language=SQL]
 CREATE OR REPLACE FUNCTION pet_limit()
-RETURNS TRIGGER AS 
+RETURNS TRIGGER AS
 $t$
 DECLARE pet_count INTEGER;
 DECLARE transgression INTEGER;
 
 BEGIN
-    select 
-        case 
+    select
+        case
             when caretaker_status=2 OR rating > 4 then 4
             else 1 end
         into pet_count from caretaker where email=NEW.ct_email;
 
-    select count(*) into transgression FROM 
+    select count(*) into transgression FROM
         (select
             dates.date
             from (
-                select                                                                              
+                select
                     generate_series(
                         date_trunc('month', NEW.start_date),
                         NEW.end_date, '1 day'
                     )::date as date
             ) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
-            where dates.date >= p.start_date and dates.date <= p.end_date 
+            where dates.date >= p.start_date and dates.date <= p.end_date
         ORDER BY dates.date) as overlapDates
     group by overlapDates.date
     having count(*) > pet_count;
@@ -1459,13 +1457,23 @@ FOR EACH ROW EXECUTE PROCEDURE pet_limit();
 \item
   pet\_count is the limit on the number of pets a Care Taker can care
   for on any day.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    it has been configured based on Part Time/Full Time and rating
+  \item
+    the actual limit is pet\_count + 1 since this trigger is done before
+    insertion
+  \end{itemize}
 \item
-  Transgressions is the count of the number of times a Care Taker has
-  more than pet\_count number of pets on any day
+  Transgressions is the count of the days when a Care Taker has more
+  than \passthrough{\lstinline!pet\_count!} number of pets on any day
 \item
   We do this check by generating dates from start to end of the new bid
-  and then checking that the count for each date does not exceed the
-  pet\_count
+  for every bid that overlaps the new bid and then checking that the
+  count for each date does not exceed the
+  \passthrough{\lstinline!pet\_count!}
 \end{itemize}
 
 \hypertarget{two-consecutive-150-working-days-constraint}{%
@@ -1473,47 +1481,81 @@ FOR EACH ROW EXECUTE PROCEDURE pet_limit();
 Constraint}\label{two-consecutive-150-working-days-constraint}}
 
 \begin{lstlisting}[language=SQL]
-CREATE OR REPLACE FUNCTION pet_limit()
-RETURNS TRIGGER AS 
+CREATE OR REPLACE FUNCTION ft_150_constraint()
+RETURNS TRIGGER AS
 $t$
-DECLARE pet_count INTEGER;
-DECLARE transgression INTEGER;
-
+DECLARE
+    count_150 NUMERIC;
+    count_300 NUMERIC;
+    new_end_year NUMERIC;
+    new_start_year NUMERIC;
 BEGIN
-    select 
-        case 
-            when caretaker_status=2 OR rating > 4 then 4
-            else 1 end
-        into pet_count from caretaker where email=NEW.ct_email;
 
-    select count(*) into transgression FROM 
-        (select
-            dates.date
-            from (
-                select                                                                              
-                    generate_series(
-                        date_trunc('month', NEW.start_date),
-                        NEW.end_date, '1 day'
-                    )::date as date
-            ) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
-            where dates.date >= p.start_date and dates.date <= p.end_date 
-        ORDER BY dates.date) as overlapDates
-    group by overlapDates.date
-    having count(*) > pet_count;
+    SELECT extract(year from NEW.start_date) into new_start_year;
+    SELECT extract(year from NEW.end_date) into new_end_year;
 
-    insert into count_limit values (transgression);
+    select COUNT(*) into count_150 FROM (
+        select * from (
+            select *, row_number() over (partition by 1) as r1 from (
+                select Date(new_start_year||'-01-01') as ed1
+                union
+                SELECT end_date as ed1 FROM ft_leave_schedule f1
+                WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
+            ) t1
+        ) ord1 inner join
+        (
+            select *, row_number() over (partition by 1) as r2 from (
+                select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
+                union
+                select start_date as sd2 FROM ft_leave_schedule f2
+                WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
+            ) t2
+        ) ord2 on ord1.r1=ord2.r2
+    ) as cc
+    WHERE Date(cc.sd2)-Date(cc.ed1) >= 150;
 
-    IF transgression > 0 THEN
-        RAISE EXCEPTION 'limit reached for period!';
+    select COUNT(*) into count_300 FROM (
+        select * from (
+            select *, row_number() over (partition by 1) as r1 from (
+                select Date(new_start_year||'-01-01') as ed1
+                union
+                SELECT end_date as ed1 FROM ft_leave_schedule f1
+                WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
+            ) t1
+        ) ord1 inner join
+        (
+            select *, row_number() over (partition by 1) as r2 from (
+                select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
+                union
+                select start_date as sd2 FROM ft_leave_schedule f2
+                WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
+            ) t2
+        ) ord2 on ord1.r1=ord2.r2
+    ) as cc
+    WHERE Date(cc.sd2)-Date(cc.ed1) >= 300;
+
+    insert into count_limit VALUES (count_150);
+    insert into count_limit VALUES (count_300);
+
+    IF new_start_year != new_end_year THEN
+        IF count_300 = 2 OR count_150 = 4 OR (count_150 = 2 AND count_300 = 1) THEN
+            RETURN NEW;
+        ELSE
+            RAISE EXCEPTION 'i simply cannot';
+        END IF;
     ELSE
-        RETURN NEW;
+        IF count_150 = 2 OR count_300 = 1 THEN
+            RETURN NEW;
+        ELSE
+            RAISE EXCEPTION 'i simply cannot';
+        END IF;
     END IF;
+
 END;
 $t$ LANGUAGE PLpgSQL;
-
-CREATE TRIGGER check_pet_limit
-BEFORE INSERT ON bid
-FOR EACH ROW EXECUTE PROCEDURE pet_limit();
+CREATE TRIGGER check_ft_150
+AFTER INSERT ON ft_leave_schedule
+FOR EACH ROW EXECUTE PROCEDURE ft_150_constraint();
 \end{lstlisting}
 
 \begin{itemize}
@@ -1530,16 +1572,12 @@ FOR EACH ROW EXECUTE PROCEDURE pet_limit();
 \item
   So what we have done is to prepend the start of the year to t1 and
   append the end of the year to t2
-
-  \begin{itemize}
-  \tightlist
-  \item
-    t1 contains the end dates of each leave schedule as well as the
-    start date of the year
-  \item
-    t2 contains the start dates of each leave schedule as well as the
-    end date of the year
-  \end{itemize}
+\item
+  t1 contains the end dates of each leave schedule as well as the start
+  date of the year
+\item
+  t2 contains the start dates of each leave schedule as well as the end
+  date of the year
 \item
   We then order both tables by ascending order of the end dates and
   start dates respectively for t1 and t2
@@ -1561,7 +1599,7 @@ check}\label{part-time-availability-overlap-check}}
 
 \begin{lstlisting}[language=SQL]
 CREATE OR REPLACE FUNCTION no_bid_overlap()
-RETURNS TRIGGER AS 
+RETURNS TRIGGER AS
 $t$
 DECLARE overlap INTEGER;
 DECLARE pt_overlap INTEGER;
@@ -1598,35 +1636,23 @@ FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 \tightlist
 \item
   This trigger serves to enforce no overlapping bids
-
-  \begin{itemize}
-  \tightlist
-  \item
-    A bid overlaps is if it's for the same pet and the dates overlap
-    irregardless of Care Taker bidded for
-  \end{itemize}
+\item
+  A bid overlaps is if it's for the same pet and the dates overlap
+  irregardless of Care Taker bided for
 \item
   This is with the caveat that there can be multiple identical bids only
   if all the bids are for Part Time Care Takers
-
-  \begin{itemize}
-  \tightlist
-  \item
-    A bid is identical if it is for the same pet with the same start and
-    end dates. But identical bids can be placed on different Care Takers
-  \item
-    This is due to our option for Part Timers to accept or reject bids
-  \end{itemize}
+\item
+  A bid is identical if it is for the same pet with the same start and
+  end dates. But identical bids can be placed on different Care Takers
+\item
+  This is due to our option for Part Timers to accept or reject bids
 \item
   We enforced this by counting the number of overlaps and then
   subtracting off the overlaps resulting from identical bids on Part
   Timers
-
-  \begin{itemize}
-  \tightlist
-  \item
-    This count should thus be 0
-  \end{itemize}
+\item
+  This count should thus be 0
 \end{itemize}
 
 \hypertarget{technical-specifications}{%
@@ -1647,7 +1673,7 @@ by Heroku Review Apps.
   \begin{itemize}
   \tightlist
   \item
-    React v16\textbf{.5}
+    React v16.5
   \item
     Ant Design v4.5
   \item
@@ -1667,7 +1693,7 @@ by Heroku Review Apps.
   \item
     Node
   \item
-    passport-jwt
+    \passthrough{\lstinline!passport-jwt!}
   \end{itemize}
 \item
   Database: PostgreSQL 12.1
@@ -1682,10 +1708,26 @@ by Heroku Review Apps.
 \caption{Finding Caretaker}
 \end{figure}
 
-Finding Caretaker: 1. Choose the Pet in the top-left box; 1. the Pets
-are collected into their respective categories 2. Choose the intended
-Start and End date 3. Browse the list of Caretakers and their
-information; click the card to proceed to the next step
+Finding Caretaker:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Choose the Pet in the top-left box;
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    the Pets are collected into their respective categories
+  \end{enumerate}
+\item
+  Choose the intended Start and End date
+\item
+  Browse the list of Caretakers and their information; click the card to
+  proceed to the next step
+\end{enumerate}
 
 \begin{figure}
 \centering
@@ -1693,10 +1735,26 @@ information; click the card to proceed to the next step
 \caption{Creating a New Request}
 \end{figure}
 
-Creating Order: 1. Choose the delivery methods among Deliver, Pickup and
-Transit through PCS 2. Choose either paying by Cash or Credit Card; 1.
-The Credit Cards are organized in a drop-down selection box 2. Choose a
-credit card, if applicable
+Creating Order:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Choose the delivery methods among Deliver, Pickup and Transit through
+  PCS
+\item
+  Choose either paying by Cash or Credit Card;
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \tightlist
+  \item
+    The Credit Cards are organized in a drop-down selection box
+  \item
+    Choose a credit card, if applicable
+  \end{enumerate}
+\end{enumerate}
 
 \begin{figure}
 \centering
@@ -1718,13 +1776,14 @@ accessing undefined object keys that existed before the schema change.
 Another major challenge is the discrepancies between the key names
 between the database and backend and frontend. Since postgres is
 case-insensitive, we have to be wary of converting the key from
-snake\_case to camelCase in our code. This becomes confusing when
-different team members do not follow the convention, which sometimes
-leaks into the frontend, causing an avalanche of runtime errors. A way
-to overcome this is to state the conventions followed in some form of
-documentations such as Github Wiki beforehand. Timely communication is
-also crucial in preventing inconsistency and reducing integration
-overhead.
+\passthrough{\lstinline!snake\_case!} to
+\passthrough{\lstinline!camelCase!} in our code. This becomes confusing
+when different team members do not follow the convention, which
+sometimes leaks into the frontend, causing an avalanche of runtime
+errors. A way to overcome this is to state the conventions followed in
+some form of documentations such as Github Wiki beforehand. Timely
+communication is also crucial in preventing inconsistency and reducing
+integration overhead.
 
 However, we were amazed by the type-safety brought by TypeScript in our
 front-end codebase. Without the type guidance, we will not be able to

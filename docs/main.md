@@ -27,6 +27,7 @@ table-use-row-colors: true
 # Application Functionalities
 
 Our application supports the below functions for their corresponding user type:
+
 * All Users 
   - Register as Pet Owners or Caretakers (either Full-time or Part-time)
   - Login and sign up
@@ -136,6 +137,7 @@ Our application supports the below functions for their corresponding user type:
 In order to generate realistic data that also fit into the application constraints, random data needs to be generated procedurally. This is done using the node module “faker”, that provides realistic data such as names and email, while also being deterministic once supplied a seed.
 
 For each randomly generated user, 
+
 * Randomly generate 0 - 5 pets from a randomly chosen pet category
   * Randomly generate 3 pets 
 * Randomly decide whether the user is a part-time or full-time caretaker
@@ -151,7 +153,7 @@ To keep the implementation true to the specifications and given the way we store
 
 # ER Model
 
-![ER Diagram](./er_diagram.png)
+![ER Diagram](./er_diagram.png){ width=95% }
 
 # Relational Schema
 
@@ -425,7 +427,7 @@ SELECT fullname, phone, address, email, avatar_link as avatarUrl, caretaker_stat
 -   Parameters: $1: start date of request, $2: end date of request, \$3 category of pet requested
 -   This query first looks for available Care Takers
     -   It does so by checking that the start date of the potential bid is within any period of any Part Timers free schedule and that it is not within any period of any Full Timers leave schedule
--   Then it checks that those Care Takers do specialize in that pet category via type_name
+-   Then it checks that those Care Takers do specialize in that pet category via `type_name`
 
 ## Calculating Full Time Pay
 
@@ -476,8 +478,8 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
 -   This query is sort of an expansion of generating a part timer’s salary but is far more complex with the need to find the first 60 pet days
 -   The high overview is to first generate the bonus, d3, from the 61st pet day onwards and right outer join (d4 on the right) it with a table, d4, that captures all the months since the Full Timer has begun work, then doing a coalesce for months in the d4 that don’t have any value in d3
 -   To get the bonus: generate a date for every month where a bid exists and do a cartesian product with bid and select dates that exist in any bid period
--   we then did a partition by month, year as well as generated an enumeration over each partition with (ROW_NUMBER) so that we could get the first 60 pet days
-    -   We’ve also done it such that we’ve ordered each partition by date first then ct_price (Care Taker Price) in ascending order within each (month, year)
+-   we then did a partition by month, year as well as generated an enumeration over each partition with (`ROW_NUMBER`) so that we could get the first 60 pet days
+    -   We’ve also done it such that we’ve ordered each partition by date first then `ct_price` (Care Taker Price) in ascending order within each (`month`, `year`)
     -   So we hope to have very happy Full Timers who get the better rates beyond the first 60 pet days
 -   Next is the right outer join with d4, which gives us some entries in d3 that are NULL which represent months which the Full Timer has not had any bids requested
     -   We solve this by Coalescing these NULL values with a standard 3000 salary and bonus of 0
@@ -533,8 +535,8 @@ FOR EACH ROW EXECUTE PROCEDURE pet_limit();
 -   pet_count is the limit on the number of pets a Care Taker can care for on any day.
     -   it has been configured based on Part Time/Full Time and rating
     -   the actual limit is pet_count + 1 since this trigger is done before insertion
--   Transgressions is the count of the days when a Care Taker has more than pet_count number of pets on any day
--   We do this check by generating dates from start to end of the new bid for every bid that overlaps the new bid and then checking that the count for each date does not exceed the pet_count
+-   Transgressions is the count of the days when a Care Taker has more than `pet_count` number of pets on any day
+-   We do this check by generating dates from start to end of the new bid for every bid that overlaps the new bid and then checking that the count for each date does not exceed the `pet_count`
 
 ## Two consecutive 150 working days Constraint
 
@@ -668,7 +670,7 @@ FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 
 
 * This trigger serves to enforce no overlapping bids 
- * A bid overlaps is if it’s for the same pet and the dates overlap irregardless of Care Taker bidded for
+ * A bid overlaps is if it’s for the same pet and the dates overlap irregardless of Care Taker bided for
 * This is with the caveat that there can be multiple identical bids only if all the bids are for Part Time Care Takers
  * A bid is identical if it is for the same pet with the same start and end dates. But identical bids can be placed on different Care Takers
  * This is due to our option for Part Timers to accept or reject bids
@@ -684,15 +686,15 @@ Our application is deployed on Heroku with Docker. PR preview is powered by Hero
 
 
 * Frontend: 
- * React v16**.5**
- * Ant Design v4.5
- * Typescript
- * Axios
+  * React v16.5
+  * Ant Design v4.5
+  * Typescript
+  * Axios
 * Backend:
- * Typescript
- * Express
- * Node
- * passport-jwt
+  * Typescript
+  * Express
+  * Node
+  * `passport-jwt`
 * Database: PostgreSQL 12.1
 
 # Screenshots
