@@ -62,33 +62,6 @@ FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 -- FOR EACH ROW EXECUTE PROCEDURE ft_rating();
 
 
-CREATE OR REPLACE FUNCTION avg_rating()
-RETURNS TRIGGER AS 
-$t$
-DECLARE avg_rating NUMERIC;
-DECLARE ct_status INTEGER;
-BEGIN
-	SELECT caretaker_status INTO ct_status FROM caretaker WHERE email=NEW.ct_email;
-	IF NEW.rating is not NULL THEN
-		IF ct_status = 2 THEN 
-			UPDATE full_time_ct 
-				SET (rating) = 
-					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
-				WHERE email=NEW.ct_email;
-		ELSE
-			UPDATE part_time_ct 
-				SET (rating) =
-					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
-				WHERE email=NEW.ct_email;
-		END IF;
-	END IF;
-	RETURN NEW;
-END;
-$t$ LANGUAGE PLpgSQL;
-
-CREATE TRIGGER get_avg_rating
-AFTER INSERT OR UPDATE ON bid
-FOR EACH ROW EXECUTE PROCEDURE avg_rating();
 
 -- Check that bid made isn't overlapping for pet
 CREATE OR REPLACE FUNCTION no_bid_overlap()
@@ -124,32 +97,14 @@ CREATE TRIGGER check_no_bid_overlap
 BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 
-CREATE OR REPLACE FUNCTION close_bid()
-RETURNS TRIGGER AS 
-$t$
-BEGIN
-	IF NEW.bid_status = 'confirmed' THEN
-		UPDATE bid SET bid_status='closed'
-			WHERE pet_name = NEW.pet_name 
-			AND pet_owner = NEW.pet_owner 
-			AND start_date = NEW.start_date 
-			AND bid_status = 'submitted';
-	END IF;
-	RETURN NEW;
-END;
-$t$ LANGUAGE PLpgSQL;
-
-CREATE TRIGGER close_pt_bid
-AFTER INSERT OR UPDATE ON bid
-FOR EACH ROW EXECUTE PROCEDURE close_bid();
 
 
 -- for debugging
-DROP TABLE IF EXISTS count_limit;
+-- DROP TABLE IF EXISTS count_limit;
 
-CREATE TABLE count_limit (
-	c1 int
-);
+-- CREATE TABLE count_limit (
+-- 	c1 int
+-- );
 
 
 CREATE OR REPLACE FUNCTION pet_limit()
@@ -167,16 +122,16 @@ BEGIN
 
 	select count(*) into transgression FROM 
 		(select
-			ac.date as date
+			dates.date
 			from (
 				select                                                                              
 					generate_series(
 						date_trunc('month', NEW.start_date),
 						NEW.end_date, '1 day'
 					)::date as date
-			) as ac, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
-			where ac.Date >= p.start_date and ac.Date <= p.end_date 
-		ORDER BY ac.date) as overlapDates
+			) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
+			where dates.date >= p.start_date and dates.date <= p.end_date 
+		ORDER BY dates.date) as overlapDates
 	group by overlapDates.date
 	having count(*) > pet_count;
 
@@ -195,6 +150,55 @@ BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE pet_limit();
 
 
+CREATE OR REPLACE FUNCTION close_bid()
+RETURNS TRIGGER AS 
+$t$
+BEGIN
+	IF NEW.bid_status = 'confirmed' THEN
+		UPDATE bid SET bid_status='closed'
+			WHERE pet_name = NEW.pet_name 
+			AND pet_owner = NEW.pet_owner 
+			AND start_date = NEW.start_date 
+			AND end_date = NEW.end_date 
+			AND bid_status = 'submitted';
+	END IF;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER close_pt_bid
+AFTER INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE close_bid();
+
+
+CREATE OR REPLACE FUNCTION avg_rating()
+RETURNS TRIGGER AS 
+$t$
+DECLARE avg_rating NUMERIC;
+DECLARE ct_status INTEGER;
+BEGIN
+	SELECT caretaker_status INTO ct_status FROM caretaker WHERE email=NEW.ct_email;
+	IF NEW.rating is not NULL THEN
+		IF ct_status = 2 THEN 
+			UPDATE full_time_ct
+				SET (rating) = 
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		ELSE
+			UPDATE part_time_ct 
+				SET (rating) =
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		END IF;
+	END IF;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER get_avg_rating
+AFTER INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE avg_rating();
+
 -- Schedule Overlap check
 -- part time
 CREATE OR REPLACE FUNCTION date_non_overlap_pt_schedule()
@@ -205,9 +209,8 @@ BEGIN
 	SELECT COUNT(*) INTO overlap FROM 
 		pt_free_schedule p
 		WHERE p.email=NEW.email 
-		AND 
-		((NEW.start_date >= p.start_date AND NEW.start_date <= p.end_date) 
-		OR (NEW.end_date >= p.start_date AND NEW.end_date <= p.end_date));
+		AND NEW.start_date <= p.end_date 
+		AND NEW.end_date >= p.start_date;
 	IF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
 	ELSE
@@ -230,9 +233,8 @@ BEGIN
 	SELECT COUNT(*) INTO overlap FROM 
 		ft_leave_schedule ft 
 		WHERE ft.email=NEW.email 
-		AND 
-		((NEW.start_date >= ft.start_date AND NEW.start_date <= ft.end_date) 
-		OR (NEW.end_date >= ft.start_date AND NEW.end_date <= ft.end_date));
+		AND NEW.start_date <= ft.end_date 
+		AND NEW.end_date >= ft.start_date;
 	IF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
 	ELSE
@@ -269,7 +271,7 @@ BEGIN
 	select COUNT(*) into count_150 FROM ( 
 		select * from (
 			select *, row_number() over (partition by 1) as r1 from (
-				select (Date(new_start_year||'-01-01')-'1 day'::interval) as ed1
+				select Date(new_start_year||'-01-01') as ed1
 				union
 				SELECT end_date as ed1 FROM ft_leave_schedule f1
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
@@ -277,7 +279,7 @@ BEGIN
 		) ord1 inner join 
 		(
 			select *, row_number() over (partition by 1) as r2 from (
-				select (Date(new_end_year||'-01-01')+'1 year'::interval) as sd2
+				select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
 				union
 				select start_date as sd2 FROM ft_leave_schedule f2
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
@@ -289,7 +291,7 @@ BEGIN
 	select COUNT(*) into count_300 FROM ( 
 		select * from (
 			select *, row_number() over (partition by 1) as r1 from (
-				select (Date(new_start_year||'-01-01')-'1 day'::interval) as ed1
+				select Date(new_start_year||'-01-01') as ed1
 				union
 				SELECT end_date as ed1 FROM ft_leave_schedule f1
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
@@ -297,7 +299,7 @@ BEGIN
 		) ord1 inner join 
 		(
 			select *, row_number() over (partition by 1) as r2 from (
-				select (Date(new_end_year||'-01-01')+'1 year'::interval) as sd2
+				select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
 				union
 				select start_date as sd2 FROM ft_leave_schedule f2
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
@@ -310,7 +312,7 @@ BEGIN
 	insert into count_limit VALUES (count_300);
 
 	IF new_start_year != new_end_year THEN
-		IF count_150 = 4 OR (count_150 > 1 AND count_300 > 0) THEN 
+		IF count_300 = 2 OR count_150 = 4 OR (count_150 = 2 AND count_300 = 1) THEN 
 			RETURN NEW;
 		ELSE
 			RAISE EXCEPTION 'i simply cannot';
