@@ -526,7 +526,6 @@ Our application supports the below functions for their corresponding
 user type:
 
 \begin{itemize}
-\tightlist
 \item
   All Users
 
@@ -1193,12 +1192,17 @@ superkeys of the table.
   A Bid can only progress through status via one of the following
   routes:
 \item
-  Full Timers 1. \passthrough{\lstinline!confirmed!} \(\rightarrow\)
+  Full Timers
+\item
+  \passthrough{\lstinline!confirmed!} \(\rightarrow\)
   \passthrough{\lstinline!reviewed!}
 \item
-  Part Timers 1. \passthrough{\lstinline!submitted!} \(\rightarrow\)
+  Part Timers
+\item
+  \passthrough{\lstinline!submitted!} \(\rightarrow\)
   \passthrough{\lstinline!confirmed!}
-  \(\rightarrow\)\passthrough{\lstinline!reviewed!} 2.
+  \(\rightarrow\)\passthrough{\lstinline!reviewed!}
+\item
   \passthrough{\lstinline!submitted!} \(\rightarrow\)
   \passthrough{\lstinline!closed!}
 \item
@@ -1270,9 +1274,9 @@ category}\label{searching-for-valid-care-takers-based-on-schedule-and-category}}
 
 \begin{lstlisting}[language=SQL]
 SELECT fullname, phone, address, email, avatar_link as avatarUrl, caretaker_status as caretakerStatus, rating, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
-   SELECT email, $3 as type_name FROM 
-      (SELECT DISTINCT email 
-            FROM pt_free_schedule 
+   SELECT email, $3 as type_name FROM
+      (SELECT DISTINCT email
+            FROM pt_free_schedule
             WHERE start_date <= $1 AND end_date >= $2
       UNION
       SELECT email FROM full_time_ct ftct
@@ -1497,7 +1501,7 @@ BEGIN
     select COUNT(*) into count_150 FROM (
         select * from (
             select *, row_number() over (partition by 1) as r1 from (
-                select Date(new_start_year||'-01-01') as ed1
+                select (Date(new_start_year||'-01-01')-'1 day'::interval) as ed1
                 union
                 SELECT end_date as ed1 FROM ft_leave_schedule f1
                 WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
@@ -1505,19 +1509,19 @@ BEGIN
         ) ord1 inner join
         (
             select *, row_number() over (partition by 1) as r2 from (
-                select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
+                select (Date(new_end_year||'-01-01')+'1 year'::interval) as sd2
                 union
                 select start_date as sd2 FROM ft_leave_schedule f2
                 WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
             ) t2
         ) ord2 on ord1.r1=ord2.r2
     ) as cc
-    WHERE Date(cc.sd2)-Date(cc.ed1) >= 150;
+    WHERE Date(cc.sd2)-Date(cc.ed1) > 150;
 
     select COUNT(*) into count_300 FROM (
         select * from (
             select *, row_number() over (partition by 1) as r1 from (
-                select Date(new_start_year||'-01-01') as ed1
+                select (Date(new_start_year||'-01-01')-'1 day'::interval) as ed1
                 union
                 SELECT end_date as ed1 FROM ft_leave_schedule f1
                 WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
@@ -1525,29 +1529,26 @@ BEGIN
         ) ord1 inner join
         (
             select *, row_number() over (partition by 1) as r2 from (
-                select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
+                select (Date(new_end_year||'-01-01')+'1 year'::interval) as sd2
                 union
                 select start_date as sd2 FROM ft_leave_schedule f2
                 WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
             ) t2
         ) ord2 on ord1.r1=ord2.r2
     ) as cc
-    WHERE Date(cc.sd2)-Date(cc.ed1) >= 300;
-
-    insert into count_limit VALUES (count_150);
-    insert into count_limit VALUES (count_300);
+    WHERE Date(cc.sd2)-Date(cc.ed1) > 300;
 
     IF new_start_year != new_end_year THEN
         IF count_300 = 2 OR count_150 = 4 OR (count_150 = 2 AND count_300 = 1) THEN
             RETURN NEW;
         ELSE
-            RAISE EXCEPTION 'i simply cannot';
+            RAISE EXCEPTION 'No 2 times 150 consecutive working days!';
         END IF;
     ELSE
         IF count_150 = 2 OR count_300 = 1 THEN
             RETURN NEW;
         ELSE
-            RAISE EXCEPTION 'i simply cannot';
+            RAISE EXCEPTION 'No 2 times 150 consecutive working days!';
         END IF;
     END IF;
 
