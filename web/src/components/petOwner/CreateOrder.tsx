@@ -3,7 +3,7 @@ import { Select, Col, Row, Radio, Input, Space } from "antd";
 import moment from "moment";
 import { Action, NewRequestState } from "./NewRequest";
 import { CreditCard } from "../../../../models/creditCard";
-import { user as UserApi } from "./../../common/api";
+import { creditCards as CreditCardApi } from "./../../common/api";
 
 type CreateOrderProps = {
     state: NewRequestState;
@@ -18,8 +18,9 @@ const CreateOrder = (props: CreateOrderProps) => {
     useEffect(() => {
         const fetchCreditCards = async () => {
             try {
-                const fetchedCreditCards = (await UserApi.getCreditCards()).data
-                    .data;
+                const fetchedCreditCards = (
+                    await CreditCardApi.getUserCreditCards()
+                ).data.data;
                 setCreditCards(fetchedCreditCards);
             } catch (err) {
                 console.log("fetching credit card error", err);

@@ -194,16 +194,18 @@ export const bid_query = {
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
         WHERE email= $1 AND type_name= $2`,
-    query_role: `SELECT caretaker_status 
+    query_price_role: `SELECT caretaker_status, ct_price_daily
         FROM caretaker 
-        WHERE email = $1`,
+        NATURAL JOIN specializes_in 
+        NATURAL JOIN 
+        (select category as type_name FROM pet where name=$2 AND owner=$3) as ownerpet
+        WHERE email=$1`,
     create_bid: `
     INSERT INTO bid VALUES 
-        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         `,
     delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`,
-    update_bid: `UPDATE bid SET bid_status = $5 WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`,
-    get_overlapping_bids: `SELECT start_date, end_date FROM bid WHERE ct_email=$1 AND start_date<=$3 AND end_date>=$2 AND bid_status='confirmed'`
+    update_bid: `UPDATE bid SET bid_status = $5 WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4`
 };
 
 export default { user_query, pet_query, credit_card_query };

@@ -64,9 +64,9 @@ CREATE TABLE full_time_ct (
 );
 
 CREATE VIEW caretaker (email, caretaker_status, rating) AS (
-	SELECT email, 1, 4.1 FROM  part_time_ct 
+	SELECT email, 1, rating FROM  part_time_ct 
 	UNION 
-	SELECT email, 2, 4.2 FROM full_time_ct
+	SELECT email, 2, rating FROM full_time_ct
 );
 
 CREATE TABLE pt_specializes_in (
@@ -116,7 +116,6 @@ CREATE TABLE bid (
 	transport_method transport_method NOT NULL,
 	pet_owner varchar(64),
 	pet_name varchar(64),
-	pet_category varchar(64) REFERENCES pet_category(type_name),
 	bid_status bid_status NOT NULL,
 	feedback text DEFAULT NULL,
 	rating int DEFAULT NULL,
