@@ -41,27 +41,6 @@ FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 
 -- TODO set constraint for bids for schedule -> can't bid for leave
 -- TODO set constraint for schedule with bids -> can't take leave if bids
--- TODO set constraint on not updating bid if 'closed'
-
--- CREATE OR REPLACE FUNCTION ft_rating()
--- RETURNS TRIGGER AS 
--- $t$
--- DECLARE avg_rating NUMERIC;
--- BEGIN
--- 	IF NEW.rating is not NULL THEN
--- 		UPDATE full_time_ct 
--- 		SET (rating) = (SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
--- 		WHERE email=NEW.ct_email;
--- 	END IF;
--- 	RETURN NEW;
--- END;
--- $t$ LANGUAGE PLpgSQL;
-
--- CREATE TRIGGER get_ft_rating
--- BEFORE INSERT OR UPDATE ON bid
--- FOR EACH ROW EXECUTE PROCEDURE ft_rating();
-
-
 
 -- Check that bid made isn't overlapping for pet
 CREATE OR REPLACE FUNCTION no_bid_overlap()
