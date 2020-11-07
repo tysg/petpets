@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
+    PetCountPerDay,
     MonthlyPayment,
     CareTaker,
     CareTakerDetails,
@@ -27,6 +28,7 @@ import {
 } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
 import * as yup from "yup";
+import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
 
 const mapCareTakerAttr = (r: any): CareTakerDetails => ({
     email: r.email,
@@ -138,8 +140,18 @@ export const search = async (req: Request, res: Response) => {
             [`${start_date}`, `${end_date}`, `${pet_category}`]
         );
         // TODO add check for no existing bookings
-        // TODO add check for PT for rating > some value and caring < 5
+        // WIP untested
         const rows = qr.rows.map(mapSearchResponse);
+        const bidCheck = await rows.filter(async (ct) => {
+            const transgression: QueryResult<PetCountPerDay> = await asyncQuery(
+                caretaker_query.pet_limit_check,
+                [ct.email, `${start_date}`, `${end_date}`]
+            );
+            const count = transgression.rows[0].count;
+            console.log(count);
+            return count === 0;
+        });
+        console.log(bidCheck);
         yup.array(CareTakerSpecializesInCategorySchema)
             .defined()
             .validate(rows)
