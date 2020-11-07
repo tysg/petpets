@@ -62,27 +62,6 @@ export const caretaker_query = {
             )
         ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
     `,
-    pet_limit_check: `
-        select count(*) as t FROM 
-            (select
-                dates.date
-                from (
-                    select                                                                              
-                        generate_series(
-                            date_trunc('month', Date($2)),
-                            Date($3), '1 day'
-                        )::date as date
-                ) as dates, (select * FROM bid WHERE ct_email=$1) as p
-                where dates.date >= p.start_date and dates.date <= p.end_date 
-            ORDER BY dates.date) as overlapDates
-        group by overlapDates.date
-        having count(*) > 
-        (select 
-            case 
-                when caretaker_status=2 OR rating > 4 then 4
-                else 1 end
-            from caretaker where email=$1)
-    `,
     delete_caretaker: [
         `DELETE FROM part_time_ct where email=$1`,
         `DELETE FROM full_time_ct where email=$1`
@@ -103,12 +82,13 @@ const ptPaymentMonthly = `
                 startend.ed, '1 month'
             ) + interval '1 month' - interval '1 day' )::date AS endmonth
             FROM
-            (SELECT min(start_date) AS sd, max(end_date) AS ed FROM bid WHERE ct_email=$1) AS startend
+            (SELECT min(start_date) AS sd, max(end_date) AS ed 
+            FROM bid 
+            WHERE ct_email=$1 AND bid_status='confirmed') AS startend
             ORDER BY 1
-    ) AS monthly, bid 
+    ) AS monthly, (SELECT * FROM bid  WHERE bid.ct_email=$1 AND bid.bid_status = 'confirmed')
     WHERE bid.start_date <= monthly.endmonth
     AND monthly.startmonth <= bid.end_date
-    AND bid.bid_status = 'confirmed'
     GROUP BY monthly.endmonth, monthly.startmonth
     HAVING monthly.endmonth <= CURRENT_DATE
 `;
@@ -124,23 +104,21 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
 						ROW_NUMBER() OVER (PARTITION BY mm, yy 
 						ORDER BY concat(date, ct_price, pet_owner, pet_name, ct_email) ASC) AS r FROM
 					(SELECT pet_owner, pet_name, ct_email, ct_price,
-							to_char(ac.date,'DD') AS dd, 
-							to_char(ac.date,'MM') AS mm, 
-							to_char(ac.date, 'YYYY') AS yy,
+							to_char(gen_dates.date,'DD') AS dd, 
+							to_char(gen_dates.date,'MM') AS mm, 
+							to_char(gen_dates.date, 'YYYY') AS yy,
 							date FROM
 						(SELECT generate_series(
 									date_trunc('month', startend.sd),
 									startend.ed, '1 day'
 								)::date AS date FROM
-							(SELECT min(start_date) AS sd, max(end_date) AS ed FROM
+							(SELECT min(start_date) AS sd, CURRENT_DATE as ed FROM
 								bid 
 								WHERE ct_email=$1 
-								AND end_date <= CURRENT_DATE 
-								AND bid_status='confirmed'
 							) AS startend ORDER BY sd
-						) AS ac, (SELECT * FROM bid WHERE ct_email=$1) AS p
-						WHERE ac.date >= p.start_date and ac.date <= p.end_date 
-						ORDER BY ac.date
+						) AS gen_dates, (SELECT * FROM bid WHERE ct_email=$1) AS p
+						WHERE gen_dates.date >= p.start_date AND gen_dates.date <= p.end_date 
+						ORDER BY gen_dates.date
 					) AS monthdates
 				) rank_price WHERE r > 60 GROUP BY mm, yy
 			) AS d4
@@ -150,11 +128,12 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
 						date_trunc('month', startend.sd),
 						startend.ed, '1 month'
 					)::date, 'YYYY-MM') AS month FROM
-				(SELECT min(start_date) AS sd, max(end_date) AS ed FROM bid 
+				(SELECT min(start_date) AS sd, CURRENT_DATE AS ed FROM bid 
 					WHERE ct_email=$1
 				) AS startend
-			) AS d3
-			ON d4.month=d3.month
+            ) AS d3
+            ON d4.month=d3.month
+        WHERE (Date(d3.month||'-01') + '1 month'::interval - '1 day'::interval) <= CURRENT_DATE
 `;
 
 export const payments_query = {
