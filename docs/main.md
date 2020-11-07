@@ -72,7 +72,7 @@ Our application supports the below functions for their corresponding user type:
 
 ## User:
 1. Users cannot register for an account if their email already exists in the database
-2. Users have a role that must be “admin” or “user”
+2. Users have a role that must be `admin` or `user`
 
 ## Pet:
 1. A Pet can only be registered if it belongs to one of the pet categories created by the PCS administrator
@@ -80,23 +80,22 @@ Our application supports the below functions for their corresponding user type:
 
 ## Care Takers:
 1. Must reference a user account
-2. Must be either full-time or part-time, not both
-3. A Care Taker’s rating is a floating point number between 1 and 5 that is the average of all the ratings that he/she has received
+1. A Care Taker’s rating is a floating point number between 1 and 5 that is the average of all the ratings that he/she has received
 
 ## Credit Cards:
 1. Must reference a user account
 
 ## Bids:
 
-2. Bids have a status of {`submitted`, `confirmed`, `reviewed`, `closed`}
-   1. The necessity of `submitted` is due to the option for Part Timers to reject the bid
-3. A Bid’s transport method is either `delivery`, `pickup`, `pcs`
-4. End date cannot be before start date
-5. Start date cannot be before the date the bid is created.
-6. Must reference a Care Taker and a pet that belongs to the pet owner in the bid
-7. The rating of a Bid is an integer of no less than 1 and no more than 5
-8. Bids cannot be placed for the same pet with the same starting time
-9. A bid is paid by either cash or credit card, but not both or neither.
+1. Bids have a status of {`submitted`, `confirmed`, `reviewed`, `closed`}
+ 1. The necessity of `submitted` is due to the option for Part Timers to reject the bid
+1. A Bid’s transport method is either `delivery`, `pickup`, `pcs`
+1. End date cannot be before start date
+1. Start date cannot be before the date the bid is created.
+1. Must reference a Care Taker and a pet that belongs to the pet owner in the bid
+1. The rating of a Bid is an integer of no less than 1 and no more than 5
+1. Bids cannot be placed for the same pet with the same starting time
+1. A bid is paid by either cash or credit card, but not both or neither.
 
 ## Schedules:
 
@@ -108,21 +107,21 @@ Our application supports the below functions for their corresponding user type:
 
 ## Care Takers
 
-4. A non-overlapping constraint of Part Timers and Full Timers is placed over Care Takers (i.e., Care Takers can either be Part-time or Full-time but not both)
+1. A non-overlapping constraint of Part Timers and Full Timers is placed over Care Takers (i.e., Care Takers can either be Part-time or Full-time but not both)
 
 ## Bids
 
-5. A Bid cannot be updated if it is ‘closed’
-6. Pet owners can only make a bid request for a CareTaker during a time period if Caretaker is not taking care of more than n pets during any time in that period
+1. A Bid cannot be updated if it is `closed`
+1. Pet owners can only make a bid request for a CareTaker during a time period if Caretaker is not taking care of more than n pets during any time in that period
  1. Limit n is set at 5 for full time CareTakers 
  2. Limit n is 2 for part timers unless their average rating is > 4 then it is 5
-7. Bid placement criteria
+1. Bid placement criteria
  1. All bids for Full Timers will only placed if the pet limit is not reached (as in 1) and the Full Timer is not on leave
  2. All bids for Full Timers will only be placed if the pet limit is not reached (as in 1) and the Part Timer is available
-8. Pet owners can only make 1 bid request for each pet in the same time period (2 time periods are the same if they have the same start and end dates)
+1. Pet owners can only make 1 bid request for each pet in the same time period (2 time periods are the same if they have the same start and end dates)
  1. This is with the exception of the case where bids have the same start and end dates and are all made for Part Time Care Takers
  2. I.e. when the pet owner has bidded the same period for multiple Part Time Care Takers for one pet
-9. Constraint 4 also leads us to the fact that if any one of Part Time Care Takers set the bid status to ‘confirmed’ or the pet owner places a bid for the same period for a full timer, the bid status for the the other Part Timers will be set to ‘closed’
+1. Constraint 4 also leads us to the fact that if any one of Part Time Care Takers set the bid status to ‘confirmed’ or the pet owner places a bid for the same period for a full timer, the bid status for the the other Part Timers will be set to ‘closed’
 
 ## Schedules
 1. Care Taker must work for two 150 consecutive day periods per year (inclusive of weekends)
@@ -373,6 +372,7 @@ CREATE TABLE bid (
 ```
 
 
+| #            | Value     |
 | ------------ + -------------------------------------------------------------------------------------------------------------------------------------- |
 | FDs          | { ct_email, pet_name, pet_owner, start_date, end_date $\rightarrow$ ct_price,is_cash, credit_card, transport_method, bid_status, feedback, rating } |
 | Normal Forms | BCNF, 3NF                                                                                                                              |
@@ -745,7 +745,3 @@ Some decisions on the application constraints are not fully thought out during t
 
 
 Overall, we felt that the use of  the ER diagram has helped us greatly in communicating database design requirements. Functional dependency analysis is also easier when the relational schema follows the ER diagram closely and is concise and clear. We have learnt that modelling a real world problem can be done more effectively and efficiently with systematic knowledge on relational schema and functional dependencies.
-
-
-
-
