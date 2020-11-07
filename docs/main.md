@@ -27,52 +27,47 @@ table-use-row-colors: true
 # Application Functionalities
 
 Our application supports the below functions for their corresponding user type:
+* All Users 
+  - Register as Pet Owners or Caretakers (either Full-time or Part-time)
+  - Login and sign up
+  - Update profile and opt in as a caretaker
 
--   All Users
+* PCS Administrators
+  - Access to Summary statistics
+  - View, create and update Pet Categories
+  - Delete a Pet Category if there are no pets in that category
+  - Set the base daily price for any pet category
+  - View monthly payroll (salary of the caretakers)
 
-    -   Register as Pet Owners or Caretakers (either Full-time or Part-time)
-    -   Login and sign up
-    -   Update profile and opt in as a caretaker
+* Pet Owners
+  - Update Pet details
+  - Add a new Pet
+  - Bid for a caretaker for for a specific pet and declare transport method and payment method
 
--   PCS Administrators
+* All CareTakers
+  - View payment by month and year
+  - View all pets taken care of (past and present)
+  - View Feedback of past pets taken care of and ratings
+  - View average rating
+  - Declare daily price
+  - Declare categories of pets he/she can take care of 
+  - Care Takers declare their availability using a start date and an end date.
 
-    -   Access to Summary statistics
-    -   View, create and update Pet Categories
-    -   Delete a Pet Category if there are no pets in that category
-    -   Set the base daily price for any pet category
-    -   View monthly payroll (salary of the caretakers)
+* Full Time Care Taker
+  - Full-time Care Takers declare their leaves. Any time a Full-time Care Taker is not on leave, he is available
+  - Can only accept bid request
 
--   Pet Owners
+* Part Time Care Taker
+  - Part-time Care Takers declare their availability. A Part-time Care Taker is available if the request period of service is within one of his declared available periods.
+  - Able to accept or reject bid request
 
-    -   Update Pet details
-    -   Add a new Pet
-    -   Bid for a caretaker for for a specific pet and declare transport method and payment method
-
--   All CareTakers
-
-    -   View payment by month and year
-    -   View all pets taken care of (past and present)
-    -   View Feedback of past pets taken care of and ratings
-    -   View average rating
-    -   Declare daily price
-    -   Declare categories of pets he/she can take care of
-    -   Care Takers declare their availability using a start date and an end date.
-
--   Full Time Care Taker
-
-    -   Full-time Care Takers declare their leaves. Any time a Full-time Care Taker is not on leave, he is available
-    -   Can only accept bid request
-
--   Part Time Care Taker
-    -   Part-time Care Takers declare their availability. A Part-time Care Taker is available if the request period of service is within one of his declared available periods.
-    -   Able to accept or reject bid request
 
 # Data Constraints
 
 ## User:
 
 1. Users cannot register for an account if their email already exists in the database
-2. Users have a role that must be “admin” or “user”
+2. Users have a role that must be `admin` or `user`
 
 ## Pet:
 
@@ -82,8 +77,7 @@ Our application supports the below functions for their corresponding user type:
 ## Care Takers:
 
 1. Must reference a user account
-2. Must be either full-time or part-time, not both
-3. A Care Taker’s rating is a floating point number between 1 and 5 that is the average of all the ratings that he/she has received
+1. A Care Taker’s rating is a floating point number between 1 and 5 that is the average of all the ratings that he/she has received
 
 ## Credit Cards:
 
@@ -91,15 +85,16 @@ Our application supports the below functions for their corresponding user type:
 
 ## Bids:
 
-2. Bids have a status of {‘submitted’, ‘confirmed’, ‘reviewed’, ‘closed’}
-    1. The necessity of ‘submitted’ is due to the option for Part Timers to reject the bid
-3. A Bid’s transport method is either “delivery”, “pickup”, “pcs”
-4. End date cannot be before start date
-5. Start date cannot be before the date the bid is created.
-6. Must reference a Care Taker and a pet that belongs to the pet owner in the bid
-7. The rating of a Bid is an integer of no less than 1 and no more than 5
-8. Bids cannot be placed for the same pet with the same starting time
-9. A bid is paid by either cash or credit card, but not both or neither.
+1. Bids have a status of {`submitted`, `confirmed`, `reviewed`, `closed`}
+   1. The necessity of `submitted` is due to the option for Part Timers to reject the bid
+1. A Bid’s transport method is either `delivery`, `pickup`, `pcs`
+1. End date cannot be before start date
+1. Start date cannot be before the date the bid is created.
+1. Must reference a Care Taker and a pet that belongs to the pet owner in the bid
+1. The rating of a Bid is an integer of no less than 1 and no more than 5
+1. Bids cannot be placed for the same pet with the same starting time
+1. A bid is paid by either cash or credit card, but not both or neither.
+
 
 ## Schedules:
 
@@ -111,27 +106,27 @@ Our application supports the below functions for their corresponding user type:
 
 ## Care Takers
 
-4. A non-overlapping constraint of Part Timers and Full Timers is placed over Care Takers
+1. A non-overlapping constraint of Part Timers and Full Timers is placed over Care Takers (i.e., Care Takers can either be Part-time or Full-time but not both)
 
 ## Bids
 
-5. A Bid cannot be updated if it is ‘closed’
-6. Pet owners can only make a bid request for a CareTaker during a time period if Caretaker is not taking care of more than n pets during any time in that period
-    1. Limit n is set at 5 for full time CareTakers
-    2. Limit n is 2 for part timers unless their average rating is > 4 then it is 5
-7. Bid placement criteria
-    1. All bids for Full Timers will only placed if the pet limit is not reached (as in 1) and the Full Timer is not on leave
-    2. All bids for Full Timers will only be placed if the pet limit is not reached (as in 1) and the Part Timer is available
-8. Pet owners can only make 1 bid request for each pet in the same time period (2 time periods are the same if they have the same start and end dates)
-    1. This is with the exception of the case where bids have the same start and end dates and are all made for Part Time Care Takers
-    2. I.e. when the pet owner has bidded the same period for multiple Part Time Care Takers for one pet
-9. Constraint 4 also leads us to the fact that if any one of Part Time Care Takers set the bid status to ‘confirmed’ or the pet owner places a bid for the same period for a full timer, the bid status for the the other Part Timers will be set to ‘closed’
+1. A Bid cannot be updated if it is `closed`
+1. Pet owners can only make a bid request for a CareTaker during a time period if Caretaker is not taking care of more than n pets during any time in that period
+   1. Limit n is set at 5 for full time CareTakers 
+   2. Limit n is 2 for part timers unless their average rating is > 4 then it is 5
+1. Bid placement criteria
+   1. All bids for Full Timers will only placed if the pet limit is not reached (as in 1) and the Full Timer is not on leave
+   2. All bids for Full Timers will only be placed if the pet limit is not reached (as in 1) and the Part Timer is available
+1. Pet owners can only make 1 bid request for each pet in the same time period (2 time periods are the same if they have the same start and end dates)
+   1. This is with the exception of the case where bids have the same start and end dates and are all made for Part Time Care Takers
+   2. I.e. when the pet owner has bidded the same period for multiple Part Time Care Takers for one pet
+1. Constraint 4 also leads us to the fact that if any one of Part Time Care Takers set the bid status to ‘confirmed’ or the pet owner places a bid for the same period for a full timer, the bid status for the the other Part Timers will be set to ‘closed’
 
 ## Schedules
 
 1. Care Taker must work for two 150 consecutive day periods per year (inclusive of weekends)
 2. Constraints with bid
-    1. A Full Timer may not apply for leave if a bid has already been made that has overlapped (inclusive of start and end dates)
+   1. A Full Timer may not apply for leave if a bid has already been made that has overlapped (inclusive of start and end dates)
 3. Schedules for any user cannot overlap (inclusive of start and end dates)
 
 # Non-trivial Aspects of Implementation
@@ -140,12 +135,11 @@ Our application supports the below functions for their corresponding user type:
 
 In order to generate realistic data that also fit into the application constraints, random data needs to be generated procedurally. This is done using the node module “faker”, that provides realistic data such as names and email, while also being deterministic once supplied a seed.
 
-For each randomly generated user,
-
--   randomly generate 0 - 5 pets from a randomly chosen pet category
-    -   Randomly generate 3 pets
--   Randomly decide whether the user is a part-time or full-time caretaker
-    -   Randomly generate 0 - 3 pet categories that the caretaker specializes in
+For each randomly generated user, 
+* Randomly generate 0 - 5 pets from a randomly chosen pet category
+  * Randomly generate 3 pets 
+* Randomly decide whether the user is a part-time or full-time caretaker
+  * Randomly generate 0 - 3 pet categories that the caretaker specializes in
 
 ## Tackling 60 Pet days in SQL for Full Timer monthly payments
 
@@ -353,18 +347,18 @@ All of our SQL tables are in BCNF, and consequently, 3NF. This is because all th
 1. Users must have a valid-looking email address
 2. Users register as a Pet Owner or Care Taker after logging in.
 3. Can only care for pets they specialize in
-4. Owners and Care
-5. Both the Pet Owner and Care Taker should agree on how to transfer the Pet, which can only be one of the following three:
-    1. Pet Owner deliver
-    2. Care Taker pick up
-    3. Transfer through the physical building of PCS administrator
+4. Owners and Care 
+5. Both the Pet Owner and Care Taker should agree on how to transfer the Pet, which can only be one of the following three: 
+  1. Pet Owner deliver 
+  2. Care Taker pick up 
+  3. Transfer through the physical building of PCS administrator
 6. Transaction can only be cash or credit card
 7. A Bid can only progress through status via one of the following routes:
-    1. Full Timers
-        1. `confirmed` $\rightarrow$ `reviewed`
-    2. Part Timers
-        1. `submitted` $\rightarrow$ `confirmed` $\rightarrow$`reviewed`
-        2. `submitted` $\rightarrow$ `closed`
+  1. Full Timers
+    1. `confirmed` $\rightarrow$ `reviewed`
+  2. Part Timers
+    1. `submitted` $\rightarrow$ `confirmed` $\rightarrow$`reviewed`
+    2. `submitted` $\rightarrow$ `closed`
 8. A Full-time Care Taker will receive a salary of $3000 per month for the first 60 pet-days (number of pets taken care of for how many days). They will receive 80% of their price from any excess pet-day as a bonus on top of the $3000.
 9. A Part-time Care Taker will take only 75% of their price as payment.
 
@@ -409,23 +403,23 @@ SELECT
 
 ```sql
 SELECT fullname, phone, address, email, avatar_link as avatarUrl, caretaker_status as caretakerStatus, rating, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
-      SELECT email, $3 as type_name FROM
-         (SELECT DISTINCT email
-               FROM pt_free_schedule
-               WHERE start_date <= $1 AND end_date >= $2
-         UNION
-         SELECT email FROM full_time_ct ftct
-               WHERE NOT EXISTS (
-                  SELECT 1 FROM ft_leave_schedule fts
-                  WHERE fts.email = ftct.email
-                  AND start_date <= $1
-                  AND end_date >= $2
-               )
-         ) as free_sched
-         WHERE EXISTS (
-               SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
-         )
-      ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
+   SELECT email, $3 as type_name FROM 
+      (SELECT DISTINCT email 
+            FROM pt_free_schedule 
+            WHERE start_date <= $1 AND end_date >= $2
+      UNION
+      SELECT email FROM full_time_ct ftct
+            WHERE NOT EXISTS (
+               SELECT 1 FROM ft_leave_schedule fts
+               WHERE fts.email = ftct.email
+               AND start_date <= $1
+               AND end_date >= $2
+            )
+      ) as free_sched
+      WHERE EXISTS (
+            SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
+      )
+   ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
 ```
 
 -   Parameters: $1: start date of request, $2: end date of request, \$3 category of pet requested
@@ -624,19 +618,19 @@ FOR EACH ROW EXECUTE PROCEDURE ft_150_constraint();
 
 ```
 
--   This query works by first getting the start and end years of the start and end dates of the new leave schedule
--   The first and second queries are identical except that one checks for 150 day gaps and the second checks for 300 day gaps
--   Overview: We want to check the gaps between each leave schedule to see if it is either a 150 day gap or a 300 day gap
--   So what we have done is to prepend the start of the year to t1 and append the end of the year to t2
-    -   t1 contains the end dates of each leave schedule as well as the start date of the year
-    -   t2 contains the start dates of each leave schedule as well as the end date of the year
--   We then order both tables by ascending order of the end dates and start dates respectively for t1 and t2
--   Next we use row number again to generate an enumeration and join the tables so that we get the end dates and start dates in the same row such that start date - end date gives us the gap between each leave schedule
--   We then check the count of the 150/300 day gaps
--   At the end, it’s a conditional based on whether the leave is applied across 2 years or is in a single year
+* This query works by first getting the start and end years of the start and end dates of the new leave schedule
+* The first and second queries are identical except that one checks for 150 day gaps and the second checks for 300 day gaps
+* Overview: We want to check the gaps between each leave schedule to see if it is either a 150 day gap or a 300 day gap
+* So what we have done is to prepend the start of the year to t1 and append the end of the year to t2
+ * t1 contains the end dates of each leave schedule as well as the start date of the year
+ * t2 contains the start dates of each leave schedule as well as the end date of the year
+* We then order both tables by ascending order of the end dates and start dates respectively for t1 and t2
+* Next we use row number again to generate an enumeration and join the tables so that we get the end dates and start dates in the same row such that start date - end date gives us the gap between each leave schedule
+* We then check the count of the 150/300 day gaps
+* At the end, it’s a conditional based on whether the leave is applied across 2 years or is in a single year
 
-## Bid overlap check with caveat for Part Timer Bids
-
+## Part time availability overlap check
+  
 ```sql
 CREATE OR REPLACE FUNCTION no_bid_overlap()
 RETURNS TRIGGER AS
@@ -672,13 +666,14 @@ BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 ```
 
--   This trigger serves to enforce no overlapping bids
-    -   A bid overlaps is if it’s for the same pet and the dates overlap irregardless of Care Taker bidded for
--   This is with the caveat that there can be multiple identical bids only if all the bids are for Part Time Care Takers
-    -   A bid is identical if it is for the same pet with the same start and end dates. But identical bids can be placed on different Care Takers
-    -   This is due to our option for Part Timers to accept or reject bids
--   We enforced this by counting the number of overlaps and then subtracting off the overlaps resulting from identical bids on Part Timers
-    -   This count should thus be 0
+
+* This trigger serves to enforce no overlapping bids 
+ * A bid overlaps is if it’s for the same pet and the dates overlap irregardless of Care Taker bidded for
+* This is with the caveat that there can be multiple identical bids only if all the bids are for Part Time Care Takers
+ * A bid is identical if it is for the same pet with the same start and end dates. But identical bids can be placed on different Care Takers
+ * This is due to our option for Part Timers to accept or reject bids
+* We enforced this by counting the number of overlaps and then subtracting off the overlaps resulting from identical bids on Part Timers
+ * This count should thus be 0
 
 # Technical Specifications
 
@@ -686,17 +681,19 @@ Our application is implemented with an Express/Node backend that serves a ReactJ
 
 Our application is deployed on Heroku with Docker. PR preview is powered by Heroku Review Apps.
 
--   Frontend:
-    -   React v16**.5**
-    -   Ant Design v4.5
-    -   Typescript
-    -   Axios
--   Backend:
-    -   Typescript
-    -   Express
-    -   Node
-    -   passport-jwt
--   Database: PostgreSQL 12.1
+
+
+* Frontend: 
+ * React v16**.5**
+ * Ant Design v4.5
+ * Typescript
+ * Axios
+* Backend:
+ * Typescript
+ * Express
+ * Node
+ * passport-jwt
+* Database: PostgreSQL 12.1
 
 # Screenshots
 
@@ -724,7 +721,7 @@ Creating Order:
 
 One problem that we faced along the way is the frontend-backend integration. As `pg` runs on JavaScript, the properties of the Query Result rows are not known at compile-time. Even though we adopted TypeScript, we were not able to type-check the outgoing JSON objects. This causes a lot of trouble, since no warning is given when the object schema changes. Front-end will encounter error accessing undefined object keys that existed before the schema change.
 
-Another major challenge is the discrepancies between the key names between the database and backend and frontend. Since postgres is case-insensitive, we have to be wary of converting the key from snake_case to camelCase in our code. This becomes confusing when different team members do not follow the convention, which sometimes leaks into the frontend, causing an avalanche of runtime errors. A way to overcome this is to state the conventions followed in some form of documentations such as Github Wiki beforehand. Timely communication is also crucial in preventing inconsistency and reducing integration overhead.
+Another major challenge is the discrepancies between the key names between the database and backend and frontend. Since postgres is case-insensitive, we have to be wary of converting the key from `snake_case` to `camelCase` in our code. This becomes confusing when different team members do not follow the convention, which sometimes leaks into the frontend, causing an avalanche of runtime errors. A way to overcome this is to state the conventions followed in some form of documentations such as Github Wiki beforehand. Timely communication is also crucial in preventing inconsistency and reducing integration overhead.
 
 However, we were amazed by the type-safety brought by TypeScript in our front-end codebase. Without the type guidance, we will not be able to fix the errors caused by the schema changes quickly.
 
