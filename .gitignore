@@ -70,3 +70,6 @@ pg_data/
 
 
 temp/
+
+# latex
+*.aux
