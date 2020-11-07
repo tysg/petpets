@@ -27,56 +27,39 @@ table-use-row-colors: true
 # Application Functionalities
 
 Our application supports the below functions for their corresponding user type:
-
--   All Users
-
-    -   Register as Pet Owners or Caretakers (either Full-time or Part-time)
-    -   Login and sign up
-    -   Update profile and opt in as a caretaker
-
--   PCS Administrators
-
-    -   Access to Summary statistics
-    -   View, create and update Pet Categories
-    -   Delete a Pet Category if there are no pets in that category
-    -   Set the base daily price for any pet category
-    -   View monthly payroll (salary of the caretakers)
-
--   Pet Owners
-
 * All Users 
-- Register as Pet Owners or Caretakers (either Full-time or Part-time)
-- Login and sign up
-- Update profile and opt in as a caretaker
+  - Register as Pet Owners or Caretakers (either Full-time or Part-time)
+  - Login and sign up
+  - Update profile and opt in as a caretaker
 
 * PCS Administrators
-- Access to Summary statistics
-- View, create and update Pet Categories
-- Delete a Pet Category if there are no pets in that category
-- Set the base daily price for any pet category
-- View monthly payroll (salary of the caretakers)
+  - Access to Summary statistics
+  - View, create and update Pet Categories
+  - Delete a Pet Category if there are no pets in that category
+  - Set the base daily price for any pet category
+  - View monthly payroll (salary of the caretakers)
 
 * Pet Owners
-- Update Pet details
-- Add a new Pet
-- Bid for a caretaker for for a specific pet and declare transport method and payment method
+  - Update Pet details
+  - Add a new Pet
+  - Bid for a caretaker for for a specific pet and declare transport method and payment method
 
 * All CareTakers
-- View payment by month and year
-- View all pets taken care of (past and present)
-- View Feedback of past pets taken care of and ratings
-- View average rating
-- Declare daily price
-- Declare categories of pets he/she can take care of 
-- Care Takers declare their availability using a start date and an end date.
+  - View payment by month and year
+  - View all pets taken care of (past and present)
+  - View Feedback of past pets taken care of and ratings
+  - View average rating
+  - Declare daily price
+  - Declare categories of pets he/she can take care of 
+  - Care Takers declare their availability using a start date and an end date.
 
 * Full Time Care Taker
-- Full-time Care Takers declare their leaves. Any time a Full-time Care Taker is not on leave, he is available
-- Can only accept bid request
+  - Full-time Care Takers declare their leaves. Any time a Full-time Care Taker is not on leave, he is available
+  - Can only accept bid request
 
 * Part Time Care Taker
-- Part-time Care Takers declare their availability. A Part-time Care Taker is available if the request period of service is within one of his declared available periods.
-- Able to accept or reject bid request
+  - Part-time Care Takers declare their availability. A Part-time Care Taker is available if the request period of service is within one of his declared available periods.
+  - Able to accept or reject bid request
 
 
 # Data Constraints
@@ -103,7 +86,7 @@ Our application supports the below functions for their corresponding user type:
 ## Bids:
 
 1. Bids have a status of {`submitted`, `confirmed`, `reviewed`, `closed`}
- 1. The necessity of `submitted` is due to the option for Part Timers to reject the bid
+   1. The necessity of `submitted` is due to the option for Part Timers to reject the bid
 1. A Bid’s transport method is either `delivery`, `pickup`, `pcs`
 1. End date cannot be before start date
 1. Start date cannot be before the date the bid is created.
@@ -129,21 +112,21 @@ Our application supports the below functions for their corresponding user type:
 
 1. A Bid cannot be updated if it is `closed`
 1. Pet owners can only make a bid request for a CareTaker during a time period if Caretaker is not taking care of more than n pets during any time in that period
- 1. Limit n is set at 5 for full time CareTakers 
- 2. Limit n is 2 for part timers unless their average rating is > 4 then it is 5
+   1. Limit n is set at 5 for full time CareTakers 
+   2. Limit n is 2 for part timers unless their average rating is > 4 then it is 5
 1. Bid placement criteria
- 1. All bids for Full Timers will only placed if the pet limit is not reached (as in 1) and the Full Timer is not on leave
- 2. All bids for Full Timers will only be placed if the pet limit is not reached (as in 1) and the Part Timer is available
+   1. All bids for Full Timers will only placed if the pet limit is not reached (as in 1) and the Full Timer is not on leave
+   2. All bids for Full Timers will only be placed if the pet limit is not reached (as in 1) and the Part Timer is available
 1. Pet owners can only make 1 bid request for each pet in the same time period (2 time periods are the same if they have the same start and end dates)
- 1. This is with the exception of the case where bids have the same start and end dates and are all made for Part Time Care Takers
- 2. I.e. when the pet owner has bidded the same period for multiple Part Time Care Takers for one pet
+   1. This is with the exception of the case where bids have the same start and end dates and are all made for Part Time Care Takers
+   2. I.e. when the pet owner has bidded the same period for multiple Part Time Care Takers for one pet
 1. Constraint 4 also leads us to the fact that if any one of Part Time Care Takers set the bid status to ‘confirmed’ or the pet owner places a bid for the same period for a full timer, the bid status for the the other Part Timers will be set to ‘closed’
 
 ## Schedules
 
 1. Care Taker must work for two 150 consecutive day periods per year (inclusive of weekends)
 2. Constraints with bid
- 1. A Full Timer may not apply for leave if a bid has already been made that has overlapped (inclusive of start and end dates)
+   1. A Full Timer may not apply for leave if a bid has already been made that has overlapped (inclusive of start and end dates)
 3. Schedules for any user cannot overlap (inclusive of start and end dates)
 
 # Non-trivial Aspects of Implementation
@@ -154,9 +137,9 @@ In order to generate realistic data that also fit into the application constrain
 
 For each randomly generated user, 
 * Randomly generate 0 - 5 pets from a randomly chosen pet category
- * Randomly generate 3 pets 
+  * Randomly generate 3 pets 
 * Randomly decide whether the user is a part-time or full-time caretaker
- * Randomly generate 0 - 3 pet categories that the caretaker specializes in
+  * Randomly generate 0 - 3 pet categories that the caretaker specializes in
 
 ## Tackling 60 Pet days in SQL for Full Timer monthly payments
 
@@ -366,16 +349,16 @@ All of our SQL tables are in BCNF, and consequently, 3NF. This is because all th
 3. Can only care for pets they specialize in
 4. Owners and Care 
 5. Both the Pet Owner and Care Taker should agree on how to transfer the Pet, which can only be one of the following three: 
- 1. Pet Owner deliver 
- 2. Care Taker pick up 
- 3. Transfer through the physical building of PCS administrator
+  1. Pet Owner deliver 
+  2. Care Taker pick up 
+  3. Transfer through the physical building of PCS administrator
 6. Transaction can only be cash or credit card
 7. A Bid can only progress through status via one of the following routes:
- 1. Full Timers
-  1. `confirmed` $\rightarrow$ `reviewed`
- 2. Part Timers
-  1. `submitted` $\rightarrow$ `confirmed` $\rightarrow$`reviewed`
-  2. `submitted` $\rightarrow$ `closed`
+  1. Full Timers
+    1. `confirmed` $\rightarrow$ `reviewed`
+  2. Part Timers
+    1. `submitted` $\rightarrow$ `confirmed` $\rightarrow$`reviewed`
+    2. `submitted` $\rightarrow$ `closed`
 8. A Full-time Care Taker will receive a salary of $3000 per month for the first 60 pet-days (number of pets taken care of for how many days). They will receive 80% of their price from any excess pet-day as a bonus on top of the $3000.
 9. A Part-time Care Taker will take only 75% of their price as payment.
 
@@ -738,10 +721,10 @@ Creating Order:
 
 One problem that we faced along the way is the frontend-backend integration. As `pg` runs on JavaScript, the properties of the Query Result rows are not known at compile-time. Even though we adopted TypeScript, we were not able to type-check the outgoing JSON objects. This causes a lot of trouble, since no warning is given when the object schema changes. Front-end will encounter error accessing undefined object keys that existed before the schema change.
 
-Another major challenge is the discrepancies between the key names between the database and backend and frontend. Since postgres is case-insensitive, we have to be wary of converting the key from snake_case to camelCase in our code. This becomes confusing when different team members do not follow the convention, which sometimes leaks into the frontend, causing an avalanche of runtime errors. A way to overcome this is to state the conventions followed in some form of documentations such as Github Wiki beforehand. Timely communication is also crucial in preventing inconsistency and reducing integration overhead.
+Another major challenge is the discrepancies between the key names between the database and backend and frontend. Since postgres is case-insensitive, we have to be wary of converting the key from `snake_case` to `camelCase` in our code. This becomes confusing when different team members do not follow the convention, which sometimes leaks into the frontend, causing an avalanche of runtime errors. A way to overcome this is to state the conventions followed in some form of documentations such as Github Wiki beforehand. Timely communication is also crucial in preventing inconsistency and reducing integration overhead.
 
 However, we were amazed by the type-safety brought by TypeScript in our front-end codebase. Without the type guidance, we will not be able to fix the errors caused by the schema changes quickly.
 
 Some decisions on the application constraints are not fully thought out during the ER diagram design phase. This has led to repeated changes in schema and endpoints to cater to new constraints. This could have been prevented by starting to consider and document the constraints early.
 
-Overall, we felt that the use of  the ER diagram has helped us greatly in communicating database design requirements. Functional dependency analysis is also easier when the relational schema follows the ER diagram closely and is concise and clear. We have learnt that modelling a real world problem can be done more effectively and efficiently with systematic knowledge on relational schema and functional dependencies.
+Overall, we felt that the use of the ER diagram has helped us greatly in communicating database design requirements. Functional dependency analysis is also easier when the relational schema follows the ER diagram closely and is concise and clear. We have learnt that modelling a real world problem can be done more effectively and efficiently with systematic knowledge on relational schema and functional dependencies.
