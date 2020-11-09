@@ -50,7 +50,6 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 {careTaker ? (
                     <Redirect to={`${path}/upcoming`} />
                 ) : (
-                    // TODO:
                     <Register {...props} />
                 )}
             </Route>
