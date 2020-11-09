@@ -17,7 +17,7 @@ export const pet_query = {
     get_pet_category:
         "SELECT type_name, base_daily_price FROM pet_category WHERE type_name=$1",
     update_pet_category:
-        "UPDATE pet_category SET (type_name, base_daily_price) = ($1, $2) WHERE type_name=$1",
+        "UPDATE pet_category SET (type_name, base_daily_price) = ($1, $2) WHERE type_name=$3",
     create_pet_category:
         "INSERT INTO pet_category (type_name, base_daily_price) VALUES ($1, $2)",
     delete_pet_category: "DELETE FROM pet_category WHERE type_name=$1"

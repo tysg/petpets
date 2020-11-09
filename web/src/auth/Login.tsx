@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Alert } from "antd";
 import { Store } from "antd/lib/form/interface";
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { RouteComponentProps } from "react-router-dom";
 import SignUp from "./SignUp";
 import { SignInRequest, SignInResponse } from "./../../../models/user";
@@ -18,9 +18,9 @@ const Login = (props: RouteComponentProps) => {
                 setTokenAndUser(accessToken, user);
                 props.history.push("/dashboard");
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 console.log(err.response);
-                setErrMsg(err.response.data.errorMessage);
+                setErrMsg(err.response.data.error);
                 setAuthfail(true);
             });
     };
