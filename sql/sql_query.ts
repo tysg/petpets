@@ -35,7 +35,8 @@ export const credit_card_query = {
         "UPDATE credit_card SET (card_number, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE card_number=$1 AND cardholder=$2"
 };
 
-const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link as avatarUrl, caretaker_status as caretakerStatus, rating`;
+const USER_ATTR = `fullname, phone, address, email, avatar_link as avatarurl`;
+const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link as avatarurl, caretaker_status as caretakerstatus, rating`;
 
 export const caretaker_query = {
     create_part_time_ct: `INSERT INTO part_time_ct (email) VALUES ($1)`,
@@ -189,9 +190,11 @@ export const schedule_query = {
     create_ft_schedule: `INSERT INTO ft_leave_schedule VALUES ($1, $2, $3)`
 };
 
+const PERSON_ATTR = `fullname, avatar_link as avatar_url, phone, address`;
+
 export const bid_query = {
     owner_get_bids: `SELECT * FROM bid WHERE pet_owner = $1`,
-    caretaker_get_bids: `SELECT * FROM bid WHERE ct_email = $1`,
+    caretaker_get_bids: `SELECT * FROM bid b NATURAL JOIN (select email as ${PERSON_ATTR} FROM person) p NATURAL JOIN pet WHERE b.ct_email = $1`,
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
         WHERE email= $1 AND type_name= $2`,
