@@ -190,11 +190,12 @@ export const schedule_query = {
     create_ft_schedule: `INSERT INTO ft_leave_schedule VALUES ($1, $2, $3)`
 };
 
-const PERSON_ATTR = `fullname, avatar_link as avatar_url, phone, address`;
+const PERSON_ATTR = `fullname, avatar_link as avatar_url, phone, address, email as pet_owner`;
+const PET_ATTR = `name as pet_name, owner as pet_owner, description, requirements, category`;
 
 export const bid_query = {
     owner_get_bids: `SELECT * FROM bid WHERE pet_owner = $1`,
-    caretaker_get_bids: `SELECT * FROM bid b NATURAL JOIN (select email as ${PERSON_ATTR} FROM person) p NATURAL JOIN pet WHERE b.ct_email = $1`,
+    caretaker_get_bids: `SELECT * FROM (select * from bid where ct_email=$1) b NATURAL JOIN (select ${PERSON_ATTR} FROM person) p NATURAL JOIN (select ${PET_ATTR} from pet) p2`,
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
         WHERE email= $1 AND type_name= $2`,
