@@ -94,6 +94,7 @@ CREATE TABLE pt_free_schedule (
 	email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
+	CONSTRAINT pt_schedule_id PRIMARY KEY (email, start_date, end_date),
 	CONSTRAINT end_after_start CHECK (end_date >= start_date),
 	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
@@ -102,6 +103,7 @@ CREATE TABLE ft_leave_schedule (
 	email varchar(64) REFERENCES full_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
+	CONSTRAINT ft_schedule_id PRIMARY KEY (email, start_date, end_date),
 	CONSTRAINT end_after_start CHECK (end_date >= start_date),
 	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
@@ -122,7 +124,7 @@ CREATE TABLE bid (
 	rating int DEFAULT NULL,
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number),
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name),
-	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date),
+	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date, end_date),
 	CONSTRAINT valid_date CHECK(end_date >= start_date),
 	CONSTRAINT xor_cash_credit CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
 );

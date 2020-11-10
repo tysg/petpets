@@ -8,7 +8,9 @@ import {
     CareTakerResponse,
     BidResponse,
     StringResponse,
-    sqlify
+    BidJoinOwnerPet,
+    sqlify,
+    BidStatus
 } from "../models/bid";
 import { CaretakerStatus } from "../models/careTaker";
 import { asyncQuery } from "../utils/db";
@@ -16,6 +18,29 @@ import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
 import moment from "moment";
 import { exception } from "console";
+
+// const mapBidJoinOwnerPetQuery = (r: QueryBidJoinOwnerPet) => ({
+//     petOwner: r.pet_name,
+//     petName: r.pet_name,
+//     ctEmail: r.ct_email,
+//     ctPrice: r.ct_price,
+//     startDate: r.start_date,
+//     endDate: r.end_date,
+//     isCash: r.is_cash,
+//     creditCard: r.credit_card,
+//     transportMethod: r.transport_method,
+//     bidStatus: r.bid_status,
+//     feedback: r.feedback,
+//     rating: r.rating,
+//     fullname: r.fullname,
+//     address: r.address,
+//     phone: r.phone,
+//     role: r.role,
+//     avatarUrl: r.avatar_link,
+//     category: r.category,
+//     requirements: r.requirements,
+//     description: r.description
+// });
 
 export const owner_get = async (req: Request, res: Response) => {
     try {
@@ -44,13 +69,13 @@ export const owner_get = async (req: Request, res: Response) => {
 export const ct_get = async (req: Request, res: Response) => {
     try {
         const { ct_email } = req.params;
-        const qr: QueryResult<Bid> = await asyncQuery(
+        const qr: QueryResult<BidJoinOwnerPet> = await asyncQuery(
             bid_query.caretaker_get_bids,
             [ct_email]
         );
-        const { rows } = qr;
+
         const response: CareTakerResponse = {
-            data: rows,
+            data: qr.rows,
             error: ""
         };
         res.send(response);
