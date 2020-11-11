@@ -25,6 +25,19 @@ export type CreateBidRequest = Pick<
     | "transport_method"
 >;
 
+interface UserInfoForCareTaker {
+    fullname: string;
+    address: string;
+    phone: number;
+    avatar_url?: string;
+}
+
+interface PetInfoForCareTaker {
+    category: string;
+    requirements: string;
+    description: string;
+}
+
 export interface Bid {
     ct_email: string;
     ct_price: number;
@@ -41,6 +54,11 @@ export interface Bid {
     feedback: Text;
     rating: number;
 }
+
+export interface BidJoinOwnerPet
+    extends Bid,
+        UserInfoForCareTaker,
+        PetInfoForCareTaker {}
 
 export const sqlify = (bid: Bid) => [
     bid.ct_email,
@@ -74,7 +92,7 @@ export type OwnerResponse = ApiResponse<Bid[], string>;
 /**
  * GET api/bids/caretaker/:ct_email;
  */
-export type CareTakerResponse = ApiResponse<Bid[], string>;
+export type CareTakerResponse = ApiResponse<BidJoinOwnerPet[], string>;
 
 /**
  * POST api/bids;

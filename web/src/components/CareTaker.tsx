@@ -10,10 +10,10 @@ import {
 import { Bid } from "../../../models/bid";
 import { CareTakerSpecializesDetails } from "../../../models/careTaker";
 import CareTakerRoute from "../auth/CareTakerRoute";
-import { careTaker as careTakerApi } from "../common/api";
+import { bid as bidApi, careTaker as careTakerApi } from "../common/api";
 import Assignments from "./caretaker/Assignments";
-import PastJobs from "./caretaker/PastJobs";
 import Rates from "./caretaker/Rates";
+import Register from "./caretaker/Register";
 
 const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
     const { path } = useRouteMatch();
@@ -26,12 +26,22 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
         careTakerApi
             .getCareTaker()
             .then((res) => {
-                console.log(res.data);
-                setCareTaker(res.data);
+                const careTaker = res.data.data;
+                setCareTaker(careTaker);
+                // TODO: get all bids for this caretaker
+                bidApi
+                    .getForCareTaker()
+                    .then((res) => {
+                        setBids(res.data.data);
+                    })
+                    .catch((err) => {
+                        console.log("There are no bids for this user");
+                        console.log(err.response.data.err);
+                    });
             })
             .catch((err) => {
                 console.log(err);
-                message.error("Unable to retrieve from database");
+                message.error(err.response.data.err);
             });
     }, []);
     return (
@@ -41,25 +51,36 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                     <Redirect to={`${path}/upcoming`} />
                 ) : (
                     // TODO:
-                    <div>Register as caretaker</div>
+                    <Register {...props} />
                 )}
             </Route>
             <CareTakerRoute
                 path={`${path}/upcoming`}
-                component={Assignments}
                 careTakerDetails={careTaker}
-            ></CareTakerRoute>
+            >
+                <Assignments
+                    dataSource={bids.filter((bid) => true)}
+                    emptyMsg="No upcoming jobs"
+                />
+            </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/pending`}
                 careTakerDetails={careTaker}
             >
-                <Assignments dataSource={bids} />
+                <Assignments
+                    dataSource={bids.filter((bid) => true)}
+                    emptyMsg="No pending jobs"
+                />
             </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/pastjobs`}
-                component={PastJobs}
                 careTakerDetails={careTaker}
-            ></CareTakerRoute>
+            >
+                <Assignments
+                    dataSource={bids.filter((bid) => true)}
+                    emptyMsg="No past jobs"
+                />
+            </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/schedule`}
                 component={Rates}

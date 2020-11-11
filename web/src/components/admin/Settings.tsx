@@ -16,21 +16,22 @@ import { PetCategoriesResponse, PetCategory } from "../../../../models/pet";
 import { pets as petsApi } from "../../common/api";
 
 const checkPrice = (_: any, value: any) => {
-    return value.number > 0
+    return value >= 0
         ? Promise.resolve()
-        : Promise.reject("Price must be more than 0");
+        : Promise.reject("Price cannot be negative!");
 };
 
 interface ModalFormProps {
     title: string;
     visible: boolean;
-    defaultPet: PetCategory;
-    onSubmit: (value: PetCategory) => void;
+    initialValue: PetCategory | null;
+    onSubmit: (oldValue: PetCategory | null, newValue: PetCategory) => void;
     onCancel: () => void;
 }
 
 const ModalForm = (props: ModalFormProps) => {
-    const { visible, onSubmit, onCancel, title, defaultPet } = props;
+    const { visible, onSubmit, onCancel, title, initialValue } = props;
+    const defaultPet = initialValue ?? { typeName: "", baseDailyPrice: 0 };
     const [form] = Form.useForm();
     return (
         <Modal
@@ -47,7 +48,7 @@ const ModalForm = (props: ModalFormProps) => {
                             typeName,
                             baseDailyPrice
                         };
-                        onSubmit(record);
+                        onSubmit(initialValue, record);
                     })
                     .catch((err) => console.log("Validation failed:", err));
             }}
@@ -72,7 +73,11 @@ const ModalForm = (props: ModalFormProps) => {
                 >
                     <Input defaultValue={defaultPet.typeName}></Input>
                 </FormItem>
-                <FormItem label="Base Daily Price" name="baseDailyPrice">
+                <FormItem
+                    label="Base Daily Price"
+                    name="baseDailyPrice"
+                    rules={[{ validator: checkPrice }]}
+                >
                     <InputNumber defaultValue={defaultPet.baseDailyPrice} />
                 </FormItem>
             </Form>
@@ -109,10 +114,7 @@ const Settings = () => {
     const [visibleModal, setVisibleModal] = useState(false);
     const showModal = () => setVisibleModal(true);
     const hideModal = () => setVisibleModal(false);
-    const [record, setRecord] = useState({
-        typeName: "",
-        baseDailyPrice: 0
-    });
+    const [record, setRecord] = useState<PetCategory | null>(null);
     const [title, setTitle] = useState("");
     const actionColumn = {
         title: "Action",
@@ -129,9 +131,11 @@ const Settings = () => {
             );
         }
     };
-    const onSubmit = (values: PetCategory) => {
-        petsApi
-            .putCategory(values)
+    const onSubmit = (oldValue: PetCategory | null, newValue: PetCategory) => {
+        const promise = oldValue
+            ? petsApi.patchCategory(oldValue, newValue)
+            : petsApi.postCategory(newValue);
+        promise
             .then((res) => {
                 console.log(res);
                 message.success("Success!");
@@ -163,8 +167,7 @@ const Settings = () => {
     };
     const newModal = () => {
         setTitle("New Pet Category");
-        setRecord(record);
-        setRecord({ typeName: "", baseDailyPrice: 0 });
+        setRecord(null);
         showModal();
     };
     const generateModal = (record: PetCategory) => {
@@ -190,7 +193,7 @@ const Settings = () => {
                     title={title}
                     onCancel={hideModal}
                     onSubmit={onSubmit}
-                    defaultPet={record}
+                    initialValue={record}
                 ></ModalForm>
             )}
             <Table

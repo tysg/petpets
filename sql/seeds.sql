@@ -30,9 +30,10 @@ INSERT INTO pt_specializes_in VALUES ('ptct2@gmail.com', 'Dog', 4);
 
 -- schedules
 INSERT INTO pt_free_schedule VALUES ('ptct@gmail.com', '2020-11-05', '2020-11-10');
-INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-12-30', '2021-01-05');
--- will throw not enought consecutive working days error
--- INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-09-20', '2021-09-30'); 
+INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-10-27', '2020-10-28');
+INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2021-05-31', '2021-06-01');
+INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2021-10-30', '2021-10-31');
+-- INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-05-22', '2020-05-23'); 
 
 -- bids
 

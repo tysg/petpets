@@ -223,11 +223,17 @@ export const remove = async (req: Request, res: Response) => {
 const create = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
-        const createQuery =
+        const careTakerQuery =
             ctStatus == CaretakerStatus.partTimeCt
                 ? caretaker_query.create_part_time_ct
-                : caretaker_query.create_part_time_ct;
-        await asyncQuery(createQuery, [caretaker.email]);
+                : caretaker_query.create_full_time_ct;
+
+        const specializesQuery =
+            ctStatus == CaretakerStatus.partTimeCt
+                ? specializes_query.set_pt_specializes
+                : specializes_query.set_ft_specializes;
+
+        await asyncQuery(careTakerQuery, [caretaker.email]);
 
         const specializesParams = caretaker.allSpecializes.map(
             (specializes: SpecializesIn) => [
@@ -238,7 +244,7 @@ const create = (ctStatus: number) => async (req: Request, res: Response) => {
         );
 
         await specializesParams.map((params: any) =>
-            asyncQuery(specializes_query.set_pt_specializes, params)
+            asyncQuery(specializesQuery, params)
         );
 
         const response: StringResponse = {

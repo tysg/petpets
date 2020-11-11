@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS pt_specializes_in CASCADE;
 DROP TABLE IF EXISTS ft_specializes_in CASCADE;
 DROP TABLE IF EXISTS pet CASCADE;
 DROP TABLE IF EXISTS pet_category CASCADE;
+DROP VIEW IF EXISTS pet_owner CASCADE;
 DROP TABLE IF EXISTS pt_free_schedule CASCADE;
 DROP TABLE IF EXISTS ft_leave_schedule CASCADE;
 DROP VIEW IF EXISTS caretaker CASCADE;
@@ -103,6 +104,7 @@ CREATE TABLE pt_free_schedule (
 	email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
+	CONSTRAINT pt_schedule_id PRIMARY KEY (email, start_date, end_date),
 	CONSTRAINT end_after_start CHECK (end_date >= start_date),
 	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
@@ -111,13 +113,11 @@ CREATE TABLE ft_leave_schedule (
 	email varchar(64) REFERENCES full_time_ct(email) ON DELETE CASCADE,
 	start_date date NOT NULL,
 	end_date date NOT NULL,
-	CONSTRAINT end_after_start CHECK (end_date >= start_date)
+	CONSTRAINT ft_schedule_id PRIMARY KEY (email, start_date, end_date),
+	CONSTRAINT end_after_start CHECK (end_date >= start_date),
+	CONSTRAINT within_next_year CHECK (extract(year FROM end_date) <= (1 + extract(year FROM CURRENT_DATE)))
 );
 
-CREATE VIEW pet_owner (email, pet_name) AS (
-	SELECT email, name as pet_name
-	FROM person NATURAL JOIN pet
-);
 
 CREATE TABLE bid (
 <<<<<<< HEAD
@@ -144,7 +144,7 @@ CREATE TABLE bid (
 >>>>>>> f1af6f6ecdc365bb2a882dc2ac9c98d2b4d7ef6a
 	FOREIGN KEY (pet_owner, credit_card) REFERENCES credit_card(cardholder, card_number),
 	FOREIGN KEY (pet_owner, pet_name) REFERENCES pet(owner, name),
-	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date),
+	CONSTRAINT bid_id PRIMARY KEY (ct_email, pet_name, pet_owner, start_date, end_date),
 	CONSTRAINT valid_date CHECK(end_date >= start_date),
 	CONSTRAINT xor_cash_credit CHECK ((is_cash AND credit_card IS NULL) OR (NOT is_cash AND credit_card IS NOT NULL))
 );

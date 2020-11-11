@@ -158,11 +158,11 @@ $t$ LANGUAGE PLpgSQL;
 
 
 -- for debugging
-DROP TABLE IF EXISTS count_limit;
+-- DROP TABLE IF EXISTS count_limit;
 
-CREATE TABLE count_limit (
-	c1 int
-);
+-- CREATE TABLE count_limit (
+-- 	c1 int
+-- );
 
 
 CREATE OR REPLACE FUNCTION pet_limit()
