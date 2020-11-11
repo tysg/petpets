@@ -24,6 +24,9 @@ const OwnerSidebar = (props: RouteComponentProps) => {
                 <Menu.Item key="orders">
                     <Link to={`${path}/orders`}>My Orders</Link>
                 </Menu.Item>
+                <Menu.Item key="payment">
+                    <Link to={`${path}/payment`}>My CreditCards</Link>
+                </Menu.Item>
             </ItemGroup>
         </ResponsiveSidebar>
     );

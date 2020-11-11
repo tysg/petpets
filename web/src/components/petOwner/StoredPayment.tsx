@@ -26,7 +26,7 @@ const CreditCards = () => {
     const hideModal = () => setVisibleModal(false);
     const [record, setRecord] = useState<Omit<CreditCard, "cardholder">>({
         cardNumber: 0,
-        expiryDate: new Date(),
+        expiryDate: new Date('1976-04-19T12:59-0500'),
         securityCode: 505
     });
     const [title, setTitle] = useState("");
@@ -67,7 +67,7 @@ const CreditCards = () => {
         setTitle("New Credit Card");
         setRecord({
             cardNumber: 0,
-            expiryDate: new Date(),
+            expiryDate: new Date('1976-04-19T12:59-0500'),
             securityCode: 505
         });
         showModal();
