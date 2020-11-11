@@ -77,15 +77,6 @@ BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 
 
-
--- for debugging
--- DROP TABLE IF EXISTS count_limit;
-
--- CREATE TABLE count_limit (
--- 	c1 int
--- );
-
-
 CREATE OR REPLACE FUNCTION pet_limit()
 RETURNS TRIGGER AS 
 $t$
@@ -113,8 +104,6 @@ BEGIN
 		ORDER BY dates.date) as overlapDates
 	group by overlapDates.date
 	having count(*) > pet_count;
-
-	insert into count_limit values (transgression);
 
 	IF transgression > 0 THEN
 		RAISE EXCEPTION 'limit reached for period!';
