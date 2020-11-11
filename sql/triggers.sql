@@ -101,10 +101,9 @@ BEGIN
 		(select
 			dates.date
 			from (
-				select                                                                              
+				select
 					generate_series(
-						date_trunc('month', NEW.start_date),
-						NEW.end_date, '1 day'
+						NEW.start_date, NEW.end_date, '1 day'
 					)::date as date
 			) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
 			where dates.date >= p.start_date and dates.date <= p.end_date 
@@ -121,8 +120,10 @@ END;
 $t$ LANGUAGE PLpgSQL;
 
 CREATE TRIGGER check_pet_limit
-BEFORE INSERT ON bid
+BEFORE INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE pet_limit();
+
+
 
 
 CREATE OR REPLACE FUNCTION close_bid()
