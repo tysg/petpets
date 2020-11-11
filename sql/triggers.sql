@@ -100,12 +100,6 @@ FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 -- BEFORE UPDATE ON bid
 -- FOR EACH ROW EXECUTE PROCEDURE prevent_update_bid();
 
--- for debugging
--- DROP TABLE IF EXISTS count_limit;
-
--- CREATE TABLE count_limit (
--- 	c1 int
--- );
 
 
 CREATE OR REPLACE FUNCTION pet_limit()
@@ -135,8 +129,6 @@ BEGIN
 		ORDER BY dates.date) as overlapDates
 	group by overlapDates.date
 	having count(*) > pet_count;
-
-	insert into count_limit values (transgression);
 
 	IF transgression > 0 THEN
 		RAISE EXCEPTION 'limit reached for period!';
@@ -247,14 +239,6 @@ $t$ LANGUAGE PLpgSQL;
 CREATE TRIGGER check_ft_schedule_no_date_overlap
 BEFORE INSERT ON ft_leave_schedule
 FOR EACH ROW EXECUTE PROCEDURE date_non_overlap_ft_schedule();
-
--- for debugging
--- DROP TABLE IF EXISTS count_sched;
-
--- CREATE TABLE count_sched (
--- 	c1 int
--- );
-
 
 CREATE OR REPLACE FUNCTION ft_150_constraint()
 RETURNS TRIGGER AS 
