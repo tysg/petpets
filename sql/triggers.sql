@@ -3,6 +3,13 @@
 -- NOTE, functions not allowed to take parameters when used in triggers, so no choice. 
 -- WAC, lots of dasani
 
+-- CREATE OR REPLACE FUNCTION get_ct_pet_limit(text) RETURNS integer AS 
+-- 	'SELECT CASE 
+-- 			when (caretaker_status=2 OR rating > 4) then 5
+-- 			else 2 end
+-- 		from caretaker where email=$1;'
+-- 	LANGUAGE PLpgSQL;
+
 CREATE OR REPLACE FUNCTION not_part_time()
 RETURNS TRIGGER AS 
 $t$ 

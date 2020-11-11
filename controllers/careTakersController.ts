@@ -139,19 +139,7 @@ export const search = async (req: Request, res: Response) => {
             caretaker_query.search_caretaker,
             [`${start_date}`, `${end_date}`, `${pet_category}`]
         );
-        // TODO add check for no existing bookings
-        // WIP untested
         const rows = qr.rows.map(mapSearchResponse);
-        const bidCheck = await rows.filter(async (ct) => {
-            const transgression: QueryResult<PetCountPerDay> = await asyncQuery(
-                caretaker_query.pet_limit_check,
-                [ct.email, `${start_date}`, `${end_date}`]
-            );
-            const count = transgression.rows[0].count;
-            console.log(count);
-            return count === 0;
-        });
-        console.log(bidCheck);
         yup.array(CareTakerSpecializesInCategorySchema)
             .defined()
             .validate(rows)

@@ -43,6 +43,30 @@ export const caretaker_query = {
     create_full_time_ct: `INSERT INTO full_time_ct (email) VALUES ($1)`,
     get_caretaker: `SELECT ${CARETAKER_ATTR} FROM (caretaker NATURAL JOIN person) WHERE email=$1`,
     index_caretaker: `SELECT ${CARETAKER_ATTR} FROM (caretaker NATURAL JOIN person)`,
+    // search_caretaker: `
+    // SELECT ${CARETAKER_ATTR}, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
+    //     SELECT email, $3 as type_name FROM
+    //         (SELECT DISTINCT email
+    //             FROM pt_free_schedule
+    //             WHERE start_date <= $1 AND end_date >= $2
+    //         UNION
+    //         SELECT email FROM full_time_ct ftct
+    //             WHERE NOT EXISTS (
+    //                 SELECT 1 FROM ft_leave_schedule fts
+    //                 WHERE fts.email = ftct.email
+    //                 AND start_date <= $1
+    //                 AND end_date >= $2
+    //             )
+    //         ) as free_sched
+    //         WHERE EXISTS (
+    //             SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
+    //         )
+    //     ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
+    // `,
+    delete_caretaker: [
+        `DELETE FROM part_time_ct where email=$1`,
+        `DELETE FROM full_time_ct where email=$1`
+    ],
     search_caretaker: `
     SELECT ${CARETAKER_ATTR}, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
         SELECT email, $3 as type_name FROM 
@@ -61,32 +85,28 @@ export const caretaker_query = {
             WHERE EXISTS (
                 SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
             )
-        ) as s NATURAL JOIN person NATURAL JOIN caretaker NATURAL JOIN specializes_in
-    `,
-    delete_caretaker: [
-        `DELETE FROM part_time_ct where email=$1`,
-        `DELETE FROM full_time_ct where email=$1`
-    ],
-    pet_limit_check: `
-        select count(*) as t FROM 
-            (select
-                dates.date
-                from (
-                    select
-                        generate_series(
-                            date_trunc('month', Date($2)),
-                            Date($3), '1 day'
-                        )::date as date
-                ) as dates, (select * FROM bid WHERE ct_email=$1) as p
-                where dates.date >= p.start_date and dates.date <= p.end_date 
-            ORDER BY dates.date) as overlapDates
-        group by overlapDates.date
-        having count(*) > 
-        (select 
-            case 
-                when caretaker_status=2 OR rating > 4 then 4
-                else 1 end
-            from caretaker where email=$1)
+        ) as s NATURAL JOIN person NATURAL JOIN caretaker c NATURAL JOIN specializes_in
+        WHERE NOT EXISTS (
+            select 1 FROM 
+                (select
+                    dates.date
+                    from (
+                        select
+                            generate_series(
+                                date_trunc('month', Date($1)),
+                                Date($2), '1 day'
+                            )::date as date
+                    ) as dates, (select * FROM bid WHERE ct_email=c.email) as p
+                    where dates.date >= p.start_date and dates.date <= p.end_date 
+                ORDER BY dates.date) as overlapDates
+            group by overlapDates.date
+            having count(*) >=
+            (select 
+                case 
+                    when caretaker_status=2 OR rating > 4 then 5
+                    else 2 end
+                from caretaker where email=c.email)
+        )
     `
 };
 
