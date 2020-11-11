@@ -53,6 +53,7 @@ export const index = async (req: Request, res: Response) => {
 export const get = async (req: Request, res: Response) => {
     try {
         const { card_number, cardholder } = req.params;
+
         const qr = await asyncQuery(credit_card_query.get_credit_card, [
             card_number,
             cardholder

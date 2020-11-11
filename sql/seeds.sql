@@ -36,6 +36,7 @@ INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2021-10-30', '2021-10-3
 -- INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2020-05-22', '2020-05-23'); 
 
 -- bids
+
 INSERT INTO bid VALUES('ftct@gmail.com', '50', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Apple', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'confirmed', '');
