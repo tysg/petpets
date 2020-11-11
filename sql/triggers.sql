@@ -96,20 +96,23 @@ BEGIN
 			when caretaker_status=2 OR rating > 4 then 4
 			else 1 end
 		into pet_count from caretaker where email=NEW.ct_email;
+	SELECT 0 into transgression;
 
-	select count(*) into transgression FROM 
-		(select
-			dates.date
-			from (
-				select
-					generate_series(
-						NEW.start_date, NEW.end_date, '1 day'
-					)::date as date
-			) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
-			where dates.date >= p.start_date and dates.date <= p.end_date 
-		ORDER BY dates.date) as overlapDates
-	group by overlapDates.date
-	having count(*) > pet_count;
+	IF (TG_OP='INSERT') OR (TG_OP='UPDATE' AND OLD.bid_status!='confirmed')  THEN 
+		select count(*) into transgression FROM
+			(select
+				dates.date
+				from (
+					select
+						generate_series(
+							NEW.start_date, NEW.end_date, '1 day'
+						)::date as date
+				) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email AND bid_status='confirmed') as p
+				where dates.date >= p.start_date and dates.date <= p.end_date 
+			ORDER BY dates.date) as overlapDates
+		group by overlapDates.date
+		having count(*) > pet_count;
+	END IF;
 
 	IF transgression > 0 THEN
 		RAISE EXCEPTION 'limit reached for period!';

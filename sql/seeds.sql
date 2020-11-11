@@ -38,13 +38,13 @@ INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2021-10-30', '2021-10-3
 -- bids
 INSERT INTO bid VALUES('ftct@gmail.com', '50', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Apple', 'confirmed', '');
+INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'submitted', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Brandt_Metz10@yahoo.com', 'Jailyn', 'confirmed', '');
-INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-05', '2020-09-08', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'submitted', '');
-INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'submitted', '');
+INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'confirmed', '');
 -- INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'confirmed', '');
-INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'submitted', '');
-INSERT INTO bid VALUES('ptct2@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'confirmed', '');
+INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'confirmed', '');
+INSERT INTO bid VALUES('ptct2@gmail.com', '69', '2020-09-05', '2020-09-09', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'confirmed', '');
 
 -- credit cards
 -- Postgresql uses the yyyy-mm-dd format

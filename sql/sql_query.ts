@@ -95,7 +95,7 @@ export const caretaker_query = {
                             generate_series(
                                 Date($1), Date($2), '1 day'
                             )::date as date
-                    ) as dates, (select * FROM bid WHERE ct_email=c.email) as p
+                    ) as dates, (select * FROM bid WHERE ct_email=c.email AND bid_status='confirmed') as p
                     where dates.date >= p.start_date and dates.date <= p.end_date 
                 ORDER BY dates.date) as overlapDates
             group by overlapDates.date
