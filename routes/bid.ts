@@ -6,11 +6,11 @@ export const router = Router();
 router.post("/", bidsController.create);
 
 router.patch(
-    "/:ct_email/:owner_email/:pet_name/:start_date",
+    "/:ct_email/:owner_email/:pet_name/:start_date/:end_date",
     bidsController.update
 );
 router.delete(
-    "/:ct_email/:owner_email/:pet_name/:start_date",
+    "/:ct_email/:owner_email/:pet_name/:start_date/:end_date",
     bidsController.remove
 );
 router.get("/owner/:owner_email", bidsController.owner_get);

@@ -76,41 +76,29 @@ CREATE TRIGGER check_no_bid_overlap
 BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 
-CREATE OR REPLACE FUNCTION close_bid()
-RETURNS TRIGGER AS 
-$t$
-BEGIN
-	IF NEW.bid_status = 'confirmed' THEN
-		UPDATE bid SET bid_status='closed'
-			WHERE pet_name = NEW.pet_name 
-			AND pet_owner = NEW.pet_owner 
-			AND start_date = NEW.start_date 
-			AND bid_status = 'submitted';
-	END IF;
-	RETURN NEW;
-END;
-$t$ LANGUAGE PLpgSQL;
-
-CREATE TRIGGER close_pt_bid
-AFTER INSERT OR UPDATE ON bid
-FOR EACH ROW EXECUTE PROCEDURE close_bid()
-
 CREATE OR REPLACE FUNCTION prevent_update_bid()
 RETURNS TRIGGER AS
 $t$
+DECLARE old_status VARCHAR(64);
 BEGIN
-	IF OLD.bid_status = 'closed' THEN
-		RAISE EXCEPTION 'The bid is already closed';
-	ELSE
-		RETURN NEW;
-	END IF;
+	SELECT bid_status INTO old_status FROM bid B
+		WHERE B.ct_email = NEW.ct_email
+	  AND B.pet_name = NEW.pet_name
+	  AND B.pet_owner = NEW.pet_owner
+	  AND B.start_date = NEW.start_date
+	  AND B.end_date = NEW.end_date;
+
+	  IF old_status = 'closed' THEN
+	  RAISE EXCEPTION 'The bid is already closed!';
+	END if;
+	RETURN NEW;
 END;
-$t$ LANGUAGE PLpgSQL;
+$t$
+LANGUAGE PLpgSQL;
 
 CREATE TRIGGER prevent_bid
 BEFORE UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE prevent_update_bid();
-
 
 -- for debugging
 -- DROP TABLE IF EXISTS count_limit;
@@ -135,16 +123,16 @@ BEGIN
 
 	select count(*) into transgression FROM 
 		(select
-			ac.date as date
+			dates.date
 			from (
 				select                                                                              
 					generate_series(
 						date_trunc('month', NEW.start_date),
 						NEW.end_date, '1 day'
 					)::date as date
-			) as ac, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
-			where ac.Date >= p.start_date and ac.Date <= p.end_date 
-		ORDER BY ac.date) as overlapDates
+			) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
+			where dates.date >= p.start_date and dates.date <= p.end_date 
+		ORDER BY dates.date) as overlapDates
 	group by overlapDates.date
 	having count(*) > pet_count;
 
@@ -163,6 +151,55 @@ BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE pet_limit();
 
 
+CREATE OR REPLACE FUNCTION close_bid()
+RETURNS TRIGGER AS 
+$t$
+BEGIN
+	IF NEW.bid_status = 'confirmed' THEN
+		UPDATE bid SET bid_status='closed'
+			WHERE pet_name = NEW.pet_name 
+			AND pet_owner = NEW.pet_owner 
+			AND start_date = NEW.start_date 
+			AND end_date = NEW.end_date 
+			AND bid_status = 'submitted';
+	END IF;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER close_pt_bid
+AFTER INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE close_bid();
+
+
+CREATE OR REPLACE FUNCTION avg_rating()
+RETURNS TRIGGER AS 
+$t$
+DECLARE avg_rating NUMERIC;
+DECLARE ct_status INTEGER;
+BEGIN
+	SELECT caretaker_status INTO ct_status FROM caretaker WHERE email=NEW.ct_email;
+	IF NEW.rating is not NULL THEN
+		IF ct_status = 2 THEN 
+			UPDATE full_time_ct
+				SET (rating) = 
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		ELSE
+			UPDATE part_time_ct 
+				SET (rating) =
+					(SELECT AVG(rating) FROM bid WHERE ct_email=NEW.ct_email AND rating IS NOT NULL) 
+				WHERE email=NEW.ct_email;
+		END IF;
+	END IF;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER get_avg_rating
+AFTER INSERT OR UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE avg_rating();
+
 -- Schedule Overlap check
 -- part time
 CREATE OR REPLACE FUNCTION date_non_overlap_pt_schedule()
@@ -173,9 +210,8 @@ BEGIN
 	SELECT COUNT(*) INTO overlap FROM 
 		pt_free_schedule p
 		WHERE p.email=NEW.email 
-		AND 
-		((NEW.start_date >= p.start_date AND NEW.start_date <= p.end_date) 
-		OR (NEW.end_date >= p.start_date AND NEW.end_date <= p.end_date));
+		AND NEW.start_date <= p.end_date 
+		AND NEW.end_date >= p.start_date;
 	IF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
 	ELSE
@@ -198,9 +234,8 @@ BEGIN
 	SELECT COUNT(*) INTO overlap FROM 
 		ft_leave_schedule ft 
 		WHERE ft.email=NEW.email 
-		AND 
-		((NEW.start_date >= ft.start_date AND NEW.start_date <= ft.end_date) 
-		OR (NEW.end_date >= ft.start_date AND NEW.end_date <= ft.end_date));
+		AND NEW.start_date <= ft.end_date 
+		AND NEW.end_date >= ft.start_date;
 	IF overlap > 0 THEN
 		RAISE EXCEPTION 'New schedule overlaps!';
 	ELSE

@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
-    BidPeriod,
     CtStatusAndSpecializes,
-    PetCategory,
     Bid,
     OwnerResponse,
     CareTakerResponse,
@@ -92,25 +90,26 @@ export const ct_get = async (req: Request, res: Response) => {
 
 export const remove = async (req: Request, res: Response) => {
     try {
-        const { ct_email, owner_email, pet_name, start_date } = req.params;
+        const { ct_email, owner_email, pet_name, start_date, end_date } = req.params;
         await asyncQuery(bid_query.delete_bid, [
             ct_email,
             owner_email,
             pet_name,
-            start_date
+            start_date,
+            end_date
         ]);
         const response: StringResponse = {
-            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been deleted `,
+            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} has been deleted `,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { ct_email, owner_email, pet_name, start_date } = req.params;
+        const { ct_email, owner_email, pet_name, start_date, end_date } = req.params;
         log.error("delete bid error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} cannot be deleted: ` +
+                `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be deleted: ` +
                 error
         };
         res.status(400).send(response);
@@ -146,12 +145,12 @@ export const create = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { ct_email, owner_email, pet_name, start_date } = req.body;
+        const { ct_email, owner_email, pet_name, start_date, end_date } = req.body;
         log.error("create bid error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} cannot be created: ` +
+                `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be created: ` +
                 error
         };
         res.status(400).send(response);
@@ -160,29 +159,30 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
     try {
-        const { ct_email, owner_email, pet_name, start_date } = req.params;
+        const { ct_email, owner_email, pet_name, start_date, end_date } = req.params;
         var bid: Bid = req.body;
         await asyncQuery(bid_query.update_bid, [
             ct_email,
             owner_email,
             pet_name,
             start_date,
+            end_date,
             bid.bid_status,
             bid.rating,
             bid.feedback,
         ]);
         const response: StringResponse = {
-            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} has been updated. The new status is ${bid.bid_status}.`,
+            data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} has been updated. The new status is ${bid.bid_status}.`,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { ct_email, owner_email, pet_name, start_date } = req.body;
+        const { ct_email, owner_email, pet_name, start_date, end_date } = req.body;
         log.error("update bid error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Bid by ${owner_email} with ${ct_email} for ${pet_name} on ${start_date} cannot be updated:` +
+            `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be updated: ` +
                 error
         };
         res.status(400).send(response);
