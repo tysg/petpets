@@ -17,7 +17,7 @@ export const pet_query = {
     get_pet_category:
         "SELECT type_name, base_daily_price FROM pet_category WHERE type_name=$1",
     update_pet_category:
-        "UPDATE pet_category SET (type_name, base_daily_price) = ($1, $2) WHERE type_name=$1",
+        "UPDATE pet_category SET (type_name, base_daily_price) = ($1, $2) WHERE type_name=$3",
     create_pet_category:
         "INSERT INTO pet_category (type_name, base_daily_price) VALUES ($1, $2)",
     delete_pet_category: "DELETE FROM pet_category WHERE type_name=$1"
@@ -35,7 +35,8 @@ export const credit_card_query = {
         "UPDATE credit_card SET (card_number, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE card_number=$1 AND cardholder=$2"
 };
 
-const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link as avatarUrl, caretaker_status as caretakerStatus, rating`;
+const USER_ATTR = `fullname, phone, address, email, avatar_link as avatarurl`;
+const CARETAKER_ATTR = `fullname, phone, address, email, avatar_link as avatarurl, caretaker_status as caretakerstatus, rating`;
 
 export const caretaker_query = {
     create_part_time_ct: `INSERT INTO part_time_ct (email) VALUES ($1)`,
@@ -91,10 +92,10 @@ export const caretaker_query = {
 
 const ptPaymentMonthly = `
     SELECT 
-        sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) * 0.75 as full_pay,
+        sum( (least(ct_bid.end_date, endmonth) + 1 - greatest(ct_bid.start_date, startmonth)) * ct_price) * 0.75 as full_pay,
         to_char(startmonth, 'YYYY-MM') as month_year
-        FROM (SELECT                                                                              
-            generate_series(
+        FROM (
+            SELECT generate_series(
                 date_trunc('month', startend.sd),
                 startend.ed, '1 month'
             )::date AS startmonth,
@@ -103,15 +104,16 @@ const ptPaymentMonthly = `
                 startend.ed, '1 month'
             ) + interval '1 month' - interval '1 day' )::date AS endmonth
             FROM
-            (SELECT min(start_date) AS sd, max(end_date) AS ed 
-            FROM bid 
-            WHERE ct_email=$1 AND bid_status='confirmed') AS startend
-            ORDER BY 1
-    ) AS monthly, (SELECT * FROM bid  WHERE bid.ct_email=$1 AND bid.bid_status = 'confirmed')
-    WHERE bid.start_date <= monthly.endmonth
-    AND monthly.startmonth <= bid.end_date
-    GROUP BY monthly.endmonth, monthly.startmonth
-    HAVING monthly.endmonth <= CURRENT_DATE
+                (SELECT min(start_date) AS sd, max(end_date) as ed
+                FROM bid 
+                WHERE ct_email=$1 AND bid_status='confirmed') AS startend
+                ORDER BY sd
+        ) AS monthly, (SELECT * FROM bid WHERE bid.ct_email=$1 AND bid.bid_status='confirmed') as ct_bid
+        WHERE ct_bid.start_date <= monthly.endmonth
+        AND monthly.startmonth <= ct_bid.end_date
+        AND ct_bid.start_date <= CURRENT_DATE
+        GROUP BY monthly.endmonth, monthly.startmonth
+        HAVING monthly.endmonth <= CURRENT_DATE
 `;
 
 const ftPaymentMonthly = `
@@ -209,9 +211,12 @@ export const schedule_query = {
     create_ft_schedule: `INSERT INTO ft_leave_schedule VALUES ($1, $2, $3)`
 };
 
+const PERSON_ATTR = `fullname, avatar_link as avatar_url, phone, address, email as pet_owner`;
+const PET_ATTR = `name as pet_name, owner as pet_owner, description, requirements, category`;
+
 export const bid_query = {
     owner_get_bids: `SELECT * FROM bid WHERE pet_owner = $1`,
-    caretaker_get_bids: `SELECT * FROM bid WHERE ct_email = $1`,
+    caretaker_get_bids: `SELECT * FROM (select * from bid where ct_email=$1) b NATURAL JOIN (select ${PERSON_ATTR} FROM person) p NATURAL JOIN (select ${PET_ATTR} from pet) p2`,
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
         WHERE email= $1 AND type_name= $2`,

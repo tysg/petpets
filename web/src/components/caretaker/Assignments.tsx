@@ -1,13 +1,14 @@
-import React, { FunctionComponent, ReactComponentElement } from "react";
-import { List, Space, Avatar } from "antd";
+import React, { useEffect } from "react";
+import { Button, List, Space, Avatar, message, Descriptions, Card } from "antd";
 import {
-    StarOutlined,
+    CloseOutlined,
     LikeOutlined,
     MessageOutlined,
     SmileOutlined,
     CoffeeOutlined
 } from "@ant-design/icons";
 import { Bid } from "../../../../models/bid";
+import DescriptionsItem from "antd/lib/descriptions/Item";
 
 const columns = [
     { title: "Date", dataIndex: "date", key: "date" },
@@ -31,23 +32,43 @@ interface IconTextProps {
     icon: any;
     text: string;
 }
+const RejectButton = (props: IconTextProps) => {
+    const { icon, text } = props;
+    return (
+        <Button danger>
+            <Space>
+                {text}
+                {React.createElement(icon)}
+            </Space>
+        </Button>
+    );
+};
 
 const IconText = (props: IconTextProps) => {
     const { icon, text } = props;
     return (
-        <Space>
-            {React.createElement(icon)}
-            {text}
-        </Space>
+        <Button>
+            <Space>
+                {text}
+                {React.createElement(icon)}
+            </Space>
+        </Button>
     );
 };
 
 interface AssignmentsProps {
     dataSource: Bid[];
+    emptyMsg: string;
 }
 
 const Assignments = (props: AssignmentsProps) => {
-    const { dataSource } = props;
+    const { dataSource, emptyMsg } = props;
+    console.log(dataSource);
+    useEffect(() => {
+        if (dataSource.length <= 0) {
+            message.info(emptyMsg);
+        }
+    }, [dataSource]);
     return (
         <List
             itemLayout="vertical"
@@ -70,41 +91,51 @@ const Assignments = (props: AssignmentsProps) => {
                 pet_owner,
                 start_date,
                 bid_status,
-                feedback
+                feedback,
+                rating,
+                transport_method,
+                end_date,
+                ct_price
             }) => (
                 <List.Item
                     key={pet_name + pet_owner + start_date}
                     actions={[
                         <IconText
-                            icon={StarOutlined}
-                            text="156"
+                            icon={LikeOutlined}
+                            text="Accept"
                             key="list-vertical-star-o"
                         />,
-                        <IconText
-                            icon={LikeOutlined}
-                            text="156"
-                            key="list-vertical-like-o"
-                        />,
-                        <IconText
-                            icon={MessageOutlined}
-                            text="2"
+                        <RejectButton
+                            icon={CloseOutlined}
+                            text="Reject"
                             key="list-vertical-message"
                         />
                     ]}
-                    extra={
-                        <img
-                            width={272}
-                            alt="logo"
-                            src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                        />
-                    }
                 >
-                    <List.Item.Meta
-                        avatar={<Avatar icon={<SmileOutlined />} />}
-                        title={pet_name}
-                        description={bid_status}
-                    />
-                    {feedback}
+                    <Card>
+                        <List.Item.Meta
+                            avatar={<Avatar icon={<SmileOutlined />} />}
+                            title={pet_name}
+                            description={bid_status}
+                        />
+                        <Descriptions bordered>
+                            <DescriptionsItem label="Transport Method">
+                                {transport_method}
+                            </DescriptionsItem>
+                            <DescriptionsItem label="End Date">
+                                {end_date}
+                            </DescriptionsItem>
+                            <DescriptionsItem label="Price">
+                                {ct_price}
+                            </DescriptionsItem>
+                            <DescriptionsItem label="Feedback" span={2}>
+                                {feedback}
+                            </DescriptionsItem>
+                            <DescriptionsItem label="Rating" span={1}>
+                                {rating}
+                            </DescriptionsItem>
+                        </Descriptions>
+                    </Card>
                 </List.Item>
             )}
         />

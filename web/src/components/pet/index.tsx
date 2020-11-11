@@ -5,20 +5,13 @@ import { Pet } from "../../../../models/pet";
 import PetsCard from "./PetCard";
 import PetModalForm from "./Modal";
 
-const PetPage = () => {
-    const [userPets, setUserPets] = useState<Pet[]>([]);
-    const fetchUserPets = async () => {
-        try {
-            const fetchedPets = (await PetsApi.getUserPets()).data.data;
-            setUserPets(fetchedPets);
-        } catch (err) {
-            console.log("fetchPetCategories err", err);
-        }
-    };
-    // fetch only once
-    useEffect(() => {
-        fetchUserPets();
-    }, []);
+interface PetPageProps {
+    pets: Pet[];
+    update: () => Promise<void>;
+}
+const PetPage = (props: PetPageProps) => {
+    const userPets = props.pets;
+    const fetchUserPets = props.update;
 
     // modal settings
     const [visibleModal, setVisibleModal] = useState(false);

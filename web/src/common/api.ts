@@ -15,10 +15,12 @@ import {
 } from "./../../../models/creditCard";
 import {
     CareTakerSpecializesDetails,
-    SearchResponse
+    SearchResponse,
+    SpecializesIn
 } from "./../../../models/careTaker";
-import { CreateBidRequest } from "../../../models/bid";
+import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
 import { Moment } from "moment";
+import { ApiResponse } from "../../../models";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = getToken();
@@ -56,10 +58,19 @@ const PET_CATEGORY_ENDPOINT = "/api/petCategories";
 export const pets = {
     getCategories: (): Promise<AxiosResponse<PetCategoriesResponse>> =>
         axios.get(PET_CATEGORY_ENDPOINT, authHeaderConfig),
-    putCategory: (
+    postCategory: (
         data: PetCategory
     ): Promise<AxiosResponse<PetCategoriesResponse>> =>
-        axios.put(PET_CATEGORY_ENDPOINT, data, authHeaderConfig),
+        axios.post(PET_CATEGORY_ENDPOINT, data, authHeaderConfig),
+    patchCategory: (
+        oldData: PetCategory,
+        newData: PetCategory
+    ): Promise<AxiosResponse<PetCategoriesResponse>> =>
+        axios.patch(
+            PET_CATEGORY_ENDPOINT + `/${oldData.typeName}`,
+            newData,
+            authHeaderConfig
+        ),
     removeCategory: ({
         typeName
     }: PetCategory): Promise<AxiosResponse<StringResponse>> =>
@@ -125,12 +136,33 @@ export const bid = {
         // return Promise.resolve();
         // return Promise.reject();
         return post(`/api/bids`, body);
+    },
+    getForCareTaker: (): Promise<AxiosResponse<CareTakerResponse>> => {
+        return get("/api/bids/caretaker/" + email);
     }
 };
 
 const CARETAKER_ENDPOINT = "/api/caretakers/";
 export const careTaker = {
-    getCareTaker: (): Promise<AxiosResponse<CareTakerSpecializesDetails>> => {
+    getCareTaker: (): Promise<
+        AxiosResponse<ApiResponse<CareTakerSpecializesDetails, string>>
+    > => {
         return get(CARETAKER_ENDPOINT + email);
+    },
+    newFulltimer: (
+        allSpecializes: SpecializesIn[]
+    ): Promise<AxiosResponse<StringResponse>> => {
+        return post(CARETAKER_ENDPOINT + "full_timer", {
+            email,
+            allSpecializes
+        });
+    },
+    newParttimer: (
+        allSpecializes: SpecializesIn[]
+    ): Promise<AxiosResponse<StringResponse>> => {
+        return post(CARETAKER_ENDPOINT + "part_timer", {
+            email,
+            allSpecializes
+        });
     }
 };

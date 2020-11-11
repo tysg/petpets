@@ -250,7 +250,7 @@ BEGIN
 	select COUNT(*) into count_150 FROM ( 
 		select * from (
 			select *, row_number() over (partition by 1) as r1 from (
-				select Date(new_start_year||'-01-01') as ed1
+				select (Date(new_start_year||'-01-01')-'1 day'::interval) as ed1
 				union
 				SELECT end_date as ed1 FROM ft_leave_schedule f1
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
@@ -258,19 +258,19 @@ BEGIN
 		) ord1 inner join 
 		(
 			select *, row_number() over (partition by 1) as r2 from (
-				select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
+				select (Date(new_end_year||'-01-01')+'1 year'::interval) as sd2
 				union
 				select start_date as sd2 FROM ft_leave_schedule f2
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
 			) t2
 		) ord2 on ord1.r1=ord2.r2
 	) as cc
-	WHERE Date(cc.sd2)-Date(cc.ed1) >= 150;
+	WHERE Date(cc.sd2)-Date(cc.ed1) > 150;
 
 	select COUNT(*) into count_300 FROM ( 
 		select * from (
 			select *, row_number() over (partition by 1) as r1 from (
-				select Date(new_start_year||'-01-01') as ed1
+				select (Date(new_start_year||'-01-01')-'1 day'::interval) as ed1
 				union
 				SELECT end_date as ed1 FROM ft_leave_schedule f1
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by ed1 ASC
@@ -278,29 +278,26 @@ BEGIN
 		) ord1 inner join 
 		(
 			select *, row_number() over (partition by 1) as r2 from (
-				select (Date(new_end_year||'-01-01')+'1 year'::interval - '1 day'::interval) as sd2
+				select (Date(new_end_year||'-01-01')+'1 year'::interval) as sd2
 				union
 				select start_date as sd2 FROM ft_leave_schedule f2
 				WHERE email=NEW.email AND start_date >= Date(new_start_year||'-01-01') order by sd2 ASC
 			) t2
 		) ord2 on ord1.r1=ord2.r2
 	) as cc
-	WHERE Date(cc.sd2)-Date(cc.ed1) >= 300;
-
-	insert into count_limit VALUES (count_150);
-	insert into count_limit VALUES (count_300);
+	WHERE Date(cc.sd2)-Date(cc.ed1) > 300;
 
 	IF new_start_year != new_end_year THEN
 		IF count_300 = 2 OR count_150 = 4 OR (count_150 = 2 AND count_300 = 1) THEN 
 			RETURN NEW;
 		ELSE
-			RAISE EXCEPTION 'i simply cannot';
+			RAISE EXCEPTION 'No 2 times 150 consecutive working days!';
 		END IF;
 	ELSE
 		IF count_150 = 2 OR count_300 = 1 THEN 
 			RETURN NEW;
 		ELSE
-			RAISE EXCEPTION 'i simply cannot';
+			RAISE EXCEPTION 'No 2 times 150 consecutive working days!';
 		END IF;
 	END IF;
 	

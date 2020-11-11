@@ -145,51 +145,42 @@ export const getCategories = async (req: Request, res: Response) => {
     }
 };
 
-export const putCategory = async (req: Request, res: Response) => {
+export const patchCategory = async (req: Request, res: Response) => {
+    const { typeName: target } = req.params;
     const { typeName, baseDailyPrice } = req.body;
-    try {
-        const qr = await asyncQuery(pet_query.get_pet_category, [typeName]);
-        const { rows } = qr;
+    log.controller("updating pet category");
+    asyncQuery(pet_query.update_pet_category, [
+        typeName,
+        baseDailyPrice,
+        target
+    ])
+        .then((ret) => {
+            const response: ApiResponse<QueryResult<any>, string> = {
+                data: ret,
+                error: ""
+            };
+            res.send(response);
+        })
+        .catch((err) =>
+            res.status(400).send(errorResponse("Update pet category failed"))
+        );
+};
 
-        if (rows[0]) {
-            asyncQuery(pet_query.update_pet_category, [
-                typeName,
-                baseDailyPrice
-            ])
-                .then((ret) => {
-                    const response: ApiResponse<QueryResult<any>, string> = {
-                        data: ret,
-                        error: ""
-                    };
-                    res.send(response);
-                })
-                .catch((err) =>
-                    res
-                        .status(400)
-                        .send(errorResponse("Update pet category failed"))
-                );
-        } else {
-            asyncQuery(pet_query.create_pet_category, [
-                typeName,
-                baseDailyPrice
-            ])
-                .then((ret) => {
-                    const response: ApiResponse<QueryResult<any>, string> = {
-                        data: ret,
-                        error: ""
-                    };
-                    res.send(response);
-                })
-                .catch((err) =>
-                    res
-                        .status(400)
-                        .send(errorResponse("Create new pet category failed"))
-                );
-        }
-    } catch (err) {
-        log.error("select pet category error:", err);
-        res.status(400).send(errorResponse("Error getting pet category."));
-    }
+export const createCategory = async (req: Request, res: Response) => {
+    const { typeName, baseDailyPrice } = req.body;
+    asyncQuery(pet_query.create_pet_category, [typeName, baseDailyPrice])
+        .then((ret) => {
+            const response: ApiResponse<QueryResult<any>, string> = {
+                data: ret,
+                error: ""
+            };
+            res.send(response);
+        })
+        .catch((err) =>
+            res
+                .status(400)
+                .send(errorResponse("Create new pet category failed"))
+        );
 };
 
 export const removeCategory = async (req: Request, res: Response) => {

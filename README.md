@@ -1,4 +1,10 @@
-# db-project
+
+# Project Submission Files
+
+* [ER Diagram](docs/er_diagram.png)
+* [Project Report](docs/main.pdf)
+
+# Petpets
 
 Project repo for CS2102 Intro to Database Management Systems.
 Recommended node v14.8.0 for development, as this is the one used by production.
