@@ -204,6 +204,41 @@ export const admin_query = {
         AND bid.bid_status = 'confirmed'
         GROUP BY sem.endmonth
         HAVING endmonth <= CURRENT_DATE
+    `,
+    get_best_by_month: `
+        select * FROM (
+            month_year,
+            select ct_earnings,
+            ct_email as email,
+            rank() OVER (
+                PARTITION BY month_year
+                ORDER BY month_year, ct_earnings DESC
+            ) as r
+            FROM (
+                SELECT 
+                    sum( (least(ct_bid.end_date, endmonth) + 1 - greatest(ct_bid.start_date, startmonth)) * ct_price) as ct_earnings,
+                    to_char(startmonth, 'YYYY-MM') as month_year,
+                    ct_email
+                    FROM (
+                        SELECT generate_series(
+                            date_trunc('month', startend.sd),
+                            startend.ed, '1 month'
+                        )::date AS startmonth,
+                        (generate_series(
+                            date_trunc('month', startend.sd),
+                            startend.ed, '1 month'
+                        ) + interval '1 month' - interval '1 day' )::date AS endmonth
+                        FROM
+                            (SELECT min(start_date) AS sd, max(end_date) as ed
+                            FROM bid WHERE bid_status='confirmed') AS startend
+                            ORDER BY sd
+                    ) AS monthly, (SELECT * FROM bid WHERE bid_status='confirmed') as ct_bid
+                    WHERE ct_bid.start_date <= monthly.endmonth
+                    AND monthly.startmonth <= ct_bid.end_date
+                    GROUP BY startmonth, ct_email
+                ) as monthly_earning 
+        ) monthly_ranked NATURAL JOIN caretaker
+        where r < $1
     `
 };
 
