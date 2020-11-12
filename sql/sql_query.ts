@@ -185,7 +185,7 @@ export const payments_query = {
 
 export const admin_query = {
     get_monthly_revenue: `
-        SELECT sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) as earnings, to_char(startmonth, 'YYYY-MM') FROM 
+        SELECT sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) as earnings, to_char(startmonth, 'YYYY-MM') as year_month FROM 
             (SELECT                                                                              
                 generate_series(
                     date_trunc('month', startend.sd),
@@ -210,17 +210,17 @@ export const admin_query = {
             select 
             ct_earnings,
             ct_bid_count,
-            month_year,
-            ct_email as email,
+            year_month,
+            ct_email,
             rank() OVER (
-                PARTITION BY month_year
-                ORDER BY month_year, ct_earnings DESC
+                PARTITION BY year_month
+                ORDER BY year_month, ct_earnings DESC
             ) as rank
             FROM (
                 SELECT 
                     sum( (least(ct_bid.end_date, endmonth) + 1 - greatest(ct_bid.start_date, startmonth)) * ct_price) as ct_earnings,
                     count(*) as ct_bid_count,
-                    to_char(startmonth, 'YYYY-MM') as month_year,
+                    to_char(startmonth, 'YYYY-MM') as year_month,
                     ct_email
                     FROM (
                         SELECT generate_series(
@@ -240,8 +240,8 @@ export const admin_query = {
                     AND monthly.startmonth <= ct_bid.end_date
                     GROUP BY startmonth, ct_email
                 ) as monthly_earning 
-                WHERE month_year=$2
-        ) monthly_ranked NATURAL JOIN caretaker NATURAL JOIN (SELECT email, fullname, address, phone, avatar_link as avatar_url FROM person) p
+                WHERE year_month=$2
+        ) monthly_ranked NATURAL JOIN (select email as ct_email, caretaker_status, rating FROM caretaker) c NATURAL JOIN (SELECT email as ct_email, fullname, address, phone, avatar_link as avatar_url FROM person) p
         where rank < $1
     `
 };

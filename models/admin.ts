@@ -2,7 +2,7 @@ import { ApiResponse } from "./index";
 import { SpecializesIn, CaretakerStatus } from "./careTaker";
 
 export interface MonthlyRevenue {
-    startmonth: string;
+    year_month: string;
     earnings: number;
 }
 
@@ -14,7 +14,7 @@ export interface MonthlyBestCareTaker {
     avatar_url?: string;
     caretaker_status: CaretakerStatus;
     rating: number;
-    startmonth: string;
+    year_month: string;
     ct_earnings: number;
     ct_bid_count: number;
 }

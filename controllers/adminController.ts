@@ -69,7 +69,7 @@ export const indexRevenueByBestCareTaker = async (
                         [ct.ct_email]
                     );
                     const specializes = specializesRows.rows;
-                    console.log(specializes);
+                    console.log(ct.ct_email);
                     return { ...ct, all_specializes: specializes };
                 }
             )
