@@ -212,7 +212,7 @@ export const admin_query = {
             ct_bid_count,
             year_month,
             ct_email,
-            rank() OVER (
+            ROW_NUMBER() OVER (
                 PARTITION BY year_month
                 ORDER BY year_month, ct_earnings DESC
             ) as rank
@@ -243,6 +243,7 @@ export const admin_query = {
                 WHERE year_month=$2
         ) monthly_ranked NATURAL JOIN (select email as ct_email, caretaker_status, rating FROM caretaker) c NATURAL JOIN (SELECT email as ct_email, fullname, address, phone, avatar_link as avatar_url FROM person) p
         where rank < $1
+        ORDER by rank ASC;
     `
 };
 

@@ -17,6 +17,7 @@ export interface MonthlyBestCareTaker {
     year_month: string;
     ct_earnings: number;
     ct_bid_count: number;
+    rank: number;
 }
 
 export interface MonthlyBestCareTakerDetails extends MonthlyBestCareTaker {
