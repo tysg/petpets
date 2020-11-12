@@ -184,8 +184,8 @@ export const payments_query = {
 };
 
 export const admin_query = {
-    get_bids_by_month: `
-        SELECT sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price), endmonth FROM 
+    get_monthly_revenue: `
+        SELECT sum( (least(bid.end_date, endmonth) + 1 - greatest(bid.start_date, startmonth)) * ct_price) as earnings, startmonth FROM 
             (SELECT                                                                              
                 generate_series(
                     date_trunc('month', startend.sd),
@@ -202,18 +202,19 @@ export const admin_query = {
         WHERE bid.start_date <= sem.endmonth
         AND sem.startmonth <= bid.end_date
         AND bid.bid_status = 'confirmed'
-        GROUP BY sem.endmonth
+        GROUP BY sem.startmonth
         HAVING endmonth <= CURRENT_DATE
     `,
-    get_best_by_month: `
+    get_best_caretaker_by_month: `
         select * FROM (
+            select 
+            ct_earnings,
             month_year,
-            select ct_earnings,
             ct_email as email,
             rank() OVER (
                 PARTITION BY month_year
                 ORDER BY month_year, ct_earnings DESC
-            ) as r
+            ) as rank
             FROM (
                 SELECT 
                     sum( (least(ct_bid.end_date, endmonth) + 1 - greatest(ct_bid.start_date, startmonth)) * ct_price) as ct_earnings,
@@ -237,8 +238,8 @@ export const admin_query = {
                     AND monthly.startmonth <= ct_bid.end_date
                     GROUP BY startmonth, ct_email
                 ) as monthly_earning 
-        ) monthly_ranked NATURAL JOIN caretaker
-        where r < $1
+        ) monthly_ranked NATURAL JOIN caretaker NATURAL JOIN person
+        where rank < $1
     `
 };
 
