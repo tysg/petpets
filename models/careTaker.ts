@@ -7,6 +7,10 @@ export enum CaretakerStatus {
     fullTimeCt = 2
 }
 
+export interface PetCountPerDay {
+    count: number;
+}
+
 /**
  * GET api/caretakers/payment
  */

@@ -1,17 +1,22 @@
 import { Router } from "express";
 import { verifyAdminToken } from "../middleware/auth";
-import * as petsController from "../controllers/petsController";
+import * as adminController from "../controllers/adminController";
 
 export const router = Router();
 
-router.use(verifyAdminToken);
+// router.use(verifyAdminToken);
 
 /**
- * FOR EXAMPLE, USING PETS controller controller only just cos
+ * data is MonthlyRevenueIndexResponse
  */
+router.get("/monthly_revenue/", adminController.indexRevenue);
 
-router.get("/:owner", petsController.index);
-router.get("/:owner/:name", petsController.get);
-router.post("/", petsController.create);
+/**
+ * data is MonthlyBestCareTakerIndexResponse
+ */
+router.get(
+    "/best_caretakers_monthly/:year_month",
+    adminController.indexRevenueByBestCareTaker
+);
 
 export default router;
