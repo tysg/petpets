@@ -52,9 +52,11 @@ export const indexRevenueByBestCareTaker = async (
     res: Response
 ) => {
     try {
+        const { year_month } = req.params;
+
         const bestCareTakerRows: QueryResult<MonthlyBestCareTaker> = await asyncQuery(
             admin_query.get_best_caretaker_by_month,
-            ["5"]
+            ["5", year_month]
         );
 
         const bestCareTakerDetails = Promise.all(
@@ -67,6 +69,7 @@ export const indexRevenueByBestCareTaker = async (
                         [ct.ct_email]
                     );
                     const specializes = specializesRows.rows;
+                    console.log(specializes);
                     return { ...ct, all_specializes: specializes };
                 }
             )
