@@ -23,20 +23,20 @@ import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
-const token = getToken();
-const email = getUser()?.email!;
+const token = () => getToken();
+const email = () => getUser()?.email!;
 const authHeaderConfig: AxiosRequestConfig = {
-    headers: { "x-access-token": token }
+    headers: { "x-access-token": token() }
 };
 
 function addOwnerField(pet: Omit<Pet, "owner">): Pet {
-    return { ...pet, owner: email };
+    return { ...pet, owner: email() };
 }
 
 function addCardHolderField(
     creditCard: Omit<CreditCard, "cardholder">
 ): CreditCard {
-    return { ...creditCard, cardholder: email };
+    return { ...creditCard, cardholder: email() };
 }
 
 const remove = (endpoint: string) => axios.delete(endpoint, authHeaderConfig);
@@ -48,7 +48,7 @@ const patch = (endpoint: string, data: any) =>
 const get = (endpoint: string) => axios.get(endpoint, authHeaderConfig);
 
 export const user = {
-    verify: () => axios.post("/api/verifyToken", token, authHeaderConfig),
+    verify: () => axios.post("/api/verifyToken", token(), authHeaderConfig),
     post: (endpoint: string, data: any) =>
         axios.post("/api" + endpoint, data, authHeaderConfig),
     get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
@@ -76,7 +76,7 @@ export const pets = {
     }: PetCategory): Promise<AxiosResponse<StringResponse>> =>
         axios.delete(`${PET_CATEGORY_ENDPOINT}/${typeName}`),
     getUserPets: (): Promise<AxiosResponse<PetIndexResponse>> =>
-        get(`/api/pets/${email}`),
+        get(`/api/pets/${email()}`),
 
     getAvailableCareTakers: (
         startDate: Moment,
@@ -97,19 +97,19 @@ export const pets = {
     putPet: (
         pet: Omit<Pet, "owner">
     ): Promise<AxiosResponse<StringResponse>> => {
-        return patch(`/api/pets/${email}/${pet.name}`, addOwnerField(pet));
+        return patch(`/api/pets/${email()}/${pet.name}`, addOwnerField(pet));
     },
 
     deletePet: (
         pet: Omit<Pet, "owner">
     ): Promise<AxiosResponse<StringResponse>> => {
-        return remove(`/api/pets/${email}/${pet.name}`);
+        return remove(`/api/pets/${email()}/${pet.name}`);
     }
 };
 
 export const creditCards = {
     getUserCreditCards: (): Promise<AxiosResponse<CreditCardIndexResponse>> =>
-        get(`/api/creditCards/${email}`),
+        get(`/api/creditCards/${email()}`),
     postCreditCard: (
         creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
@@ -119,14 +119,14 @@ export const creditCards = {
         creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
         return patch(
-            `/api/creditCards/${email}/${creditCard.cardNumber}`,
+            `/api/creditCards/${email()}/${creditCard.cardNumber}`,
             addCardHolderField(creditCard)
         );
     },
     deleteCreditCard: (
         creditCard: Omit<CreditCard, "cardholder">
     ): Promise<AxiosResponse<CreditCardStringIndexResponse>> => {
-        return remove(`/api/creditCards/${email}/${creditCard.cardNumber}`);
+        return remove(`/api/creditCards/${email()}/${creditCard.cardNumber}`);
     }
 };
 
@@ -138,7 +138,7 @@ export const bid = {
         return post(`/api/bids`, body);
     },
     getForCareTaker: (): Promise<AxiosResponse<CareTakerResponse>> => {
-        return get("/api/bids/caretaker/" + email);
+        return get("/api/bids/caretaker/" + email());
     }
 };
 
@@ -147,13 +147,13 @@ export const careTaker = {
     getCareTaker: (): Promise<
         AxiosResponse<ApiResponse<CareTakerSpecializesDetails, string>>
     > => {
-        return get(CARETAKER_ENDPOINT + email);
+        return get(CARETAKER_ENDPOINT + email());
     },
     newFulltimer: (
         allSpecializes: SpecializesIn[]
     ): Promise<AxiosResponse<StringResponse>> => {
         return post(CARETAKER_ENDPOINT + "full_timer", {
-            email,
+            email: email(),
             allSpecializes
         });
     },
@@ -161,7 +161,7 @@ export const careTaker = {
         allSpecializes: SpecializesIn[]
     ): Promise<AxiosResponse<StringResponse>> => {
         return post(CARETAKER_ENDPOINT + "part_timer", {
-            email,
+            email: email(),
             allSpecializes
         });
     }
