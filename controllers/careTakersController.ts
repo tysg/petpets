@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import {
-    PetCountPerDay,
     MonthlyPayment,
     CareTaker,
     CareTakerDetails,
@@ -28,7 +27,6 @@ import {
 } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
 import * as yup from "yup";
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from "constants";
 
 const mapCareTakerAttr = (r: any): CareTakerDetails => ({
     email: r.email,
