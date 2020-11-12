@@ -83,6 +83,29 @@ CREATE TRIGGER check_no_bid_overlap
 BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 
+-- CREATE OR REPLACE FUNCTION prevent_update_bid()
+-- RETURNS TRIGGER AS
+-- $t$
+-- DECLARE old_status VARCHAR(64);
+-- BEGIN
+-- 	SELECT bid_status INTO old_status FROM bid B
+-- 		WHERE B.ct_email = NEW.ct_email
+-- 	  AND B.pet_name = NEW.pet_name
+-- 	  AND B.pet_owner = NEW.pet_owner
+-- 	  AND B.start_date = NEW.start_date
+-- 	  AND B.end_date = NEW.end_date;
+
+-- 	  IF old_status = 'closed' THEN
+-- 	  RAISE EXCEPTION 'The bid is already closed!';
+-- 	END if;
+-- 	RETURN NEW;
+-- END;
+-- $t$
+-- LANGUAGE PLpgSQL;
+
+-- CREATE TRIGGER prevent_bid
+-- BEFORE UPDATE ON bid
+-- FOR EACH ROW EXECUTE PROCEDURE prevent_update_bid();
 
 CREATE OR REPLACE FUNCTION pet_limit()
 RETURNS TRIGGER AS 
@@ -225,14 +248,6 @@ $t$ LANGUAGE PLpgSQL;
 CREATE TRIGGER check_ft_schedule_no_date_overlap
 BEFORE INSERT ON ft_leave_schedule
 FOR EACH ROW EXECUTE PROCEDURE date_non_overlap_ft_schedule();
-
--- for debugging
--- DROP TABLE IF EXISTS count_sched;
-
--- CREATE TABLE count_sched (
--- 	c1 int
--- );
-
 
 CREATE OR REPLACE FUNCTION ft_150_constraint()
 RETURNS TRIGGER AS 
