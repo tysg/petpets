@@ -203,7 +203,7 @@ export const admin_query = {
         AND sem.startmonth <= bid.end_date
         AND bid.bid_status = 'confirmed'
         GROUP BY sem.startmonth
-        HAVING endmonth <= CURRENT_DATE
+        HAVING startmonth <= CURRENT_DATE
     `,
     get_best_caretaker_by_month: `
         select * FROM (

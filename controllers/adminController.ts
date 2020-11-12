@@ -57,25 +57,28 @@ export const indexRevenueByBestCareTaker = async (
             ["5"]
         );
 
-        const bestCareTakerDetails: MonthlyBestCareTakerDetails[] = await bestCareTakerRows.rows.map(
-            async (
-                ct: MonthlyBestCareTaker
-            ): Promise<MonthlyBestCareTakerDetails> => {
-                const specializesRows: QueryResult<SpecializesIn> = await asyncQuery(
-                    specializes_query.get_specializes,
-                    [ct.ct_email]
-                );
-                const specializes = specializesRows.rows;
-                return { ...ct, all_specializes: specializes };
-            }
+        const bestCareTakerDetails = Promise.all(
+            bestCareTakerRows.rows.map(
+                async (
+                    ct: MonthlyBestCareTaker
+                ): Promise<MonthlyBestCareTakerDetails> => {
+                    const specializesRows: QueryResult<SpecializesIn> = await asyncQuery(
+                        specializes_query.get_specializes,
+                        [ct.ct_email]
+                    );
+                    const specializes = specializesRows.rows;
+                    return { ...ct, all_specializes: specializes };
+                }
+            )
         );
 
-        console.log(bestCareTakerDetails);
-
-        const response: MonthlyBestCareTakerIndexResponse = {
-            data: bestCareTakerDetails,
-            error: ""
-        };
+        bestCareTakerDetails.then((arr) => {
+            const response: MonthlyBestCareTakerIndexResponse = {
+                data: arr,
+                error: ""
+            };
+            res.send(response);
+        });
     } catch (error) {
         log.error("get pet error", error);
         const response: StringResponse = {
