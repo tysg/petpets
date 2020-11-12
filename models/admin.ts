@@ -6,10 +6,6 @@ export interface MonthlyRevenue {
     earnings: number;
 }
 
-interface MonthlyRevenues {
-    all_monthly_revenue: MonthlyRevenue[];
-}
-
 export interface MonthlyBestCareTaker {
     fullname: string;
     phone: number;
@@ -26,10 +22,6 @@ export interface MonthlyBestCareTakerDetails extends MonthlyBestCareTaker {
     all_specializes: SpecializesIn[];
 }
 
-interface MonthlyBestCareTakerDetailsObj {
-    monthly_best_caretakers: MonthlyBestCareTakerDetails[];
-}
-
 /**
  * GET api/admin/monthly_earnings
  */
@@ -39,6 +31,6 @@ export type MonthlyRevenueIndexResponse = ApiResponse<MonthlyRevenue[], string>;
  * GET api/admin/best_caretakers_monthly
  */
 export type MonthlyBestCareTakerIndexResponse = ApiResponse<
-    MonthlyBestCareTakerDetails,
+    MonthlyBestCareTakerDetails[],
     string
 >;
