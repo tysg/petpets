@@ -15,6 +15,7 @@ import {
 } from "./../../../models/creditCard";
 import {
     CareTakerSpecializesDetails,
+    CaretakerStatus,
     SearchResponse,
     SpecializesIn
 } from "./../../../models/careTaker";
@@ -154,6 +155,10 @@ export const careTaker = {
     > => {
         return get(CARETAKER_ENDPOINT + email());
     },
+    patchCareTaker: (
+        spec: CareTakerSpecializesDetails,
+        status: CaretakerStatus
+    ) => patch(CARETAKER_ENDPOINT + getStatus(status) + email(), spec),
     newFulltimer: (
         allSpecializes: SpecializesIn[]
     ): Promise<AxiosResponse<StringResponse>> => {
@@ -170,4 +175,9 @@ export const careTaker = {
             allSpecializes
         });
     }
+};
+
+const getStatus = (status: CaretakerStatus) => {
+    const mapping = ["not_caretaker", "part_timer", "full_timer"];
+    return mapping[status] + "/";
 };

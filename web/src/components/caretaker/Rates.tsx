@@ -4,24 +4,27 @@ import {
     Button,
     Card,
     Carousel,
-    Descriptions,
+    Input,
+    InputNumber,
     Layout,
     message,
     PageHeader,
     Popconfirm,
-    Row,
+    Select,
     Space,
     Statistic,
-    Table,
-    Typography
+    Table
 } from "antd";
 import {
     CareTakerSpecializesDetails,
     SpecializesIn
 } from "../../../../models/careTaker";
-import { pets as petsApi } from "../../common/api";
+import { pets as petsApi, careTaker as careTakerApi } from "../../common/api";
 import { PetCategory } from "../../../../models/pet";
-import { useForm } from "antd/lib/form/Form";
+import Form, { FormProps, useForm } from "antd/lib/form/Form";
+import { ModalProps } from "antd/lib/modal";
+import Modal from "antd/lib/modal/Modal";
+import FormItem from "antd/lib/form/FormItem";
 
 const CHUNKSIZE = 8;
 
@@ -50,12 +53,64 @@ const columns = [
         width: "40%"
     },
     {
-        title: "My Daily Price (SGD)",
+        title: "My Daily Rates(SGD)",
         dataIndex: "ctPriceDaily",
         key: "price",
         width: "40%"
     }
 ];
+
+const checkPrice = (_: any, value: any) => {
+    return value >= 0
+        ? Promise.resolve()
+        : Promise.reject("Not a valid price!");
+};
+
+const ModalForm = (props: ModalProps & FormProps) => (
+    <Modal {...props}>
+        <Form form={props.form}>
+            <FormItem name="typeName" label="Pet Type">
+                <Input disabled />
+            </FormItem>
+            <FormItem
+                name="ctPriceDaily"
+                label="My Daily Rate"
+                rules={[{ validator: checkPrice }]}
+            >
+                <InputNumber />
+            </FormItem>
+        </Form>
+    </Modal>
+);
+
+interface AugmentProps extends ModalProps {
+    categories: PetCategory[];
+}
+const ModalFormAugment = (props: AugmentProps & FormProps) => (
+    <Modal {...props}>
+        <Form form={props.form}>
+            <FormItem name="typeName" label="Pet Type">
+                <Select
+                    placeholder="Select Specialty"
+                    style={{ width: "100%" }}
+                >
+                    {props.categories.map(({ typeName }) => (
+                        <Select.Option value={typeName}>
+                            {typeName}
+                        </Select.Option>
+                    ))}
+                </Select>
+            </FormItem>
+            <FormItem
+                name="ctPriceDaily"
+                label="My Daily Rate"
+                rules={[{ validator: checkPrice }]}
+            >
+                <InputNumber />
+            </FormItem>
+        </Form>
+    </Modal>
+);
 
 interface UpdatableCareTaker extends CareTakerSpecializesDetails {
     updateCareTaker: () => void;
@@ -64,6 +119,7 @@ interface UpdatableCareTaker extends CareTakerSpecializesDetails {
 const Rates = (props: UpdatableCareTaker) => {
     const [categories, setCategories] = useState<PetCategory[]>([]);
     const [visible, setVisible] = useState(false);
+    const [sndVisible, setSndVisible] = useState(false);
     const [form] = useForm();
     const refreshRates = () => {
         petsApi
@@ -74,13 +130,55 @@ const Rates = (props: UpdatableCareTaker) => {
     };
     useEffect(refreshRates, []);
     const populateModal = (record: SpecializesIn | null) => {
-        message.info("TODO: create and update specialization");
-        setVisible(true);
+        if (record) {
+            form.setFieldsValue(record);
+            setVisible(true);
+        } else {
+            form.resetFields();
+            setSndVisible(true);
+        }
     };
     const onDelete = (record: SpecializesIn) => {
         setVisible(false);
-        message.info("TODO: remove specialization");
+        const remaining = props.allSpecializes.filter(
+            (spec) => spec.typeName !== record.typeName
+        );
+        const careTaker: CareTakerSpecializesDetails = {
+            ...props,
+            allSpecializes: remaining
+        };
+        careTakerApi
+            .patchCareTaker(careTaker, props.caretakerStatus)
+            .then((res) => message.info(res.data.data))
+            .catch((err) => message.error(err.response.data.data));
         props.updateCareTaker();
+    };
+    const onSubmit = () => {
+        form.validateFields()
+            .then((record) =>
+                props.allSpecializes
+                    .filter((spec) => spec.typeName !== record.typeName)
+                    .concat({
+                        typeName: record.typeName,
+                        ctPriceDaily: record.ctPriceDaily
+                    })
+            )
+            .then((newSpecList) => {
+                const careTaker: CareTakerSpecializesDetails = {
+                    ...props,
+                    allSpecializes: newSpecList
+                };
+                console.log(careTaker);
+                careTakerApi
+                    .patchCareTaker(careTaker, props.caretakerStatus)
+                    .then((res) => message.info(res.data.data))
+                    .catch((err) => message.error(err.response.data.data));
+            })
+            .finally(() => {
+                setVisible(false);
+                setSndVisible(false);
+                props.updateCareTaker();
+            });
     };
     const actionColumn = {
         title: "Action",
@@ -139,6 +237,21 @@ const Rates = (props: UpdatableCareTaker) => {
                     dataSource={props.allSpecializes}
                     columns={[...columns, actionColumn]}
                     pagination={{ hideOnSinglePage: true, pageSize: 6 }}
+                />
+                <ModalForm
+                    title="Edit My Specializations"
+                    form={form}
+                    visible={visible}
+                    onCancel={() => setVisible(false)}
+                    onOk={onSubmit}
+                />
+                <ModalFormAugment
+                    title="New Specialization"
+                    form={form}
+                    visible={sndVisible}
+                    onCancel={() => setSndVisible(false)}
+                    onOk={onSubmit}
+                    categories={categories}
                 />
             </PageHeader>
         </Layout>
