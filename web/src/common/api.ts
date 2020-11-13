@@ -19,6 +19,10 @@ import {
     SearchResponse,
     SpecializesIn
 } from "./../../../models/careTaker";
+import {
+    MonthlyBestCareTakerIndexResponse,
+    MonthlyRevenueIndexResponse
+} from "./../../../models/admin";
 import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
 import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
@@ -185,4 +189,19 @@ export const careTaker = {
 const getStatus = (status: CaretakerStatus) => {
     const mapping = ["not_caretaker", "part_timer", "full_timer"];
     return mapping[status] + "/";
+};
+
+export const admin = {
+    getMonthlyRevenues: (): Promise<
+        AxiosResponse<MonthlyRevenueIndexResponse>
+    > => {
+        return get("/api/admin/monthly_revenue");
+    },
+    getMonthlyBestCareTaker: (
+        yearMonth: moment.Moment
+    ): Promise<AxiosResponse<MonthlyBestCareTakerIndexResponse>> => {
+        return get(
+            `/api/admin/best_caretakers_monthly/${yearMonth.format("YYYY-MM")}`
+        );
+    }
 };
