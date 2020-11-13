@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import {
+    sqlifyProfile,
+    NewProfile,
     SignUpResponse,
     NewUser,
     SignInRequest,
     SignInResponse,
     UserInterface
 } from "./../models/user";
+import { StringResponse } from "./../models";
 import { asyncQuery } from "./../utils/db";
 import { user_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
@@ -15,6 +18,7 @@ import { errorResponse } from "../utils/errorFactory";
 import jwt from "jsonwebtoken";
 
 import { SECRET } from "./../utils/config";
+import { sqlify } from "../models/pet";
 
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
@@ -111,4 +115,26 @@ const signIn = async (req: Request, res: Response) => {
     }
 };
 
-export default { signUp, signIn };
+const update = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.params;
+        const profile: NewProfile = req.body;
+
+        const queryParams = sqlifyProfile(profile);
+        await asyncQuery(user_query.update_user, [...queryParams, email]);
+
+        const response: StringResponse = {
+            data: `${email} profile updated`,
+            error: ""
+        };
+        res.send(response);
+    } catch (error) {
+        const response: StringResponse = {
+            data: "",
+            error: error
+        };
+        res.status(400).send(response);
+    }
+};
+
+export default { signUp, signIn, update };
