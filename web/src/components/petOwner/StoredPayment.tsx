@@ -9,7 +9,9 @@ const CreditCards = () => {
     const [userCreditCards, setUserCreditCards] = useState<CreditCard[]>([]);
     const fetchUserCreditCards = async () => {
         try {
-            const fetchedCreditCards = (await CreditCardsApi.getUserCreditCards()).data.data;
+            const fetchedCreditCards = (
+                await CreditCardsApi.getUserCreditCards()
+            ).data.data;
             setUserCreditCards(fetchedCreditCards);
         } catch (err) {
             console.log("fetchCreditCards err", err);
@@ -26,14 +28,16 @@ const CreditCards = () => {
     const hideModal = () => setVisibleModal(false);
     const [record, setRecord] = useState<Omit<CreditCard, "cardholder">>({
         cardNumber: 0,
-        expiryDate: new Date('1976-04-19T12:59-0500'),
+        expiryDate: new Date("1976-04-19T12:59-0500"),
         securityCode: 505
     });
     const [title, setTitle] = useState("");
 
     const onSubmit = async (values: Omit<CreditCard, "cardholder">) => {
         try {
-            if (userCreditCards.find((c) => c.cardNumber === values.cardNumber)) {
+            if (
+                userCreditCards.find((c) => c.cardNumber === values.cardNumber)
+            ) {
                 await CreditCardsApi.putCreditCard(values);
                 message.success("Successfully edited credit card!");
             } else {
@@ -67,20 +71,20 @@ const CreditCards = () => {
         setTitle("New Credit Card");
         setRecord({
             cardNumber: 0,
-            expiryDate: new Date('1976-04-19T12:59-0500'),
+            expiryDate: new Date("1976-04-19T12:59-0500"),
             securityCode: 505
         });
         showModal();
     };
     const generateModal = (record: Omit<CreditCard, "cardholder">) => {
-        setTitle("Edit CreditCard");
+        setTitle("Edit Credit Card");
         setRecord(record);
         showModal();
     };
 
     return (
         <PageHeader
-            title="Manage CreditCards"
+            title="Manage Credit Cards"
             extra={
                 <Button type="primary" onClick={newModal}>
                     Add CreditCard

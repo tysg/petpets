@@ -1,6 +1,7 @@
 import React from "react";
 import { Modal, Input, Form } from "antd";
 import { CreditCard } from "../../../../models/creditCard";
+import moment from "moment";
 
 export interface CreditCardModalFormProps {
     title: string;
@@ -22,14 +23,12 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                 form.validateFields()
                     .then((values) => {
                         form.resetFields();
-                        const {
-                            cardNumber,
-                            expiryDate,
-                            securityCode
-                        } = values;
+                        let { cardNumber, expiryDate, securityCode } = values;
+
                         const record: Omit<CreditCard, "cardholder"> = {
                             cardNumber,
-                            expiryDate,
+                            // cast MM/YYYY to jS datem
+                            expiryDate: moment(expiryDate, "MM/YYYY").toDate(),
                             securityCode
                         };
                         onSubmit(record);
@@ -38,25 +37,17 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
             }}
         >
             <Form form={form}>
+                <Form.Item label="Card Number" name="cardNumber" required>
+                    <Input></Input>
+                </Form.Item>
                 <Form.Item
-                    label="card number"
-                    name="card number"
+                    label="Expiry Date (MM/YYYY)"
+                    name="expiryDate"
                     required
                 >
                     <Input></Input>
                 </Form.Item>
-                <Form.Item
-                    label="expiry date"
-                    name="expiry date"
-                    required
-                >
-                    <Input></Input>
-                </Form.Item>
-                <Form.Item
-                    label="security code"
-                    name="security code"
-                    required
-                >
+                <Form.Item label="Security Code" name="securityCode" required>
                     <Input></Input>
                 </Form.Item>
             </Form>
