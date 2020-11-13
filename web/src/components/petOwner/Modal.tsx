@@ -8,10 +8,11 @@ export interface CreditCardModalFormProps {
     visible: boolean;
     onSubmit: (value: Omit<CreditCard, "cardholder">) => void;
     onCancel: () => void;
+    defaultCard: Omit<CreditCard, "cardholder">;
 }
 
 const CreditCardModalForm = (props: CreditCardModalFormProps) => {
-    const { visible, onSubmit, onCancel, title } = props;
+    const { visible, onSubmit, onCancel, title, defaultCard } = props;
     const [form] = Form.useForm();
     return (
         <Modal
@@ -24,6 +25,7 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     .then((values) => {
                         form.resetFields();
                         let { cardNumber, expiryDate, securityCode } = values;
+                        console.log(expiryDate);
 
                         const record: Omit<CreditCard, "cardholder"> = {
                             cardNumber,
@@ -37,18 +39,31 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
             }}
         >
             <Form form={form}>
-                <Form.Item label="Card Number" name="cardNumber" required>
-                    <Input></Input>
+                <Form.Item
+                    label="Card Number"
+                    name="cardNumber"
+                    required
+                    initialValue={defaultCard.cardNumber}
+                >
+                    <Input />
                 </Form.Item>
                 <Form.Item
                     label="Expiry Date (MM/YYYY)"
                     name="expiryDate"
                     required
+                    initialValue={moment(defaultCard.expiryDate).format(
+                        "MM/YYYY"
+                    )}
                 >
-                    <Input></Input>
+                    <Input />
                 </Form.Item>
-                <Form.Item label="Security Code" name="securityCode" required>
-                    <Input></Input>
+                <Form.Item
+                    label="Security Code"
+                    name="securityCode"
+                    required
+                    initialValue={defaultCard.securityCode}
+                >
+                    <Input />
                 </Form.Item>
             </Form>
         </Modal>

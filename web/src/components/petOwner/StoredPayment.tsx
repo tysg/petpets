@@ -71,8 +71,8 @@ const CreditCards = () => {
         setTitle("New Credit Card");
         setRecord({
             cardNumber: 0,
-            expiryDate: new Date("1976-04-19T12:59-0500"),
-            securityCode: 505
+            expiryDate: new Date(Date.now()),
+            securityCode: 0
         });
         showModal();
     };
@@ -87,12 +87,13 @@ const CreditCards = () => {
             title="Manage Credit Cards"
             extra={
                 <Button type="primary" onClick={newModal}>
-                    Add CreditCard
+                    Add Credit Card
                 </Button>
             }
         >
             {visibleModal && (
                 <CreditCardModalForm
+                    defaultCard={record}
                     visible={visibleModal}
                     title={title}
                     onCancel={hideModal}
