@@ -1,9 +1,14 @@
 import { ApiResponse } from "./index";
-import { SpecializesIn, CaretakerStatus } from "./careTaker";
+import { CaretakerStatus } from "./careTaker";
 
 export interface MonthlyRevenue {
     year_month: string;
     earnings: number;
+}
+
+export interface SpecializesIn {
+    type_name: string;
+    ct_price_daily: number;
 }
 
 export interface MonthlyBestCareTaker {

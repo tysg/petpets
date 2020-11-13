@@ -4,11 +4,11 @@ import {
     MonthlyPayment,
     CareTaker,
     CareTakerDetails,
-    SpecializesIn,
     CaretakerStatus
 } from "../models/careTaker";
 import { StringResponse } from "../models";
 import {
+    SpecializesIn,
     MonthlyRevenue,
     MonthlyBestCareTaker,
     MonthlyBestCareTakerDetails,
@@ -65,7 +65,7 @@ export const indexRevenueByBestCareTaker = async (
                     ct: MonthlyBestCareTaker
                 ): Promise<MonthlyBestCareTakerDetails> => {
                     const specializesRows: QueryResult<SpecializesIn> = await asyncQuery(
-                        specializes_query.get_specializes,
+                        specializes_query.get_specializes_admin,
                         [ct.ct_email]
                     );
                     const specializes = specializesRows.rows;
