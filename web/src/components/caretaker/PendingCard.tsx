@@ -12,8 +12,9 @@ import {
     Divider,
     Popconfirm
 } from "antd";
+import moment from "moment";
 import { CloseOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { BidJoinOwnerPet } from "../../../../models/bid";
+import { BidJoinOwnerPet, TransportMethod } from "../../../../models/bid";
 import DescriptionsItem from "antd/lib/descriptions/Item";
 
 interface IconTextProps {
@@ -46,70 +47,84 @@ const RejectButton = (props: IconTextProps) => {
     );
 };
 
-export default (props: BidJoinOwnerPet) => (
-    <Card>
-        <PageHeader
-            title="Jan Michael Vincent"
-            avatar={{
-                size: 80,
-                src:
-                    "https://s3.amazonaws.com/uifaces/faces/twitter/hjartstrorn/128.jpg"
-            }}
-            extra={[
-                <Accept />,
-                <RejectButton
-                    icon={CloseOutlined}
-                    text="Reject"
-                    key="list-vertical-message"
-                />
-            ]}
-            subTitle=" 10 Buangkok Road, Medical Park, Singapore 537948 "
-        >
-            <Row gutter={[48, 16]}>
-                <Col span={20}>
-                    <Descriptions bordered layout="vertical">
-                        <DescriptionsItem label="Contact">
-                            90049384
-                        </DescriptionsItem>
-                        <DescriptionsItem label="Pet">
-                            <Space align="center">
-                                Doofensmirthz
-                                <Tag>Unicorn</Tag>
-                            </Space>
-                        </DescriptionsItem>
-                        <DescriptionsItem label="Duration">
-                            20 Aug 2020 - 31 Aug 2020
-                        </DescriptionsItem>
-                        <DescriptionsItem
-                            label="Instructions from Owner"
-                            span={3}
-                        >
-                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                            elit. Perferendis ratione fugit reprehenderit,
-                            molestiae, dicta neque maxime laboriosam, in ipsum
-                            laborum necessitatibus! Non itaque provident nihil
-                            esse commodi vitae, accusantium hic.
-                        </DescriptionsItem>
-                    </Descriptions>
-                </Col>
-                <Col span={4}>
-                    <Row>
-                        <Statistic
-                            title="Daily Rate"
-                            prefix="$"
-                            precision={2}
-                            value={200.3}
-                        />
-                    </Row>
-                    <Divider />
-                    <Row>
-                        <Statistic
-                            title="Transfer Method"
-                            value="PCS Building"
-                        />
-                    </Row>
-                </Col>
-            </Row>
-        </PageHeader>
-    </Card>
-);
+const convertTransportMethod = (key: TransportMethod) => {
+    const mapping = {
+        pickup: "Pick up",
+        delivery: "Deliver",
+        pcs: "Transfer through PCS Buidling"
+    };
+    return mapping[key];
+};
+
+export default (props: BidJoinOwnerPet) => {
+    const {
+        fullname,
+        avatar_url,
+        address,
+        phone,
+        pet_name,
+        start_date,
+        end_date,
+        requirements,
+        category,
+        ct_price,
+        transport_method
+    } = props;
+
+    return (
+        <Card>
+            <PageHeader
+                title={fullname}
+                avatar={{
+                    size: 80,
+                    src: avatar_url
+                }}
+                subTitle={address}
+            >
+                <Row gutter={[48, 16]}>
+                    <Col span={20}>
+                        <Descriptions bordered layout="vertical">
+                            <DescriptionsItem label="Contact">
+                                {phone}
+                            </DescriptionsItem>
+                            <DescriptionsItem label="Pet">
+                                <Space align="center">
+                                    {pet_name}
+                                    <Tag>{category}</Tag>
+                                </Space>
+                            </DescriptionsItem>
+                            <DescriptionsItem label="Duration">
+                                {`${moment(start_date).format(
+                                    "DD/MM/YYYY"
+                                )} - ${moment(end_date).format("DD/MM/YYYY")}`}
+                            </DescriptionsItem>
+                            <DescriptionsItem
+                                label="Instructions from Owner"
+                                span={3}
+                            >
+                                {requirements}
+                            </DescriptionsItem>
+                        </Descriptions>
+                    </Col>
+                    <Col span={4}>
+                        <Row>
+                            <Statistic
+                                title="Payout"
+                                prefix="$"
+                                precision={2}
+                                value={ct_price}
+                            />
+                        </Row>
+                        <Divider />
+                        <Row>
+                            <Statistic
+                                title="Transfer Method"
+                                value={convertTransportMethod(transport_method)}
+                            />
+                        </Row>
+                    </Col>
+                </Row>
+            </PageHeader>
+        </Card>
+    );
+};

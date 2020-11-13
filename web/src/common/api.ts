@@ -146,6 +146,7 @@ export const bid = {
     getForCareTaker: (): Promise<AxiosResponse<CareTakerResponse>> => {
         return get("/api/bids/caretaker/" + email());
     }
+    // updateBid: (bid: Bid) => patch(`/api/bids/`)
 };
 
 const CARETAKER_ENDPOINT = "/api/caretakers/";

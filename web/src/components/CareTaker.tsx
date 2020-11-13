@@ -65,8 +65,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
         <Switch>
             <Route exact path={`${path}/`}>
                 {careTaker ? (
-                    // <Redirect to={`${path}/pending`} />
-                    <Redirect to={`${path}/rates`} />
+                    <Redirect to={`${path}/pending`} />
                 ) : (
                     <Register {...props} />
                 )}
