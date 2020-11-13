@@ -2,7 +2,8 @@ export const user_query = {
     userpass:
         "SELECT email, fullname, password, phone, address, role, avatar_link FROM person WHERE email=$1 LIMIT 1",
     add_user:
-        "INSERT INTO person (email, fullname, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)"
+        "INSERT INTO person (email, fullname, password, address, phone, avatar_link) VALUES ($1,$2,$3,$4,$5,$6)",
+    update_user: `UPDATE person SET (fullname, address, phone, avatar_link) = ($1,$2,$3,$4) WHERE email=$5`
 };
 
 export const pet_query = {
