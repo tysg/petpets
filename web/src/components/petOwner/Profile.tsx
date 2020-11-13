@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Descriptions,
     Avatar,
@@ -6,17 +6,83 @@ import {
     Row,
     Typography,
     Button,
-    Space,
-    Empty
+    Modal,
+    Select,
+    Radio,
+    Empty,
+    Input
 } from "antd";
+import Form, { useForm } from "antd/lib/form/Form";
+import FormItem from "antd/lib/form/FormItem";
 import { AntDesignOutlined, EditOutlined } from "@ant-design/icons";
 import { getUser } from "./../../common/token";
-// import Title from "antd/lib/skeleton/Title";
+import { NewUser } from "../../../../models/user";
+import { formatTimeStr } from "antd/lib/statistic/utils";
+import { RouteChildrenProps } from "react-router-dom";
 const { Title } = Typography;
 
-const UserProfile = () => {
+interface ProfileModalProps {
+    visible: boolean;
+    closeModal: () => void;
+}
+// fullname: string;
+//     password: string;
+//     phone: number;
+//     address: string;
+//     email: string;
+//     avatarUrl?: string;
+const ProfileModalForm = ({ visible, closeModal }: ProfileModalProps) => {
+    const [form] = useForm();
+    form.setFieldsValue(getUser());
+    const submitValues = (values: Omit<NewUser, "password">) => {
+        console.log("submitting values:", values);
+        // TODO: call endpoint
+        form.resetFields();
+        closeModal();
+    };
+    const onSubmit = () => {
+        form.validateFields().then((values) => {
+            const { fullname, email, address, phone, avatarUrl } = values;
+            submitValues({ fullname, email, address, phone, avatarUrl });
+        });
+    };
+    return (
+        <Modal
+            visible={visible}
+            onOk={onSubmit}
+            onCancel={closeModal}
+            title="Edit Profile"
+        >
+            <Form form={form}>
+                <FormItem name="fullname" label="Full Name">
+                    <Input defaultValue={getUser()?.fullname} />
+                </FormItem>
+                <FormItem name="email" label="Email">
+                    <Input defaultValue={getUser()?.email} />
+                </FormItem>
+                <FormItem name="phone" label="Phone Number">
+                    <Input defaultValue={getUser()?.phone} />
+                </FormItem>
+                <FormItem name="address" label="Address">
+                    <Input defaultValue={getUser()?.address} />
+                </FormItem>
+                <FormItem name="avatarUrl" label="Avatar Link">
+                    <Input defaultValue={getUser()?.avatarUrl} />
+                </FormItem>
+            </Form>
+        </Modal>
+    );
+};
+
+const UserProfile = (props: RouteChildrenProps) => {
     const user = getUser()!;
     const { fullname, email, phone, address, avatarUrl } = user;
+    const [visibleModal, setVisibleModal] = useState(false);
+    const showModal = () => setVisibleModal(true);
+    const hideModal = () => {
+        setVisibleModal(false);
+        props.history.go(0);
+    };
     return (
         <Card title="My Profile">
             <Row justify="center">
@@ -31,17 +97,17 @@ const UserProfile = () => {
                     }}
                     icon={<AntDesignOutlined />}
                     src={avatarUrl}
-                    // src={ "https://miro.medium.com/max/700/1*64K8EQx8ee2BrK-HIQhCmg.png" }
                 />
             </Row>
-            {/* <Row>
-                <Title level={2}>My Details</Title>
-            </Row> */}
             <Descriptions
                 bordered
                 column={1}
                 extra={
-                    <Button size="large" style={{ margin: 20 }}>
+                    <Button
+                        size="large"
+                        style={{ margin: 20 }}
+                        onClick={showModal}
+                    >
                         <EditOutlined />
                         Edit
                     </Button>
@@ -54,7 +120,7 @@ const UserProfile = () => {
                 </Descriptions.Item>
                 <Descriptions.Item label="Address">{address}</Descriptions.Item>
             </Descriptions>
-            <Row justify="end"></Row>
+            <ProfileModalForm visible={visibleModal} closeModal={hideModal} />
         </Card>
     );
 };

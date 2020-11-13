@@ -98,7 +98,7 @@ const Register = (props: RouteComponentProps) => {
         endpoint(formResult.allSpecializesIn)
             .then((res) => {
                 message.success(res.data.data);
-                props.history.push("/dashboard/sitter");
+                props.history.go(0);
             })
             .catch((err) => {
                 message.error(err.response.data.err);

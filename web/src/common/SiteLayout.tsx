@@ -125,7 +125,7 @@ const SiteLayout = (props: SiteLayoutProps) => {
                 visible={showDrawer}
                 // visible
             >
-                <Profile />
+                <Profile {...props} />
             </Drawer>
         </Layout>
     );
