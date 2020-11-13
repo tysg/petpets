@@ -1,4 +1,10 @@
-import React, { ReactNodeArray, useEffect, useState } from "react";
+import React, {
+    PropsWithChildren,
+    ReactNode,
+    ReactNodeArray,
+    useEffect,
+    useState
+} from "react";
 import "antd/dist/antd.css";
 import {
     Button,
@@ -20,13 +26,15 @@ import {
 } from "../../../../models/careTaker";
 import { pets as petsApi } from "../../common/api";
 import { PetCategory } from "../../../../models/pet";
+import { OmitProps } from "antd/lib/transfer/ListBody";
 
 const CHUNKSIZE = 8;
 
 const PetCategoryCard = (category: PetCategory) => (
     <Card>
-        <Card.Grid style={{ height: "10rem" }}>
+        <Card.Grid style={{ width: "180px", height: "160px" }}>
             <Statistic
+                prefix="$"
                 title={category.typeName}
                 value={category.baseDailyPrice}
                 precision={2}
@@ -35,7 +43,9 @@ const PetCategoryCard = (category: PetCategory) => (
     </Card>
 );
 
-const CardGroup = (cards: ReactNodeArray) => <Space>{cards}</Space>;
+const CardGroup = ({ children }: PropsWithChildren<{}>) => (
+    <Space>{children}</Space>
+);
 
 const columns = [
     {
@@ -80,19 +90,21 @@ const Rates = (props: CareTakerSpecializesDetails) => {
             <PageHeader title="Base Daily Rates">
                 <Carousel autoplay arrows>
                     {categories
-                        .filter((cat) =>
-                            props.allSpecializes
-                                .map(({ typeName }) => typeName)
-                                .includes(cat.typeName)
-                        )
+                        // .filter((cat) =>
+                        //     props.allSpecializes
+                        //         .map(({ typeName }) => typeName)
+                        //         .includes(cat.typeName)
+                        // )
                         .map((cat) => PetCategoryCard(cat))
                         .map(
-                            (card, index, res) =>
+                            (_, index, res) =>
                                 index % CHUNKSIZE === 0 &&
-                                res.splice(index, index + CHUNKSIZE)
+                                res.slice(index, index + CHUNKSIZE)
                         )
                         .filter((x) => x)
-                        .map((arr: any) => CardGroup(arr))}
+                        .map((arr: any) => (
+                            <CardGroup children={arr} />
+                        ))}
                 </Carousel>
             </PageHeader>
             <PageHeader title="My Specializations">
