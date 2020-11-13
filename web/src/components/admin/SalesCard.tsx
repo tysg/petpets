@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import "ant-design-pro/dist/ant-design-pro.css"; // Import whole style
-import { Row, Col, Card, Tabs, DatePicker } from "antd";
-// import styles from "./Analysis.less";
+import { Row, Col, Card, Tabs, DatePicker, Table } from "antd";
 import { Bar } from "ant-design-pro/lib/Charts";
 import moment from "moment";
 import {
@@ -9,7 +8,6 @@ import {
     MonthlyRevenue
 } from "../../../../models/admin";
 
-const { RangePicker } = DatePicker;
 const { TabPane } = Tabs;
 
 type SalesCardProps = {
@@ -44,50 +42,23 @@ const SalesCard = memo((props: SalesCardProps) => {
                                     x: r.year_month,
                                     y: r.earnings / 1
                                 }))}
-                                // data={[2].map((n) => ({
-                                //     x: n.toString(),
-                                //     y: n
-                                // }))}
                             />
                         </Col>
                         <Col xl={8} lg={12} md={12} sm={24} xs={24}>
-                            {/* <div className={styles.salesRank}>
-                                    <h4 className={styles.rankingTitle}>
-                                        {"Sales Ranking"}
-                                    </h4>
-                                    <ul className={styles.rankingList}> */}
-                            {/* {rankingListData.map((item, i) => (
-                                            <li key={item.title}>
-                                                <span
-                                                    className={`${
-                                                        styles.rankingItemNumber
-                                                    } ${
-                                                        i < 3
-                                                            ? styles.active
-                                                            : ""
-                                                    }`}
-                                                >
-                                                    {i + 1}
-                                                </span>
-                                                <span
-                                                    className={
-                                                        styles.rankingItemTitle
-                                                    }
-                                                    title={item.title}
-                                                >
-                                                    {item.title}
-                                                </span>
-                                                <span
-                                                    className={
-                                                        styles.rankingItemValue
-                                                    }
-                                                >
-                                                    {"0,0"}
-                                                </span>
-                                            </li>
-                                        ))} */}
-                            {/* </ul>
-                                </div> */}
+                            <Table
+                                columns={[
+                                    { title: "Rank", dataIndex: "rank" },
+                                    { title: "Name", dataIndex: "name" },
+                                    { title: "Earnings", dataIndex: "earnings" }
+                                ]}
+                                dataSource={monthlyTopSales.map((v, i) => ({
+                                    key: i,
+                                    rank: i + 1,
+                                    name: v.fullname,
+                                    earnings: "S$ " + v.ct_earnings
+                                }))}
+                                size="small"
+                            />
                         </Col>
                     </Row>
                 </TabPane>

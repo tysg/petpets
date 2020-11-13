@@ -46,7 +46,6 @@ const Summary = () => {
     }, [selectedMonth]);
 
     const handleMonthChange = (value: any) => {
-        console.log(value);
         setSelectedMonth(value);
     };
 
