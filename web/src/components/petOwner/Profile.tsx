@@ -39,8 +39,12 @@ const ProfileModalForm = ({ visible, closeModal }: ProfileModalProps) => {
         form.resetFields();
         userApi
             .updateProfile(values)
-            .then((res) => message.info(res.data.data))
-            .catch((err) => message.info(err.response.data.data))
+            .then((res) => {
+                const user = res.data.data;
+                message.info(`${user.email} is updated successfully`);
+                getUser()?.refresh(user);
+            })
+            .catch((err) => message.error(err.response.data.data))
             .finally(closeModal);
     };
     const onSubmit = () => {

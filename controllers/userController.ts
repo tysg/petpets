@@ -8,7 +8,7 @@ import {
     SignInResponse,
     UserInterface
 } from "./../models/user";
-import { StringResponse } from "./../models";
+import { ApiResponse, StringResponse } from "./../models";
 import { asyncQuery } from "./../utils/db";
 import { user_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
@@ -117,14 +117,35 @@ const signIn = async (req: Request, res: Response) => {
 
 const update = async (req: Request, res: Response) => {
     try {
-        const { email } = req.params;
         const profile: NewProfile = req.body;
 
         const queryParams = sqlifyProfile(profile);
-        await asyncQuery(user_query.update_user, [...queryParams, email]);
+        const qr = await asyncQuery(user_query.update_user, [
+            ...queryParams,
+            req.params.email
+        ]);
+        console.log(qr.rows[0]);
+        const {
+            email,
+            fullname,
+            password,
+            role,
+            phone,
+            address,
+            avatar_link
+        } = qr.rows[0];
+        const user: UserInterface = {
+            email,
+            fullname,
+            passwordHash: password,
+            role,
+            phone: parseInt(phone),
+            address,
+            avatarUrl: avatar_link
+        };
 
-        const response: StringResponse = {
-            data: `${email} profile updated`,
+        const response: ApiResponse<UserInterface, string> = {
+            data: user,
             error: ""
         };
         res.send(response);

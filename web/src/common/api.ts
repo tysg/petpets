@@ -21,7 +21,7 @@ import {
 import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
 import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
-import { NewProfile, NewUser } from "../../../models/user";
+import { NewProfile, NewUser, UserInterface } from "../../../models/user";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = () => getToken();
@@ -55,8 +55,8 @@ export const user = {
     get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig),
     updateProfile: (
         newProfile: NewProfile
-    ): Promise<AxiosResponse<StringResponse>> =>
-        axios.patch("/api/profile", newProfile, authHeaderConfig)
+    ): Promise<AxiosResponse<ApiResponse<UserInterface, string>>> =>
+        axios.patch("/api/profile/" + email(), newProfile, authHeaderConfig)
 };
 
 const PET_CATEGORY_ENDPOINT = "/api/petCategories";
