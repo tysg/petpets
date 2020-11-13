@@ -20,6 +20,7 @@ apiRouter.get("/ping", verifyToken, (req, res) => res.send("PONG"));
 
 apiRouter.post("/login", userController.signIn);
 apiRouter.post("/signup", userController.signUp);
+apiRouter.patch("/profile/:email", userController.update);
 apiRouter.post("/verifyToken", verifyToken, (req, res) =>
     res.status(200).send("OK")
 );
