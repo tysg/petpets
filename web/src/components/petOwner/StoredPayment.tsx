@@ -26,11 +26,9 @@ const CreditCards = () => {
     const [visibleModal, setVisibleModal] = useState(false);
     const showModal = () => setVisibleModal(true);
     const hideModal = () => setVisibleModal(false);
-    const [record, setRecord] = useState<Omit<CreditCard, "cardholder">>({
-        cardNumber: 0,
-        expiryDate: new Date("1976-04-19T12:59-0500"),
-        securityCode: 505
-    });
+    const [record, setRecord] = useState<Omit<CreditCard, "cardholder"> | null>(
+        null
+    );
     const [title, setTitle] = useState("");
 
     const onSubmit = async (values: Omit<CreditCard, "cardholder">) => {
@@ -69,11 +67,7 @@ const CreditCards = () => {
     };
     const newModal = () => {
         setTitle("New Credit Card");
-        setRecord({
-            cardNumber: 0,
-            expiryDate: new Date(Date.now()),
-            securityCode: 0
-        });
+        setRecord(null);
         showModal();
     };
     const generateModal = (record: Omit<CreditCard, "cardholder">) => {
@@ -93,7 +87,7 @@ const CreditCards = () => {
         >
             {visibleModal && (
                 <CreditCardModalForm
-                    defaultCard={record}
+                    defaultCard={record!}
                     visible={visibleModal}
                     title={title}
                     onCancel={hideModal}

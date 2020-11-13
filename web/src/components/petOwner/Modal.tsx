@@ -8,12 +8,18 @@ export interface CreditCardModalFormProps {
     visible: boolean;
     onSubmit: (value: Omit<CreditCard, "cardholder">) => void;
     onCancel: () => void;
-    defaultCard: Omit<CreditCard, "cardholder">;
+    defaultCard?: Omit<CreditCard, "cardholder">;
 }
 
 const CreditCardModalForm = (props: CreditCardModalFormProps) => {
     const { visible, onSubmit, onCancel, title, defaultCard } = props;
     const [form] = Form.useForm();
+    form.setFieldsValue({
+        ...defaultCard,
+        expiryDate: defaultCard
+            ? moment(defaultCard?.expiryDate).format("MM/YYYY")
+            : ""
+    });
     return (
         <Modal
             visible={visible}
@@ -43,7 +49,7 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     label="Card Number"
                     name="cardNumber"
                     required
-                    initialValue={defaultCard.cardNumber}
+                    // initialValue={defaultCard?.cardNumber}
                 >
                     <Input />
                 </Form.Item>
@@ -51,9 +57,9 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     label="Expiry Date (MM/YYYY)"
                     name="expiryDate"
                     required
-                    initialValue={moment(defaultCard.expiryDate).format(
-                        "MM/YYYY"
-                    )}
+                    // initialValue={moment(defaultCard?.expiryDate).format(
+                    //     "MM/YYYY"
+                    // )}
                 >
                     <Input />
                 </Form.Item>
@@ -61,7 +67,7 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                     label="Security Code"
                     name="securityCode"
                     required
-                    initialValue={defaultCard.securityCode}
+                    // initialValue={defaultCard?.securityCode}
                 >
                     <Input />
                 </Form.Item>
