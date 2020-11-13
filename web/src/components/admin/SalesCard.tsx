@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import "ant-design-pro/dist/ant-design-pro.css"; // Import whole style
 import { Row, Col, Card, Tabs, DatePicker } from "antd";
-import styles from "./Analysis.less";
+// import styles from "./Analysis.less";
 import { Bar } from "ant-design-pro/lib/Charts";
 import moment from "moment";
 import {
@@ -12,14 +12,6 @@ import {
 const { RangePicker } = DatePicker;
 const { TabPane } = Tabs;
 
-// const rankingListData = [];
-// for (let i = 0; i < 7; i += 1) {
-//     rankingListData.push({
-//         title: formatMessage({ id: "app.analysis.test" }, { no: i }),
-//         total: 323234
-//     });
-// }
-
 type SalesCardProps = {
     month: moment.Moment;
     handleMonthChange: (value: any) => void;
@@ -29,43 +21,42 @@ type SalesCardProps = {
 const SalesCard = memo((props: SalesCardProps) => {
     const { month, handleMonthChange, monthlyTopSales, monthlyRevenue } = props;
     return (
-        <Card bordered={false} bodyStyle={{ padding: 0 }}>
-            <div className={styles.salesCard}>
-                <Tabs
-                    tabBarExtraContent={
-                        <div className={styles.salesExtraWrap}>
-                            <DatePicker
-                                onChange={handleMonthChange}
-                                picker="month"
-                                value={month}
-                                style={{ width: 256 }}
+        <Card>
+            <Tabs
+                tabBarExtraContent={
+                    <DatePicker
+                        onChange={handleMonthChange}
+                        picker="month"
+                        value={month}
+                        style={{ width: 256 }}
+                    />
+                }
+                size="large"
+                tabBarStyle={{ marginBottom: 24 }}
+            >
+                <TabPane tab={"Sales"} key="sales">
+                    <Row>
+                        <Col xl={16} lg={12} md={12} sm={24} xs={24}>
+                            <Bar
+                                height={295}
+                                title={"Sales Trend"}
+                                data={monthlyRevenue.map((r) => ({
+                                    x: r.year_month,
+                                    y: r.earnings / 1
+                                }))}
+                                // data={[2].map((n) => ({
+                                //     x: n.toString(),
+                                //     y: n
+                                // }))}
                             />
-                        </div>
-                    }
-                    size="large"
-                    tabBarStyle={{ marginBottom: 24 }}
-                >
-                    <TabPane tab={"Sales"} key="sales">
-                        <Row>
-                            <Col xl={16} lg={12} md={12} sm={24} xs={24}>
-                                <div className={styles.salesBar}>
-                                    <Bar
-                                        height={295}
-                                        title={"Sales Trend"}
-                                        data={monthlyRevenue.map((r) => ({
-                                            x: r.year_month,
-                                            y: r.earnings
-                                        }))}
-                                    />
-                                </div>
-                            </Col>
-                            <Col xl={8} lg={12} md={12} sm={24} xs={24}>
-                                <div className={styles.salesRank}>
+                        </Col>
+                        <Col xl={8} lg={12} md={12} sm={24} xs={24}>
+                            {/* <div className={styles.salesRank}>
                                     <h4 className={styles.rankingTitle}>
                                         {"Sales Ranking"}
                                     </h4>
-                                    <ul className={styles.rankingList}>
-                                        {/* {rankingListData.map((item, i) => (
+                                    <ul className={styles.rankingList}> */}
+                            {/* {rankingListData.map((item, i) => (
                                             <li key={item.title}>
                                                 <span
                                                     className={`${
@@ -95,13 +86,12 @@ const SalesCard = memo((props: SalesCardProps) => {
                                                 </span>
                                             </li>
                                         ))} */}
-                                    </ul>
-                                </div>
-                            </Col>
-                        </Row>
-                    </TabPane>
-                </Tabs>
-            </div>
+                            {/* </ul>
+                                </div> */}
+                        </Col>
+                    </Row>
+                </TabPane>
+            </Tabs>
         </Card>
     );
 });
