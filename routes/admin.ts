@@ -4,6 +4,7 @@ import * as adminController from "../controllers/adminController";
 
 export const router = Router();
 
+// NOTE: REMOVE THIS
 // router.use(verifyAdminToken);
 
 /**
