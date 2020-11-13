@@ -250,6 +250,7 @@ export const admin_query = {
 
 export const specializes_query = {
     get_specializes: `SELECT type_name as typeName, ct_price_daily as ctPriceDaily FROM specializes_in WHERE email=$1`,
+    get_specializes_admin: `SELECT type_name, ct_price_daily FROM specializes_in WHERE email=$1`,
     delete_specializes: [
         `DELETE FROM ft_specializes_in WHERE email=$1`,
         `DELETE FROM pt_specializes_in WHERE email=$1`
