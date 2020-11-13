@@ -61,13 +61,37 @@ const ProfileModalForm = ({ visible, closeModal }: ProfileModalProps) => {
             title="Edit Profile"
         >
             <Form form={form}>
-                <FormItem name="fullname" label="Full Name">
+                <FormItem required name="fullname" label="Full Name">
                     <Input defaultValue={getUser()?.fullname} />
                 </FormItem>
-                <FormItem name="phone" label="Phone Number">
+                <FormItem
+                    required
+                    name="phone"
+                    label="Phone Number"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your phone number!"
+                        },
+                        (_) => ({
+                            validator: async (rule, value) => {
+                                const regex = /(6|8|9)\d{7}/g;
+                                if (
+                                    !value ||
+                                    JSON.stringify(value).match(regex)
+                                ) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                    "Not a valid phone number"
+                                );
+                            }
+                        })
+                    ]}
+                >
                     <Input defaultValue={getUser()?.phone} />
                 </FormItem>
-                <FormItem name="address" label="Address">
+                <FormItem required name="address" label="Address">
                     <Input defaultValue={getUser()?.address} />
                 </FormItem>
                 <FormItem name="avatarUrl" label="Avatar Link">
@@ -85,7 +109,7 @@ const UserProfile = (props: RouteChildrenProps) => {
     const showModal = () => setVisibleModal(true);
     const hideModal = () => {
         setVisibleModal(false);
-        props.history.go(0);
+        setTimeout(() => props.history.go(0), 1000);
     };
     return (
         <Card title="My Profile">
