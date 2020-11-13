@@ -15,12 +15,14 @@ import {
 } from "./../../../models/creditCard";
 import {
     CareTakerSpecializesDetails,
+    CaretakerStatus,
     SearchResponse,
     SpecializesIn
 } from "./../../../models/careTaker";
 import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
 import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
+import { NewProfile, NewUser, UserInterface } from "../../../models/user";
 
 export const formatDate = (date: Moment) => date.format("YYYY-MM-DD");
 const token = () => getToken();
@@ -51,7 +53,11 @@ export const user = {
     verify: () => axios.post("/api/verifyToken", token(), authHeaderConfig),
     post: (endpoint: string, data: any) =>
         axios.post("/api" + endpoint, data, authHeaderConfig),
-    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig)
+    get: (endpoint: string) => axios.get("/api" + endpoint, authHeaderConfig),
+    updateProfile: (
+        newProfile: NewProfile
+    ): Promise<AxiosResponse<ApiResponse<UserInterface, string>>> =>
+        axios.patch("/api/profile/" + email(), newProfile, authHeaderConfig)
 };
 
 const PET_CATEGORY_ENDPOINT = "/api/petCategories";
@@ -130,6 +136,10 @@ export const creditCards = {
     }
 };
 
+const getBidIdentity = (bid: Bid) => {
+    const { ct_email, pet_owner, pet_name, start_date, end_date } = bid;
+    return `${ct_email}/${pet_owner}/${pet_name}/${start_date}/${end_date}/`;
+};
 export const bid = {
     createBid: (body: CreateBidRequest) => {
         console.log(body);
@@ -139,7 +149,8 @@ export const bid = {
     },
     getForCareTaker: (): Promise<AxiosResponse<CareTakerResponse>> => {
         return get("/api/bids/caretaker/" + email());
-    }
+    },
+    updateBid: (bid: Bid) => patch(`/api/bids/${getBidIdentity(bid)}`, bid)
 };
 
 const CARETAKER_ENDPOINT = "/api/caretakers/";
@@ -149,6 +160,10 @@ export const careTaker = {
     > => {
         return get(CARETAKER_ENDPOINT + email());
     },
+    patchCareTaker: (
+        spec: CareTakerSpecializesDetails,
+        status: CaretakerStatus
+    ) => patch(CARETAKER_ENDPOINT + getStatus(status) + email(), spec),
     newFulltimer: (
         allSpecializes: SpecializesIn[]
     ): Promise<AxiosResponse<StringResponse>> => {
@@ -165,4 +180,9 @@ export const careTaker = {
             allSpecializes
         });
     }
+};
+
+const getStatus = (status: CaretakerStatus) => {
+    const mapping = ["not_caretaker", "part_timer", "full_timer"];
+    return mapping[status] + "/";
 };

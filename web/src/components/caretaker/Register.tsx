@@ -54,7 +54,12 @@ const ModalForm = (props: ModalFormProps) => {
                     const { careTakerStatus, allSpecializesIn } = values;
                     const res = {
                         careTakerStatus,
-                        allSpecializesIn
+                        allSpecializesIn: allSpecializesIn.map(
+                            (typeName: string) => ({
+                                typeName,
+                                ctPriceDaily: 0
+                            })
+                        )
                     };
                     onSubmit(res);
                 });
@@ -72,7 +77,6 @@ const ModalForm = (props: ModalFormProps) => {
                         placeholder="Select Specialty"
                         style={{ width: "100%" }}
                         mode="multiple"
-                        onChange={(value) => console.log(value)}
                     >
                         {petTypes.map(({ typeName }) => (
                             <Select.Option value={typeName}>
@@ -98,7 +102,7 @@ const Register = (props: RouteComponentProps) => {
         endpoint(formResult.allSpecializesIn)
             .then((res) => {
                 message.success(res.data.data);
-                props.history.push("/dashboard/sitter");
+                setTimeout(() => props.history.go(0), 1000);
             })
             .catch((err) => {
                 message.error(err.response.data.err);

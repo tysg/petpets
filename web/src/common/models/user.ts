@@ -20,4 +20,8 @@ export default class User {
     isAdmin() {
         return this.role === "admin";
     }
+
+    refresh(user: UserInterface) {
+        localStorage.setItem("user", JSON.stringify(user));
+    }
 }

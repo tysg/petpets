@@ -12,7 +12,7 @@ export interface NewProfile {
     fullname: string;
     phone: number;
     address: string;
-    avatarUrl: string;
+    avatarUrl?: string;
 }
 
 /**
