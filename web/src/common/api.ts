@@ -19,6 +19,10 @@ import {
     SearchResponse,
     SpecializesIn
 } from "./../../../models/careTaker";
+import {
+    MonthlyBestCareTakerIndexResponse,
+    MonthlyRevenueIndexResponse
+} from "./../../../models/admin";
 import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
 import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
@@ -31,6 +35,9 @@ const authHeaderConfig: AxiosRequestConfig = {
     headers: { "x-access-token": token() }
 };
 
+const authHeader = () => ({
+    headers: { "x-access-token": token() }
+});
 function addOwnerField(pet: Omit<Pet, "owner">): Pet {
     return { ...pet, owner: email() };
 }
@@ -41,13 +48,18 @@ function addCardHolderField(
     return { ...creditCard, cardholder: email() };
 }
 
-const remove = (endpoint: string) => axios.delete(endpoint, authHeaderConfig);
-const post = (endpoint: string, data: any) =>
-    axios.post(endpoint, data, authHeaderConfig);
+const remove = (endpoint: string) => {
+    return axios.delete(endpoint, authHeader());
+};
+const post = (endpoint: string, data: any) => {
+    return axios.post(endpoint, data, authHeader());
+};
 const patch = (endpoint: string, data: any) =>
     axios.patch(endpoint, data, authHeaderConfig);
 
-const get = (endpoint: string) => axios.get(endpoint, authHeaderConfig);
+const get = (endpoint: string) => {
+    return axios.get(endpoint, authHeader());
+};
 
 export const user = {
     verify: () => axios.post("/api/verifyToken", token(), authHeaderConfig),
@@ -185,4 +197,19 @@ export const careTaker = {
 const getStatus = (status: CaretakerStatus) => {
     const mapping = ["not_caretaker", "part_timer", "full_timer"];
     return mapping[status] + "/";
+};
+
+export const admin = {
+    getMonthlyRevenues: (): Promise<
+        AxiosResponse<MonthlyRevenueIndexResponse>
+    > => {
+        return get("/api/admin/monthly_revenue");
+    },
+    getMonthlyBestCareTaker: (
+        yearMonth: moment.Moment
+    ): Promise<AxiosResponse<MonthlyBestCareTakerIndexResponse>> => {
+        return get(
+            `/api/admin/best_caretakers_monthly/${yearMonth.format("YYYY-MM")}`
+        );
+    }
 };
