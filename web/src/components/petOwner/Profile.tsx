@@ -10,7 +10,8 @@ import {
     Select,
     Radio,
     Empty,
-    Input
+    Input,
+    message
 } from "antd";
 import Form, { useForm } from "antd/lib/form/Form";
 import FormItem from "antd/lib/form/FormItem";
@@ -19,7 +20,7 @@ import { getUser } from "./../../common/token";
 import { NewUser } from "../../../../models/user";
 import { formatTimeStr } from "antd/lib/statistic/utils";
 import { RouteChildrenProps } from "react-router-dom";
-const { Title } = Typography;
+import { user as userApi } from "../../common/api";
 
 interface ProfileModalProps {
     visible: boolean;
@@ -35,10 +36,12 @@ const ProfileModalForm = ({ visible, closeModal }: ProfileModalProps) => {
     const [form] = useForm();
     form.setFieldsValue(getUser());
     const submitValues = (values: Omit<NewUser, "password">) => {
-        console.log("submitting values:", values);
-        // TODO: call endpoint
         form.resetFields();
-        closeModal();
+        userApi
+            .updateProfile(values)
+            .then((res) => message.info(res.data.data))
+            .catch((err) => message.info(err.response.data.data))
+            .finally(closeModal);
     };
     const onSubmit = () => {
         form.validateFields().then((values) => {
@@ -56,9 +59,6 @@ const ProfileModalForm = ({ visible, closeModal }: ProfileModalProps) => {
             <Form form={form}>
                 <FormItem name="fullname" label="Full Name">
                     <Input defaultValue={getUser()?.fullname} />
-                </FormItem>
-                <FormItem name="email" label="Email">
-                    <Input defaultValue={getUser()?.email} />
                 </FormItem>
                 <FormItem name="phone" label="Phone Number">
                     <Input defaultValue={getUser()?.phone} />
