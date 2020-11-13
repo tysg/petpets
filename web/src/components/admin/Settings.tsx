@@ -203,6 +203,7 @@ const Settings = () => {
             <Table
                 dataSource={petTypes}
                 columns={[...columns, actionColumn]}
+                pagination={{ hideOnSinglePage: true }}
             ></Table>
         </PageHeader>
     );

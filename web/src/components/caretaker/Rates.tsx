@@ -14,6 +14,8 @@ import {
     Layout,
     message,
     PageHeader,
+    Popconfirm,
+    Popover,
     Row,
     Space,
     Statistic,
@@ -22,11 +24,14 @@ import {
 } from "antd";
 import {
     CareTakerSpecializesDetails,
+    CareTakerSpecializesDetailsSchema,
     SpecializesIn
 } from "../../../../models/careTaker";
 import { pets as petsApi } from "../../common/api";
 import { PetCategory } from "../../../../models/pet";
 import { OmitProps } from "antd/lib/transfer/ListBody";
+import { useForm } from "antd/lib/form/Form";
+import { SuperExpression } from "typescript";
 
 const CHUNKSIZE = 8;
 
@@ -55,15 +60,21 @@ const columns = [
         width: "40%"
     },
     {
-        title: "Daily Price (SGD)",
-        dataIndex: "baseDailyPrice",
+        title: "My Daily Price (SGD)",
+        dataIndex: "ctPriceDaily",
         key: "price",
         width: "40%"
     }
 ];
 
-const Rates = (props: CareTakerSpecializesDetails) => {
+interface UpdatableCareTaker extends CareTakerSpecializesDetails {
+    updateCareTaker: () => void;
+}
+
+const Rates = (props: UpdatableCareTaker) => {
     const [categories, setCategories] = useState<PetCategory[]>([]);
+    const [visible, setVisible] = useState(false);
+    const [form] = useForm();
     const refreshRates = () => {
         petsApi
             .getCategories()
@@ -72,6 +83,15 @@ const Rates = (props: CareTakerSpecializesDetails) => {
             .catch((err) => message.error(err.response.data.err));
     };
     useEffect(refreshRates, []);
+    const populateModal = (record: SpecializesIn | null) => {
+        message.info("TODO: create and update specialization");
+        setVisible(true);
+    };
+    const onDelete = (record: SpecializesIn) => {
+        setVisible(false);
+        message.info("TODO: remove specialization");
+        props.updateCareTaker();
+    };
     const actionColumn = {
         title: "Action",
         key: "action",
@@ -79,22 +99,27 @@ const Rates = (props: CareTakerSpecializesDetails) => {
         render: (text: string, record: SpecializesIn, index: any) => {
             return (
                 <Space size="middle">
-                    <Button>Edit</Button>
-                    <Button danger>Delete</Button>
+                    <Button onClick={() => populateModal(record)}>Edit</Button>
+                    <Popconfirm
+                        title="Are you sure?"
+                        okText="Yes"
+                        cancelText="No"
+                        onConfirm={() => onDelete(record)}
+                    >
+                        <Button danger>Delete</Button>
+                    </Popconfirm>
                 </Space>
             );
         }
     };
     return (
         <Layout>
-            <PageHeader title="Base Daily Rates">
-                <Carousel autoplay arrows>
+            <PageHeader
+                title="All Base Daily Rates"
+                subTitle="Current base rates for pet categories"
+            >
+                <Carousel autoplay dotPosition="right">
                     {categories
-                        // .filter((cat) =>
-                        //     props.allSpecializes
-                        //         .map(({ typeName }) => typeName)
-                        //         .includes(cat.typeName)
-                        // )
                         .map((cat) => PetCategoryCard(cat))
                         .map(
                             (_, index, res) =>
@@ -107,11 +132,24 @@ const Rates = (props: CareTakerSpecializesDetails) => {
                         ))}
                 </Carousel>
             </PageHeader>
-            <PageHeader title="My Specializations">
+            <PageHeader
+                title="My Specializations"
+                subTitle="Manage your specializations here"
+                extra={
+                    <Button
+                        size="large"
+                        type="primary"
+                        onClick={() => populateModal(null)}
+                    >
+                        New
+                    </Button>
+                }
+            >
                 <Table
                     dataSource={props.allSpecializes}
                     columns={[...columns, actionColumn]}
-                ></Table>
+                    pagination={{ hideOnSinglePage: true, pageSize: 6 }}
+                />
             </PageHeader>
         </Layout>
     );

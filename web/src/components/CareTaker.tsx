@@ -26,7 +26,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
         setCareTaker
     ] = useState<CareTakerSpecializesDetails | null>(null);
     const [bids, setBids] = useState<BidJoinOwnerPet[]>([]);
-    useEffect(() => {
+    const updateCareTaker = () => {
         careTakerApi
             .getCareTaker()
             .then((res) => {
@@ -38,7 +38,8 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 console.log(err);
                 message.error(err.response.data.err);
             });
-    }, []);
+    };
+    useEffect(updateCareTaker, []);
     const refreshBids = () =>
         bidApi
             .getForCareTaker()
@@ -96,7 +97,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 <Schedule {...careTaker!} />
             </CareTakerRoute>
             <CareTakerRoute path={`${path}/rates`} careTakerDetails={careTaker}>
-                <Rates {...careTaker!} />
+                <Rates {...careTaker!} updateCareTaker={updateCareTaker} />
             </CareTakerRoute>
         </Switch>
     );
