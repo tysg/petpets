@@ -7,6 +7,7 @@ import {
     useRouteMatch
 } from "react-router-dom";
 import NewRequest from "./petOwner/NewRequest";
+import CreditCards from "./petOwner/StoredPayment";
 import Pets from "./pet";
 import { pets as PetsApi } from "../common/api";
 import OwnerRoute from "../auth/OwnerRoute";
@@ -44,6 +45,11 @@ const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
                 pets={pets}
                 path={`${path}/new-request`}
                 component={NewRequest}
+            ></OwnerRoute>
+           <OwnerRoute
+                pets={pets}
+                path={`${path}/payment`}
+                component={CreditCards}
             ></OwnerRoute>
             <OwnerRoute
                 pets={pets}

@@ -31,9 +31,9 @@ export const credit_card_query = {
     delete_credit_card:
         "DELETE FROM credit_card WHERE card_number=$1 AND cardholder=$2",
     create_credit_card:
-        "INSERT INTO credit_card (card_number, cardholder, expiryDate, securityCode) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO credit_card (card_number, cardholder, expiry_date, security_code) VALUES ($1, $2, $3, $4)",
     update_credit_card:
-        "UPDATE credit_card SET (card_number, cardholder, expiryDate, securityCode) = ($1, $2, $3, $4) WHERE card_number=$1 AND cardholder=$2"
+        "UPDATE credit_card SET (card_number, cardholder, expiry_date, security_code) = ($1, $2, $3, $4) WHERE card_number=$1 AND cardholder=$2"
 };
 
 const USER_ATTR = `fullname, phone, address, email, avatar_link as avatarurl`;

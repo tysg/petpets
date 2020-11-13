@@ -85,23 +85,23 @@ export const get = async (req: Request, res: Response) => {
 
 export const remove = async (req: Request, res: Response) => {
     try {
-        const { card_number, cardholder } = req.params;
+        const { cardNumber, cardholder } = req.params;
         await asyncQuery(credit_card_query.delete_credit_card, [
-            card_number,
+            cardNumber,
             cardholder
         ]);
         const response: StringResponse = {
-            data: `${card_number} ${cardholder} has been deleted `,
+            data: `${cardNumber} ${cardholder} has been deleted `,
             error: ""
         };
         res.send(response);
     } catch (error) {
-        const { card_number, cardholder } = req.params;
+        const { cardNumber, cardholder } = req.params;
         log.error("delete card error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Credit card ${card_number} of ${cardholder} cannot be deleted: ` +
+                `Credit card ${cardNumber} of ${cardholder} cannot be deleted: ` +
                 error
         };
         res.status(400).send(response);
