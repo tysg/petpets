@@ -8,6 +8,10 @@ export interface CtStatusAndSpecializes {
     caretaker_status: number;
 }
 
+export interface PetCategory {
+    pet_category: string;
+}
+
 export type CreateBidRequest = Pick<
     Bid,
     | "ct_email"
@@ -20,6 +24,19 @@ export type CreateBidRequest = Pick<
     | "credit_card"
     | "transport_method"
 >;
+
+interface UserInfoForCareTaker {
+    fullname: string;
+    address: string;
+    phone: number;
+    avatar_url?: string;
+}
+
+interface PetInfoForCareTaker {
+    category: string;
+    requirements: string;
+    description: string;
+}
 
 export interface Bid {
     ct_email: string;
@@ -37,6 +54,11 @@ export interface Bid {
     feedback: Text;
     rating: number;
 }
+
+export interface BidJoinOwnerPet
+    extends Bid,
+        UserInfoForCareTaker,
+        PetInfoForCareTaker {}
 
 export const sqlify = (bid: Bid) => [
     bid.ct_email,
@@ -70,7 +92,7 @@ export type OwnerResponse = ApiResponse<Bid[], string>;
 /**
  * GET api/bids/caretaker/:ct_email;
  */
-export type CareTakerResponse = ApiResponse<Bid[], string>;
+export type CareTakerResponse = ApiResponse<BidJoinOwnerPet[], string>;
 
 /**
  * POST api/bids;

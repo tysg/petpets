@@ -3,6 +3,13 @@
 -- NOTE, functions not allowed to take parameters when used in triggers, so no choice. 
 -- WAC, lots of dasani
 
+-- CREATE OR REPLACE FUNCTION get_ct_pet_limit(text) RETURNS integer AS 
+-- 	'SELECT CASE 
+-- 			when (caretaker_status=2 OR rating > 4) then 5
+-- 			else 2 end
+-- 		from caretaker where email=$1;'
+-- 	LANGUAGE PLpgSQL;
+
 CREATE OR REPLACE FUNCTION not_part_time()
 RETURNS TRIGGER AS 
 $t$ 
@@ -76,15 +83,29 @@ CREATE TRIGGER check_no_bid_overlap
 BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 
+-- CREATE OR REPLACE FUNCTION prevent_update_bid()
+-- RETURNS TRIGGER AS
+-- $t$
+-- DECLARE old_status VARCHAR(64);
+-- BEGIN
+-- 	SELECT bid_status INTO old_status FROM bid B
+-- 		WHERE B.ct_email = NEW.ct_email
+-- 	  AND B.pet_name = NEW.pet_name
+-- 	  AND B.pet_owner = NEW.pet_owner
+-- 	  AND B.start_date = NEW.start_date
+-- 	  AND B.end_date = NEW.end_date;
 
+-- 	  IF old_status = 'closed' THEN
+-- 	  RAISE EXCEPTION 'The bid is already closed!';
+-- 	END if;
+-- 	RETURN NEW;
+-- END;
+-- $t$
+-- LANGUAGE PLpgSQL;
 
--- for debugging
--- DROP TABLE IF EXISTS count_limit;
-
--- CREATE TABLE count_limit (
--- 	c1 int
--- );
-
+-- CREATE TRIGGER prevent_bid
+-- BEFORE UPDATE ON bid
+-- FOR EACH ROW EXECUTE PROCEDURE prevent_update_bid();
 
 CREATE OR REPLACE FUNCTION pet_limit()
 RETURNS TRIGGER AS 
@@ -98,23 +119,23 @@ BEGIN
 			when caretaker_status=2 OR rating > 4 then 4
 			else 1 end
 		into pet_count from caretaker where email=NEW.ct_email;
+	SELECT 0 into transgression;
 
-	select count(*) into transgression FROM 
-		(select
-			dates.date
-			from (
-				select                                                                              
-					generate_series(
-						date_trunc('month', NEW.start_date),
-						NEW.end_date, '1 day'
-					)::date as date
-			) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email) as p
-			where dates.date >= p.start_date and dates.date <= p.end_date 
-		ORDER BY dates.date) as overlapDates
-	group by overlapDates.date
-	having count(*) > pet_count;
-
-	insert into count_limit values (transgression);
+	IF (TG_OP='INSERT') OR (TG_OP='UPDATE' AND OLD.bid_status!='confirmed')  THEN 
+		select count(*) into transgression FROM
+			(select
+				dates.date
+				from (
+					select
+						generate_series(
+							NEW.start_date, NEW.end_date, '1 day'
+						)::date as date
+				) as dates, (select * FROM bid WHERE ct_email=NEW.ct_email AND bid_status='confirmed') as p
+				where dates.date >= p.start_date and dates.date <= p.end_date 
+			ORDER BY dates.date) as overlapDates
+		group by overlapDates.date
+		having count(*) > pet_count;
+	END IF;
 
 	IF transgression > 0 THEN
 		RAISE EXCEPTION 'limit reached for period!';
@@ -125,8 +146,10 @@ END;
 $t$ LANGUAGE PLpgSQL;
 
 CREATE TRIGGER check_pet_limit
-BEFORE INSERT ON bid
+BEFORE INSERT OR UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE pet_limit();
+
+
 
 
 CREATE OR REPLACE FUNCTION close_bid()
@@ -225,14 +248,6 @@ $t$ LANGUAGE PLpgSQL;
 CREATE TRIGGER check_ft_schedule_no_date_overlap
 BEFORE INSERT ON ft_leave_schedule
 FOR EACH ROW EXECUTE PROCEDURE date_non_overlap_ft_schedule();
-
--- for debugging
--- DROP TABLE IF EXISTS count_sched;
-
--- CREATE TABLE count_sched (
--- 	c1 int
--- );
-
 
 CREATE OR REPLACE FUNCTION ft_150_constraint()
 RETURNS TRIGGER AS 
