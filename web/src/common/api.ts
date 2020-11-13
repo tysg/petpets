@@ -136,6 +136,10 @@ export const creditCards = {
     }
 };
 
+const getBidIdentity = (bid: Bid) => {
+    const { ct_email, pet_owner, pet_name, start_date, end_date } = bid;
+    return `${ct_email}/${pet_owner}/${pet_name}/${start_date}/${end_date}/`;
+};
 export const bid = {
     createBid: (body: CreateBidRequest) => {
         console.log(body);
@@ -145,8 +149,8 @@ export const bid = {
     },
     getForCareTaker: (): Promise<AxiosResponse<CareTakerResponse>> => {
         return get("/api/bids/caretaker/" + email());
-    }
-    // updateBid: (bid: Bid) => patch(`/api/bids/`)
+    },
+    updateBid: (bid: Bid) => patch(`/api/bids/${getBidIdentity(bid)}`, bid)
 };
 
 const CARETAKER_ENDPOINT = "/api/caretakers/";

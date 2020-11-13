@@ -14,14 +14,14 @@ const CareTakerSidebar = (props: RouteComponentProps) => {
             defaultSelected="pending"
         >
             <ItemGroup key="sitter" title="Pet Sitter">
-                <Menu.Item key="pending">
-                    <Link to={`${path}/pending`}>Pending Requests</Link>
-                </Menu.Item>
                 <Menu.Item key="upcoming">
                     <Link to={`${path}/upcoming`}>Upcoming Assignments</Link>
                 </Menu.Item>
+                <Menu.Item key="pending">
+                    <Link to={`${path}/pending`}>Pending Requests</Link>
+                </Menu.Item>
                 <Menu.Item key="reviews">
-                    <Link to={`${path}/reviews`}>My Reviews</Link>
+                    <Link to={`${path}/reviews`}>Reviews of Me</Link>
                 </Menu.Item>
                 <Menu.Item key="schedule">
                     <Link to={`${path}/schedule`}>My Schedule</Link>

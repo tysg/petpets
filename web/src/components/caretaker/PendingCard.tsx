@@ -12,9 +12,49 @@ import {
     Divider,
     Popconfirm
 } from "antd";
+import { CheckCircleOutlined, CloseOutlined } from "@ant-design/icons";
 import moment from "moment";
 import { BidJoinOwnerPet, TransportMethod } from "../../../../models/bid";
 import DescriptionsItem from "antd/lib/descriptions/Item";
+import { bid, bid as bidApi } from "../../common/api";
+import { RouteComponentProps } from "react-router-dom";
+import { AssignmentCardProps } from "./Assignments";
+
+interface IconTextProps {
+    icon?: React.FC<{}>;
+    text?: string;
+    action: () => void;
+}
+
+const Accept = (props: IconTextProps) => {
+    return (
+        <Button type="primary" onClick={props.action}>
+            <Space>
+                Accept
+                <CheckCircleOutlined />
+            </Space>
+        </Button>
+    );
+};
+
+const RejectButton = (props: IconTextProps) => {
+    const { icon, text } = props;
+    return (
+        <Popconfirm
+            title="Are you sure?"
+            okText="Yes"
+            cancelText="No"
+            onConfirm={props.action}
+        >
+            <Button danger>
+                <Space>
+                    {text}
+                    {React.createElement(icon!)}
+                </Space>
+            </Button>
+        </Popconfirm>
+    );
+};
 
 const convertTransportMethod = (key: TransportMethod) => {
     const mapping = {
@@ -25,7 +65,7 @@ const convertTransportMethod = (key: TransportMethod) => {
     return mapping[key];
 };
 
-export default (props: BidJoinOwnerPet) => {
+export default (props: AssignmentCardProps) => {
     const {
         fullname,
         avatar_url,
@@ -39,6 +79,14 @@ export default (props: BidJoinOwnerPet) => {
         ct_price,
         transport_method
     } = props;
+    const acceptBid = () =>
+        bidApi
+            .updateBid({ ...props, bid_status: "confirmed" })
+            .finally(props.refreshBids);
+    const rejectBid = () =>
+        bidApi
+            .updateBid({ ...props, bid_status: "closed" })
+            .finally(props.refreshBids);
 
     return (
         <Card>
@@ -49,6 +97,15 @@ export default (props: BidJoinOwnerPet) => {
                     src: avatar_url
                 }}
                 subTitle={address}
+                extra={[
+                    <Accept action={acceptBid} />,
+                    <RejectButton
+                        icon={CloseOutlined}
+                        text="Reject"
+                        key="list-vertical-message"
+                        action={rejectBid}
+                    />
+                ]}
             >
                 <Row gutter={[48, 16]}>
                     <Col span={20}>

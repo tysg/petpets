@@ -65,7 +65,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
         <Switch>
             <Route exact path={`${path}/`}>
                 {careTaker ? (
-                    <Redirect to={`${path}/pending`} />
+                    <Redirect to={`${path}/upcoming`} />
                 ) : (
                     <Register {...props} />
                 )}
@@ -75,6 +75,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
+                    refreshBids={refreshBids}
                     dataSource={bids.filter(upcomingFilter)}
                     emptyMsg="No upcoming jobs"
                     card={AssignmentCard}
@@ -85,6 +86,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
+                    refreshBids={refreshBids}
                     dataSource={bids.filter(pendingFilter)}
                     emptyMsg="No pending jobs"
                     card={PendingCard}
@@ -95,6 +97,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
+                    refreshBids={refreshBids}
                     dataSource={bids.filter(completedFilter)}
                     emptyMsg="No past assignments"
                     card={PastCard}

@@ -2,16 +2,16 @@ import React, { useEffect } from "react";
 import { List, message } from "antd";
 import { CoffeeOutlined } from "@ant-design/icons";
 import { BidJoinOwnerPet } from "../../../../models/bid";
-import AssignmentCard from "./AssignmentCard";
 
 interface AssignmentsProps {
     dataSource: BidJoinOwnerPet[];
     emptyMsg: string;
-    card: React.FC<BidJoinOwnerPet>;
+    card: React.FC<any>;
+    refreshBids: () => void;
 }
 
 const Assignments = (props: AssignmentsProps) => {
-    const { dataSource, emptyMsg } = props;
+    const { dataSource, emptyMsg, refreshBids } = props;
     useEffect(() => {
         if (dataSource.length <= 0) {
             message.info(emptyMsg);
@@ -21,12 +21,6 @@ const Assignments = (props: AssignmentsProps) => {
         <List
             itemLayout="vertical"
             size="large"
-            // pagination={{
-            //     onChange: (page) => {
-            //         console.log(page);
-            //     },
-            //     pageSize: 3
-            // }}
             dataSource={dataSource}
             footer={
                 <div>
@@ -36,7 +30,7 @@ const Assignments = (props: AssignmentsProps) => {
             }
             renderItem={(bidInfo) => (
                 <List.Item key={JSON.stringify(bidInfo)}>
-                    {props.card(bidInfo)}
+                    {props.card({ ...bidInfo, refreshBids })}
                 </List.Item>
             )}
         />
@@ -44,3 +38,6 @@ const Assignments = (props: AssignmentsProps) => {
 };
 
 export default Assignments;
+export interface AssignmentCardProps extends BidJoinOwnerPet {
+    refreshBids: () => void;
+}
