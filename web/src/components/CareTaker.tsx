@@ -27,7 +27,7 @@ const pendingFilter = (bid: Bid) =>
     bid.bid_status === "submitted" &&
     moment(bid.start_date).isSameOrAfter(Date.now());
 const completedFilter = (bid: Bid) =>
-    bid.bid_status === "reviewed" &&
+    // bid.bid_status === "reviewed" &&
     moment(bid.start_date).isBefore(Date.now());
 
 const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {

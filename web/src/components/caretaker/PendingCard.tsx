@@ -13,39 +13,8 @@ import {
     Popconfirm
 } from "antd";
 import moment from "moment";
-import { CloseOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { BidJoinOwnerPet, TransportMethod } from "../../../../models/bid";
 import DescriptionsItem from "antd/lib/descriptions/Item";
-
-interface IconTextProps {
-    icon: React.FC<{}>;
-    text: string;
-}
-
-const Accept = () => {
-    return (
-        <Button type="primary">
-            <Space>
-                Accept
-                <CheckCircleOutlined />
-            </Space>
-        </Button>
-    );
-};
-
-const RejectButton = (props: IconTextProps) => {
-    const { icon, text } = props;
-    return (
-        <Popconfirm title="Are you sure?" okText="Yes" cancelText="No">
-            <Button danger>
-                <Space>
-                    {text}
-                    {React.createElement(icon)}
-                </Space>
-            </Button>
-        </Popconfirm>
-    );
-};
 
 const convertTransportMethod = (key: TransportMethod) => {
     const mapping = {

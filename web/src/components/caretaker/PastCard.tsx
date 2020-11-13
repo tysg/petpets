@@ -1,15 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
-    Button,
     Space,
     Descriptions,
     Card,
     Row,
     Col,
     PageHeader,
-    Statistic,
     Tag,
-    Divider,
     Rate
 } from "antd";
 import moment from "moment";
@@ -41,7 +38,7 @@ export default (props: BidJoinOwnerPet) => {
                 subTitle={address}
             >
                 <Row gutter={[48, 16]}>
-                    <Col>
+                    <Col span={24}>
                         <Descriptions bordered layout="vertical">
                             <DescriptionsItem label="Pet">
                                 <Space align="center">
