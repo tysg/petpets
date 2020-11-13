@@ -46,6 +46,7 @@ const SalesCard = memo((props: SalesCardProps) => {
                         </Col>
                         <Col xl={8} lg={12} md={12} sm={24} xs={24}>
                             <Table
+                                title={() => <b>{"Monthly Top Caretakers"}</b>}
                                 columns={[
                                     { title: "Rank", dataIndex: "rank" },
                                     { title: "Name", dataIndex: "name" },
