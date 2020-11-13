@@ -1,10 +1,4 @@
-import React, {
-    PropsWithChildren,
-    ReactNode,
-    ReactNodeArray,
-    useEffect,
-    useState
-} from "react";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import "antd/dist/antd.css";
 import {
     Button,
@@ -15,7 +9,6 @@ import {
     message,
     PageHeader,
     Popconfirm,
-    Popover,
     Row,
     Space,
     Statistic,
@@ -24,14 +17,11 @@ import {
 } from "antd";
 import {
     CareTakerSpecializesDetails,
-    CareTakerSpecializesDetailsSchema,
     SpecializesIn
 } from "../../../../models/careTaker";
 import { pets as petsApi } from "../../common/api";
 import { PetCategory } from "../../../../models/pet";
-import { OmitProps } from "antd/lib/transfer/ListBody";
 import { useForm } from "antd/lib/form/Form";
-import { SuperExpression } from "typescript";
 
 const CHUNKSIZE = 8;
 

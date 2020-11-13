@@ -7,6 +7,7 @@ import {
     useRouteMatch,
     Route
 } from "react-router-dom";
+import moment from "moment";
 import { Bid, BidJoinOwnerPet } from "../../../models/bid";
 import { CareTakerSpecializesDetails } from "../../../models/careTaker";
 import CareTakerRoute from "../auth/CareTakerRoute";
@@ -18,6 +19,16 @@ import PendingCard from "./caretaker/PendingCard";
 import Rates from "./caretaker/Rates";
 import Register from "./caretaker/Register";
 import Schedule from "./caretaker/Schedule";
+
+const upcomingFilter = (bid: Bid) =>
+    bid.bid_status === "confirmed" &&
+    moment(bid.start_date).isSameOrAfter(Date.now());
+const pendingFilter = (bid: Bid) =>
+    bid.bid_status === "submitted" &&
+    moment(bid.start_date).isSameOrAfter(Date.now());
+const completedFilter = (bid: Bid) =>
+    bid.bid_status === "reviewed" &&
+    moment(bid.start_date).isBefore(Date.now());
 
 const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
     const { path } = useRouteMatch();
@@ -65,7 +76,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
-                    dataSource={bids.filter((bid) => true)}
+                    dataSource={bids.filter(upcomingFilter)}
                     emptyMsg="No upcoming jobs"
                     card={AssignmentCard}
                 />
@@ -75,7 +86,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
-                    dataSource={bids.filter((bid) => true)}
+                    dataSource={bids.filter(pendingFilter)}
                     emptyMsg="No pending jobs"
                     card={PendingCard}
                 />
@@ -85,7 +96,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
-                    dataSource={bids.filter((bid) => true)}
+                    dataSource={bids.filter(completedFilter)}
                     emptyMsg="No past assignments"
                     card={PastCard}
                 />
