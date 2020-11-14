@@ -9,6 +9,7 @@ import {
     StringResponse,
     BidJoinOwnerPet,
     sqlify,
+    BidJoinCareTaker,
     BidStatus
 } from "../models/bid";
 import { CaretakerStatus } from "../models/careTaker";
@@ -43,7 +44,7 @@ import moment from "moment";
 export const owner_get = async (req: Request, res: Response) => {
     try {
         const { owner_email } = req.params;
-        const qr: QueryResult<Bid> = await asyncQuery(
+        const qr: QueryResult<BidJoinCareTaker> = await asyncQuery(
             bid_query.owner_get_bids,
             [owner_email]
         );
@@ -90,7 +91,13 @@ export const ct_get = async (req: Request, res: Response) => {
 
 export const remove = async (req: Request, res: Response) => {
     try {
-        const { ct_email, owner_email, pet_name, start_date, end_date } = req.params;
+        const {
+            ct_email,
+            owner_email,
+            pet_name,
+            start_date,
+            end_date
+        } = req.params;
         await asyncQuery(bid_query.delete_bid, [
             ct_email,
             owner_email,
@@ -104,7 +111,13 @@ export const remove = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { ct_email, owner_email, pet_name, start_date, end_date } = req.params;
+        const {
+            ct_email,
+            owner_email,
+            pet_name,
+            start_date,
+            end_date
+        } = req.params;
         log.error("delete bid error", error);
         const response: StringResponse = {
             data: "",
@@ -115,7 +128,6 @@ export const remove = async (req: Request, res: Response) => {
         res.status(400).send(response);
     }
 };
-
 
 export const test = async (req: Request, res: Response) => {
     const { startDate, endDate } = req.body;
@@ -131,7 +143,7 @@ export const create = async (req: Request, res: Response) => {
             bid_query.query_price_role,
             [bid.ct_email, bid.pet_name, bid.pet_owner]
         );
-        
+
         const ctPrice = priceStatusRow.rows[0].ct_price_daily;
         const ctStatus = priceStatusRow.rows[0].caretaker_status;
         bid.bid_status =
@@ -145,7 +157,13 @@ export const create = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { ct_email, owner_email, pet_name, start_date, end_date } = req.body;
+        const {
+            ct_email,
+            owner_email,
+            pet_name,
+            start_date,
+            end_date
+        } = req.body;
         log.error("create bid error", error);
         const response: StringResponse = {
             data: "",
@@ -159,7 +177,13 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
     try {
-        const { ct_email, owner_email, pet_name, start_date, end_date } = req.params;
+        const {
+            ct_email,
+            owner_email,
+            pet_name,
+            start_date,
+            end_date
+        } = req.params;
         var bid: Bid = req.body;
         await asyncQuery(bid_query.update_bid, [
             ct_email,
@@ -169,7 +193,7 @@ export const update = async (req: Request, res: Response) => {
             end_date,
             bid.bid_status,
             bid.rating,
-            bid.feedback,
+            bid.feedback
         ]);
         const response: StringResponse = {
             data: `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} has been updated. The new status is ${bid.bid_status}.`,
@@ -177,12 +201,18 @@ export const update = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { ct_email, owner_email, pet_name, start_date, end_date } = req.body;
+        const {
+            ct_email,
+            owner_email,
+            pet_name,
+            start_date,
+            end_date
+        } = req.body;
         log.error("update bid error", error);
         const response: StringResponse = {
             data: "",
             error:
-            `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be updated: ` +
+                `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be updated: ` +
                 error
         };
         res.status(400).send(response);

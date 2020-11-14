@@ -8,12 +8,11 @@ import {
 } from "react-router-dom";
 import NewRequest from "./petOwner/NewRequest";
 import CreditCards from "./petOwner/StoredPayment";
+import Orders from "./petOwner/orders";
 import Pets from "./pet";
 import { pets as PetsApi } from "../common/api";
 import OwnerRoute from "../auth/OwnerRoute";
 import { Pet } from "../../../models/pet";
-
-const Orders = () => <div>Orders stub</div>;
 
 const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
     const [pets, setPets] = useState<Pet[]>([]);
@@ -46,7 +45,7 @@ const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
                 path={`${path}/new-request`}
                 component={NewRequest}
             ></OwnerRoute>
-           <OwnerRoute
+            <OwnerRoute
                 pets={pets}
                 path={`${path}/payment`}
                 component={CreditCards}
