@@ -292,8 +292,8 @@ export const bid_query = {
     INSERT INTO bid VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         `,
-    delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4 $4 AND end_date = $5`,
-    update_bid: `UPDATE bid SET (bid_status, rating, feedback) = ($6, $7, $8) WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4 AND end_date = $5`
+    delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = Date($4) AND end_date = Date($5)`,
+    update_bid: `UPDATE bid SET (bid_status, rating, feedback) = ($6, $7, $8) WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = Date($4) AND end_date = Date($5)`
 };
 
 export default { user_query, pet_query, credit_card_query };
