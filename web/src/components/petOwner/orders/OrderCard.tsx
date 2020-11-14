@@ -13,7 +13,7 @@ import moment from "moment";
 import { BidJoinCareTaker } from "../../../../../models/bid";
 import DescriptionsItem from "antd/lib/descriptions/Item";
 
-export default (props: BidJoinCareTaker) => {
+export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
     const {
         fullname,
         avatar_url,
@@ -25,8 +25,9 @@ export default (props: BidJoinCareTaker) => {
         rating,
         ct_price,
         avg_rating,
-        caretaker_status
-    } = props;
+        caretaker_status,
+        bid_status
+    } = bidDetails;
 
     return (
         <Card>

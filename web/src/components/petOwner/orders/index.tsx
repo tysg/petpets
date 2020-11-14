@@ -21,10 +21,16 @@ const upcomingFilter = (bid: BidJoinCareTaker) =>
     bid.bid_status === "confirmed" &&
     moment(bid.start_date).isSameOrAfter(Date.now());
 const completedFilter = (bid: BidJoinCareTaker) =>
-    moment(bid.start_date).isBefore(Date.now()) && bid.bid_status;
+    bid.bid_status === "confirmed" &&
+    moment(bid.start_date).isBefore(Date.now());
+
+interface OrderParams {
+    type: "past" | "upcoming";
+}
 
 const Order = () => {
-    const { path } = useRouteMatch();
+    const match = useRouteMatch<OrderParams>(); // console.log(match?.params.type === "past");
+    const canReview = match.params.type === "past";
     const [bidDetails, setBidDetails] = useState<BidJoinCareTaker[] | null>(
         null
     );
@@ -44,8 +50,10 @@ const Order = () => {
             console.log(error);
         }
     }, []);
+    const filteredBidDetails = canReview
+        ? bidDetails?.filter((r) => completedFilter(r))
+        : bidDetails?.filter((r) => upcomingFilter(r));
 
-    console.log(bidDetails);
     // const updateCareTaker = () => {
     //     careTakerApi
     //         .getCareTaker()
@@ -70,59 +78,7 @@ const Order = () => {
     //             console.log("There are no bids for this user");
     //             console.log(err.response.data.err);
     //         });
-    return <div>{bidDetails?.map((o) => OrderCard(o))}</div>;
+    return <div>{filteredBidDetails?.map((o) => OrderCard(o, canReview))}</div>;
 };
 
 export default Order;
-
-// <Switch>
-/* <Route exact path={`${path}/`}>
-                {careTaker ? (
-                    <Redirect to={`${path}/upcoming`} />
-                ) : (
-                    <Register {...props} />
-                )}
-            </Route>
-            <CareTakerRoute
-                path={`${path}/upcoming`}
-                careTakerDetails={careTaker}
-            >
-                <Assignments
-                    refreshBids={refreshBids}
-                    dataSource={bids.filter(upcomingFilter)}
-                    emptyMsg="No upcoming jobs"
-                    card={AssignmentCard}
-                />
-            </CareTakerRoute>
-            <CareTakerRoute
-                path={`${path}/pending`}
-                careTakerDetails={careTaker}
-            >
-                <Assignments
-                    refreshBids={refreshBids}
-                    dataSource={bids.filter(pendingFilter)}
-                    emptyMsg="No pending jobs"
-                    card={PendingCard}
-                />
-            </CareTakerRoute>
-            <CareTakerRoute
-                path={`${path}/reviews`}
-                careTakerDetails={careTaker}
-            >
-                <Assignments
-                    refreshBids={refreshBids}
-                    dataSource={bids.filter(completedFilter)}
-                    emptyMsg="No past assignments"
-                    card={PastCard}
-                />
-            </CareTakerRoute>
-            <CareTakerRoute
-                path={`${path}/schedule`}
-                careTakerDetails={careTaker}
-            >
-                <Schedule {...careTaker!} />
-            </CareTakerRoute>
-            <CareTakerRoute path={`${path}/rates`} careTakerDetails={careTaker}>
-                <Rates {...careTaker!} updateCareTaker={updateCareTaker} />
-            </CareTakerRoute> */
-/* {</Switch>} */

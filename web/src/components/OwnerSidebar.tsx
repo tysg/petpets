@@ -21,8 +21,11 @@ const OwnerSidebar = (props: RouteComponentProps) => {
                 <Menu.Item key="new-request">
                     <Link to={`${path}/new-request`}>New Request</Link>
                 </Menu.Item>
-                <Menu.Item key="orders">
-                    <Link to={`${path}/orders`}>My Orders</Link>
+                <Menu.Item key="past-orders">
+                    <Link to={`${path}/orders/past`}>Past Orders</Link>
+                </Menu.Item>
+                <Menu.Item key="upcoming-orders">
+                    <Link to={`${path}/orders/upcoming`}>Upcoming Orders</Link>
                 </Menu.Item>
                 <Menu.Item key="payment">
                     <Link to={`${path}/payment`}>My Credit Cards</Link>

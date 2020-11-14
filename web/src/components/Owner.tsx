@@ -52,7 +52,7 @@ const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
             ></OwnerRoute>
             <OwnerRoute
                 pets={pets}
-                path={`${path}/orders`}
+                path={`${path}/orders/:type`}
                 component={Orders}
             ></OwnerRoute>
         </Switch>
