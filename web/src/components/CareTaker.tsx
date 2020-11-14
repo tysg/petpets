@@ -1,4 +1,4 @@
-import { message, Rate } from "antd";
+import { message, Statistic } from "antd";
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
     Redirect,
@@ -9,7 +9,10 @@ import {
 } from "react-router-dom";
 import moment from "moment";
 import { Bid, BidJoinOwnerPet } from "../../../models/bid";
-import { CareTakerSpecializesDetails } from "../../../models/careTaker";
+import {
+    CareTakerSpecializesDetails,
+    MonthlyPayment
+} from "../../../models/careTaker";
 import CareTakerRoute from "../auth/CareTakerRoute";
 import { bid as bidApi, careTaker as careTakerApi } from "../common/api";
 import AssignmentCard from "./caretaker/AssignmentCard";
@@ -38,6 +41,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
         setCareTaker
     ] = useState<CareTakerSpecializesDetails | null>(null);
     const [bids, setBids] = useState<BidJoinOwnerPet[]>([]);
+    const [salaries, setSalaries] = useState<MonthlyPayment[]>([]);
     const updateCareTaker = () => {
         careTakerApi
             .getCareTaker()
@@ -51,7 +55,20 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 message.error(err.response.data.err);
             });
     };
-    useEffect(updateCareTaker, []);
+    const fetchSalaries = async () => {
+        try {
+            const fetchedSalaries = (await careTakerApi.getPayment()).data.data
+                .monthly_payment;
+            setSalaries(fetchedSalaries);
+        } catch (err) {
+            console.log("fetch salary err", err);
+        }
+    };
+
+    useEffect(() => {
+        updateCareTaker();
+        fetchSalaries();
+    }, []);
     const refreshBids = () =>
         bidApi
             .getForCareTaker()
@@ -97,6 +114,11 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 path={`${path}/reviews`}
                 careTakerDetails={careTaker}
             >
+                <Statistic
+                    title="This Month's Salary"
+                    value={salaries.length > 0 ? salaries[0].fullPay : "N/A"} // HACK: TODO: FIXME: NOTE: this is not correct
+                    prefix={"S$"}
+                />
                 <Assignments
                     refreshBids={refreshBids}
                     dataSource={bids.filter(completedFilter)}

@@ -21,7 +21,7 @@ const CareTakerSidebar = (props: RouteComponentProps) => {
                     <Link to={`${path}/pending`}>Pending Requests</Link>
                 </Menu.Item>
                 <Menu.Item key="reviews">
-                    <Link to={`${path}/reviews`}>Reviews of Me</Link>
+                    <Link to={`${path}/reviews`}>Reviews & Salary</Link>
                 </Menu.Item>
                 <Menu.Item key="schedule">
                     <Link to={`${path}/schedule`}>My Schedule</Link>
