@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Space, Row, Col, Table, DatePicker, Button, message } from "antd";
-import {
-    CareTakerDetails,
-    CareTakerSpecializesDetails
-} from "../../../../../models/careTaker";
-import {
-    bid as bidApi,
-    careTaker as careTakerApi,
-    schedule as ScheduleApi
-} from "../../../common/api";
-import { careTaker as CaretakerApi } from "../../../common/api";
+import { Row, Col, Table, DatePicker, Button, message } from "antd";
+import { CareTakerSpecializesDetails } from "../../../../../models/careTaker";
+import { schedule as ScheduleApi } from "../../../common/api";
 import { Schedule } from "../../../../../models/schedule";
 
 import moment from "moment";
@@ -32,15 +24,11 @@ const isOverlap = (s: [moment.Moment, moment.Moment], v: Schedule) => {
     }
     const startDate = moment(v.start_date);
     const endDate = moment(v.end_date);
-    // let res =
-    //     (e1start > e2start && e1start < e2end) ||
-    //     (e2start > e1start && e2start < e1end);
 
-    let res =
+    return (
         (s[0].isAfter(startDate) && s[0].isBefore(endDate)) ||
-        (startDate.isAfter(s[0]) && startDate.isBefore(s[1]));
-    console.log(res);
-    return res;
+        (startDate.isAfter(s[0]) && startDate.isBefore(s[1]))
+    );
 };
 
 const SchedulePage = (props: CareTakerSpecializesDetails) => {
@@ -81,7 +69,6 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
     };
 
     const handleSelectDate = (dateInput: any, s: any) => {
-        console.log(dateInput);
         // checks whether the chosen period overlaps with any of
         // the existing dates
         const dates: [moment.Moment, moment.Moment] = dateInput;
@@ -91,8 +78,6 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
             },
             false
         );
-        // console.log(anyOverlap);
-
         if (anyOverlap) {
             message.error("Overlapping time period!");
         } else {
