@@ -186,7 +186,8 @@ export const update = async (req: Request, res: Response) => {
             pet_owner, 
             pet_name, 
             start_date, 
-            end_date } = req.params;
+            end_date 
+        } = req.params;
         var bid: Bid = req.body;
         CheckNotUndefined({"bid_status": bid.bid_status});
 
