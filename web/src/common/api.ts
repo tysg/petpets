@@ -29,7 +29,10 @@ import {
     CareTakerResponse,
     OwnerResponse
 } from "../../../models/bid";
-import { IndexResponse as ScheduleIndexResponse } from "./../../../models/schedule";
+import {
+    IndexResponse as ScheduleIndexResponse,
+    Schedule
+} from "./../../../models/schedule";
 import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
 import { NewProfile, NewUser, UserInterface } from "../../../models/user";
@@ -227,6 +230,19 @@ export const schedule = {
     getSchedule: (
         type: "part_timer" | "full_timer"
     ): Promise<AxiosResponse<ScheduleIndexResponse>> => {
-        return get(`/api/${type}/${email()}`);
+        return get(`/api/schedules/${type}/${email()}`);
+    },
+
+    postSchedule: (
+        startEnd: [moment.Moment, moment.Moment],
+        type: "part_timer" | "full_timer"
+    ): Promise<AxiosResponse<StringResponse>> => {
+        const payload: Schedule = {
+            email: email(),
+            start_date: startEnd[0].toDate(),
+            end_date: startEnd[1].toDate()
+        };
+
+        return post(`/api/schedules/${type}`, payload);
     }
 };
