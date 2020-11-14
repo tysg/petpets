@@ -196,19 +196,12 @@ while (end.diff(start, "days") > 7) {
         if (!assignment) return null;
         unassignedOwners.delete(assignment);
         const transport_method = faker.random.arrayElement(TRANSPORT_METHOD);
-        let restDeets: any = {
-            bid_status: start.isBefore(moment(TODAY))
-                ? BID_STATUS[1]
-                : BID_STATUS[0]
-        };
-        if (start.isBefore(moment(TODAY)) && faker.random.boolean()) {
-            const feedback = faker.lorem.sentences(2);
-            const rating = faker.random.number(2) + 3;
-            restDeets = { bid_status: BID_STATUS[2], feedback, rating };
-        }
+        const bid_status = start.isBefore(moment(TODAY))
+            ? BID_STATUS[1]
+            : BID_STATUS[0];
         return {
             ...bidDeets,
-            ...restDeets,
+            bid_status,
             ct_email: caretaker.email,
             transport_method,
             ct_price: category.ctPriceDaily,
@@ -216,30 +209,40 @@ while (end.diff(start, "days") > 7) {
             pet_owner: assignment.owner
         };
     });
+    const weeded = bids.filter((x) => x);
     fakeBids.push(
-        ...bids
-            .filter((x) => x)
-            .map((bid) => {
-                const {
-                    ct_email,
-                    ct_price,
-                    start_date,
-                    end_date,
-                    is_cash,
-                    transport_method,
-                    pet_owner,
-                    pet_name,
-                    bid_status,
-                    feedback,
-                    rating
-                } = bid!;
-                const getFeedback = (feedback: any) =>
-                    feedback ? `'${feedback}'` : "NULL";
-                return `INSERT INTO bid (ct_email, ct_price, start_date, end_date, is_cash, transport_method, pet_owner, pet_name, bid_status, feedback, rating) VALUES ('${ct_email}', ${ct_price}, '${start_date}', '${end_date}', ${is_cash}, '${transport_method}', '${pet_owner}', '${pet_name}', '${bid_status}', ${getFeedback(
-                    feedback
-                )}, ${rating || "NULL"});`;
-            })
+        ...weeded.map((bid) => {
+            const {
+                ct_email,
+                ct_price,
+                start_date,
+                end_date,
+                is_cash,
+                transport_method,
+                pet_owner,
+                pet_name,
+                bid_status
+            } = bid!;
+            return `INSERT INTO bid (ct_email, ct_price, start_date, end_date, is_cash, transport_method, pet_owner, pet_name, bid_status) VALUES ('${ct_email}', ${ct_price}, '${start_date}', '${end_date}', ${is_cash}, '${transport_method}', '${pet_owner}', '${pet_name}', '${bid_status}');`;
+        })
     );
+    const reviewedBids = weeded
+        .filter((x) => start.isBefore(moment(TODAY)) && faker.random.boolean())
+        .map((bid) => {
+            const {
+                ct_email,
+                start_date,
+                end_date,
+                pet_owner,
+                pet_name
+            } = bid!;
+
+            const feedback = faker.lorem.sentences(2);
+            const rating = faker.random.number(2) + 3;
+            return `UPDATE bid SET (bid_status, rating, feedback) = ('${BID_STATUS[2]}', ${rating}, '${feedback}') WHERE ct_email = '${ct_email}' AND pet_owner = '${pet_owner}' AND pet_name = '${pet_name}' AND start_date = Date('${start_date}') AND end_date = Date('${end_date}');`;
+            // return `UPDATE INTO bid (ct_email, ct_price, start_date, end_date, is_cash, transport_method, pet_owner, pet_name, bid_status, feedback, rating) VALUES ('${ct_email}', ${ct_price}, '${start_date}', '${end_date}', ${is_cash}, '${transport_method}', '${pet_owner}', '${pet_name}', '${BID_STATUS[2]}', '${feedback}', ${rating});`;
+        });
+    fakeBids.push(...reviewedBids);
     start = moment(periodEnd).add(1, "day");
 }
 
