@@ -176,8 +176,12 @@ const BID_STATUS: BidStatus[] = [
     "reviewed",
     "closed"
 ];
-let start = moment(faker.date.recent(60, TODAY));
-const end = moment(faker.date.soon(60, TODAY));
+let start = moment(
+    faker.date.recent(60, moment(TODAY).subtract(2, "months").toISOString())
+);
+const end = moment(
+    faker.date.soon(60, moment(TODAY).add(1, "month").toISOString())
+);
 let fakeBids: string[] = [];
 while (end.diff(start, "days") > 14) {
     const periodEnd = faker.date.soon(14, start.toDate());
