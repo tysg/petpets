@@ -11,20 +11,37 @@ import {
 } from "../../../common/api";
 import { careTaker as CaretakerApi } from "../../../common/api";
 import { Schedule } from "../../../../../models/schedule";
-import { date } from "faker";
+
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 
-function isOverlap(s: [moment.Moment, moment.Moment], v: Schedule) {
-    let e1start = s[0].toDate().getTime();
-    let e1end = s[1].toDate().getTime();
-    let e2start = v.start_date.getTime();
-    let e2end = v.end_date.getTime();
-    return (
-        (e1start > e2start && e1start < e2end) ||
-        (e2start > e1start && e2start < e1end)
-    );
-}
+const mapScheduleToTable = (s: Schedule, i: number) => {
+    const startDate = moment(s.start_date);
+    const endDate = moment(s.end_date);
+    return {
+        key: i.toString(),
+        start_date: startDate.format("YYYY-MM-DD"),
+        end_date: endDate.format("YYYY-MM-DD"),
+        duration: endDate.diff(startDate, "days")
+    };
+};
+const isOverlap = (s: [moment.Moment, moment.Moment], v: Schedule) => {
+    if (s === null || s[0] === null || s[1] === null) {
+        return false;
+    }
+    const startDate = moment(v.start_date);
+    const endDate = moment(v.end_date);
+    // let res =
+    //     (e1start > e2start && e1start < e2end) ||
+    //     (e2start > e1start && e2start < e1end);
+
+    let res =
+        (s[0].isAfter(startDate) && s[0].isBefore(endDate)) ||
+        (startDate.isAfter(s[0]) && startDate.isBefore(s[1]));
+    console.log(res);
+    return res;
+};
 
 const SchedulePage = (props: CareTakerSpecializesDetails) => {
     const isFulltime = props.caretakerStatus === 2;
@@ -56,29 +73,32 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
                 isFulltime ? "full_timer" : "part_timer"
             );
             message.success("Successfully added time period!");
+            fetchSchedule();
+            setSelectedDates(undefined);
         } catch (err) {
             message.error("Cannot add time period" + err);
-        } finally {
-            fetchSchedule();
         }
     };
 
     const handleSelectDate = (dateInput: any, s: any) => {
+        console.log(dateInput);
         // checks whether the chosen period overlaps with any of
         // the existing dates
         const dates: [moment.Moment, moment.Moment] = dateInput;
         const anyOverlap = schedule.reduce<boolean>(
             (b: boolean, v: Schedule) => {
-                return b && isOverlap(dates, v);
+                return b || isOverlap(dates, v);
             },
             false
         );
+        // console.log(anyOverlap);
 
         if (anyOverlap) {
             message.error("Overlapping time period!");
         } else {
             setSelectedDates(dates);
         }
+        return;
     };
 
     return (
@@ -86,7 +106,7 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
             <Row gutter={8}>
                 <Col span={8} style={{ marginBottom: 8 }}>
                     <RangePicker
-                        onChange={handleSelectDate}
+                        onCalendarChange={handleSelectDate}
                         value={selectedDates}
                     />
                 </Col>
@@ -94,13 +114,37 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
                     <Button
                         type="primary"
                         onClick={handleAddPeriod}
-                        disabled={selectedDates === undefined}
+                        disabled={
+                            selectedDates === null ||
+                            selectedDates === undefined ||
+                            selectedDates[0] === null ||
+                            selectedDates[1] === null
+                        }
                     >
                         Add New
                     </Button>
                 </Col>
             </Row>
-            <Table />
+            <Table
+                columns={[
+                    {
+                        title: "Start Date",
+                        dataIndex: "start_date",
+                        key: "start_date"
+                    },
+                    {
+                        title: "End Date",
+                        dataIndex: "end_date",
+                        key: "end_date"
+                    },
+                    {
+                        title: "Duration",
+                        dataIndex: "duration",
+                        key: "duration"
+                    }
+                ]}
+                dataSource={schedule.map(mapScheduleToTable)}
+            />
         </>
     );
 };
