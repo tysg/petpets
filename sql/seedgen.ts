@@ -7,11 +7,12 @@ import { CaretakerStatus, SpecializesIn } from "../models/careTaker";
 import { Bid, BidStatus, TransportMethod } from "../models/bid";
 import moment from "moment";
 
-const fakerSeed = 669;
+const fakerSeed = 6679;
 faker.seed(fakerSeed);
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
 const NUM_PEOPLE = 1000;
+const TODAY = "11/14/2020";
 
 const fakePetCategories = [
     "Bearded Dragon",
@@ -68,9 +69,12 @@ let accounts: AccountDetails[] = [];
 let petOwners: Pet[] = [];
 let careTakers: CoreCareTaker[] = [];
 
+const password = "abcde";
+const hashedPassword = bcrypt.hashSync(password, salt);
+
 const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
-    const password = faker.internet.password();
-    const hashedPassword = bcrypt.hashSync(password, salt);
+    // const password = faker.internet.password();
+    // const hashedPassword = bcrypt.hashSync(password, salt);
     // const email = faker.unique(faker.internet.email());
     const email = faker.internet.email();
     const sanitizedName = faker
@@ -96,21 +100,25 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
             `${ccNumber}, '${email}', '${futureDate.toISOString()}', {{finance.creditCardCVV}}`
         );
         postfix += `INSERT INTO credit_card VALUES (${cardRecord});` + "\n";
-        [...Array(faker.random.float(1) > 0.7 ? 1 : 2)].forEach((_) => {
-            const petCategory = faker.random.arrayElement(fakePetCategories);
-            const name = faker.name.firstName();
-            const requirements = faker.lorem.sentence();
-            const description = faker.lorem.sentence();
-            const petRecord = `'${name}', '${email}', '${petCategory}', '${requirements}', '${description}'`;
-            petOwners.push({
-                owner: email,
-                category: petCategory,
-                requirements,
-                description,
-                name
-            });
-            postfix += `INSERT INTO pet VALUES (${petRecord});` + "\n";
-        });
+        [...Array(faker.random.float({ max: 1 }) > 0.7 ? 1 : 2)].forEach(
+            (_) => {
+                const petCategory = faker.random.arrayElement(
+                    fakePetCategories
+                );
+                const name = faker.name.firstName();
+                const requirements = faker.lorem.sentence();
+                const description = faker.lorem.sentence();
+                const petRecord = `'${name}', '${email}', '${petCategory}', '${requirements}', '${description}'`;
+                petOwners.push({
+                    owner: email,
+                    category: petCategory,
+                    requirements,
+                    description,
+                    name
+                });
+                postfix += `INSERT INTO pet VALUES (${petRecord});` + "\n";
+            }
+        );
     }
     let caretakerStatus: CaretakerStatus = 0;
     if (faker.random.boolean()) {
@@ -136,11 +144,8 @@ const fakePeople = [...Array(NUM_PEOPLE)].map((_) => {
             // part time
             caretakerStatus = 1;
             postfix += `INSERT INTO part_time_ct VALUES ('${email}');` + "\n";
-            const startDate = faker.date.soon();
-            const futureDate = faker.date.future(
-                faker.random.number(1),
-                startDate
-            );
+            const startDate = moment(TODAY).subtract(6, "months");
+            const futureDate = moment(TODAY).add(1, "year");
             postfix +=
                 `INSERT INTO pt_free_schedule VALUES ('${email}', '${startDate.toISOString()}', '${futureDate.toISOString()}');` +
                 "\n";
@@ -171,12 +176,11 @@ const BID_STATUS: BidStatus[] = [
     "reviewed",
     "closed"
 ];
-const TODAY = "11/14/2020";
-let start = moment(faker.date.recent(10, TODAY));
-const end = moment(faker.date.soon(50, TODAY));
+let start = moment(faker.date.recent(60, TODAY));
+const end = moment(faker.date.soon(60, TODAY));
 let fakeBids: string[] = [];
-while (end.diff(start, "days") > 7) {
-    const periodEnd = faker.date.soon(7, start.toDate());
+while (end.diff(start, "days") > 14) {
+    const periodEnd = faker.date.soon(14, start.toDate());
     const bidDeets = {
         start_date: start.toISOString(),
         end_date: periodEnd.toISOString(),
@@ -185,7 +189,8 @@ while (end.diff(start, "days") > 7) {
     };
     let unassignedOwners = new Set(petOwners);
     const bids: (Bid | null)[] = careTakers.map((caretaker) => {
-        if (faker.random.float(1) < 0.4) return null;
+        const rand = faker.random.float({ max: 1 });
+        if (rand < 0.7) return null;
         const category = faker.random.arrayElement(caretaker.allSpecializesIn);
         const validOwners = Array.from(unassignedOwners).filter(
             (pet) =>
