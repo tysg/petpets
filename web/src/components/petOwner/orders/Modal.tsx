@@ -1,8 +1,9 @@
-import { Input, Form, Modal, Button, Rate } from "antd";
+import { Input, Form, Modal, Rate } from "antd";
 import React from "react";
 
 const ReviewModal = (props: any) => {
     const { visible, onSubmit, onCancel, title, order } = props;
+    console.log(props, "order props");
     const [form] = Form.useForm();
 
     return (
@@ -12,24 +13,14 @@ const ReviewModal = (props: any) => {
             okText="Submit"
             onCancel={onCancel}
             onOk={() => {
-                // form.validateFields()
-                //     .then((values) => {
-                //         form.resetFields();
-                //         const {
-                //             name,
-                //             category,
-                //             description,
-                //             requirements
-                //         } = values;
-                //         const record: any = {
-                //             name,
-                //             category,
-                //             description,
-                //             requirements
-                //         };
-                //         onSubmit(record);
-                //     })
-                //     .catch((err) => console.log("Validation failed:", err));
+                form.validateFields()
+                    .then((values) => {
+                        form.resetFields();
+                        const { feedback, rating } = values;
+                        console.log(order);
+                        onSubmit({ ...order, feedback, rating });
+                    })
+                    .catch((err) => console.log("Validation failed:", err));
             }}
         >
             <Form form={form} initialValues={order}>
@@ -51,7 +42,7 @@ const ReviewModal = (props: any) => {
                         })
                     ]}
                 >
-                    <Rate />
+                    <Rate defaultValue={order?.avg_rating} />
                 </Form.Item>
             </Form>
         </Modal>

@@ -34,7 +34,6 @@ const Order = () => {
         try {
             const getBidDetails = await bid.getForOwner();
             setBidDetails(getBidDetails.data.data);
-            console.log(getBidDetails);
         } catch (err) {
             console.log(err);
         }
@@ -47,20 +46,20 @@ const Order = () => {
             console.log(error);
         }
     }, []);
+    useEffect(() => {
+        if (activeReview !== null) setVisibleModal(true);
+    }, [activeReview]);
 
     const filteredBidDetails = canReview
         ? bidDetails?.filter((r) => completedFilter(r))
         : bidDetails?.filter((r) => upcomingFilter(r));
 
-    const openModal = (index: number) => {
-        if (bidDetails.length > 0) {
-            const temp = bidDetails[index];
-            setActiveReview(temp);
-            setVisibleModal(true);
-        }
+    const openModal = (order: BidJoinCareTaker) => {
+        setActiveReview({ ...order });
     };
 
     const postReview = async (bid: Bid) => {
+        console.log(bid);
         await bidApi.updateBid(bid);
         await getBids();
         setVisibleModal(false);
@@ -68,17 +67,16 @@ const Order = () => {
 
     return (
         <div>
-            {bidDetails.length > 0 && (
-                <ReviewModal
-                    order={activeReview}
-                    visible={visibleModal}
-                    onSubmit={postReview}
-                    onCancel={() => setVisibleModal(false)}
-                />
-            )}
+            <ReviewModal
+                order={activeReview}
+                visible={visibleModal}
+                onSubmit={postReview}
+                onCancel={() => setVisibleModal(false)}
+            />
             {filteredBidDetails?.map((o, i) => (
                 <OrderCard
                     key={i}
+                    index={i}
                     order={o}
                     canReview={canReview}
                     openModal={openModal}

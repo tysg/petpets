@@ -16,13 +16,13 @@ import DescriptionsItem from "antd/lib/descriptions/Item";
 
 interface OrderCardProps {
     order: BidJoinCareTaker;
-    key: number;
+    index: number;
     canReview: boolean;
-    openModal: (value: number) => void;
+    openModal: (value: BidJoinCareTaker) => void;
 }
 
 const OrderCard = (props: OrderCardProps) => {
-    const { order, key, canReview, openModal } = props;
+    const { order, index, canReview, openModal } = props;
     const {
         fullname,
         avatar_url,
@@ -31,16 +31,14 @@ const OrderCard = (props: OrderCardProps) => {
         pet_name,
         start_date,
         end_date,
-        rating,
-        ct_price,
-        avg_rating,
-        caretaker_status,
-        bid_status
+        rating
     } = order;
+
+    console.log(index, order);
 
     const buttons = canReview
         ? [
-              <Button key="1" onClick={() => openModal(key)}>
+              <Button key="1" onClick={() => openModal(order)}>
                   Rate
               </Button>
           ]
@@ -72,11 +70,7 @@ const OrderCard = (props: OrderCardProps) => {
                                 )} - ${moment(end_date).format("DD/MM/YYYY")}`}
                             </DescriptionsItem>
                             <DescriptionsItem label="Rating">
-                                <Rate
-                                    disabled
-                                    allowHalf
-                                    defaultValue={rating}
-                                />
+                                <Rate disabled allowHalf value={rating} />
                             </DescriptionsItem>
                             <DescriptionsItem label="Review" span={3}>
                                 {feedback}
