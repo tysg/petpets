@@ -3,6 +3,7 @@
 
 * [ER Diagram](docs/er_diagram.png)
 * [Project Report](docs/main.pdf)
+* [Demo](demo-draft.mp4)
 
 # Petpets
 
