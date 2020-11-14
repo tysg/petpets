@@ -156,8 +156,8 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
 									startend.ed, '1 day'
 								)::date AS date FROM
 							(SELECT min(start_date) AS sd, CURRENT_DATE as ed FROM
-								bid 
-								WHERE ct_email=$1 
+                                    ft_leave_schedule 
+								WHERE email=$1 
 							) AS startend ORDER BY sd
 						) AS gen_dates, (SELECT * FROM bid WHERE ct_email=$1) AS p
 						WHERE gen_dates.date >= p.start_date AND gen_dates.date <= p.end_date 
@@ -171,8 +171,8 @@ SELECT COALESCE(d4.fullpay, 3000.0) AS full_pay,
 						date_trunc('month', startend.sd),
 						startend.ed, '1 month'
 					)::date, 'YYYY-MM') AS month FROM
-				(SELECT min(start_date) AS sd, CURRENT_DATE AS ed FROM bid 
-					WHERE ct_email=$1
+                (SELECT min(start_date) AS sd, CURRENT_DATE AS ed FROM ft_leave_schedule 
+					WHERE email=$1
 				) AS startend
             ) AS d3
             ON d4.month=d3.month
