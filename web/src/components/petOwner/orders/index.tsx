@@ -38,7 +38,6 @@ const Order = () => {
             console.log(err);
         }
     };
-
     useEffect(() => {
         try {
             getBids();

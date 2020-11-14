@@ -1,5 +1,7 @@
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
+    Link,
+    LinkProps,
     Redirect,
     Route,
     RouteComponentProps,
@@ -13,6 +15,8 @@ import Pets from "./pet";
 import { pets as PetsApi } from "../common/api";
 import OwnerRoute from "../auth/OwnerRoute";
 import { Pet } from "../../../models/pet";
+import { Button, Result } from "antd";
+import ErrorPage from "./ErrorPage";
 
 const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
     const [pets, setPets] = useState<Pet[]>([]);
@@ -34,7 +38,7 @@ const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
                 {pets.length > 0 ? (
                     <Redirect to={`${path}/pets`} />
                 ) : (
-                    <div>Register as pet owner</div>
+                    <RegisterLanding to={`${path}/pets`} />
                 )}
             </Route>
             <OwnerRoute pets={pets} path={`${path}/pets`}>
@@ -55,7 +59,22 @@ const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
                 path={`${path}/orders/:type`}
                 component={Orders}
             ></OwnerRoute>
+            <Route component={ErrorPage}></Route>
         </Switch>
+    );
+};
+
+const RegisterLanding = (props: LinkProps) => {
+    return (
+        <Result
+            title="You are not registered as a Pet Owner yet!"
+            subTitle="Add pets to get started"
+            extra={[
+                <Button type="primary">
+                    <Link to={props.to}>Add Pets</Link>
+                </Button>
+            ]}
+        ></Result>
     );
 };
 
