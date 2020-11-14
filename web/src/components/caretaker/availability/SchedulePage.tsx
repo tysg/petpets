@@ -123,7 +123,7 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
                         key: "end_date"
                     },
                     {
-                        title: "Duration",
+                        title: "Duration (days)",
                         dataIndex: "duration",
                         key: "duration"
                     }

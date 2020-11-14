@@ -17,7 +17,8 @@ import {
     CareTakerSpecializesDetails,
     CaretakerStatus,
     SearchResponse,
-    SpecializesIn
+    SpecializesIn,
+    MonthlyPaymentsResponse
 } from "./../../../models/careTaker";
 import {
     MonthlyBestCareTakerIndexResponse,
@@ -203,6 +204,10 @@ export const careTaker = {
             email: email(),
             allSpecializes
         });
+    },
+
+    getPayment: (): Promise<AxiosResponse<MonthlyPaymentsResponse>> => {
+        return get(`/api/caretakers/payment/${email()}`);
     }
 };
 
