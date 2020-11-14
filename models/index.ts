@@ -4,3 +4,4 @@ export interface ApiResponse<D, E = {}> {
 }
 
 export type StringResponse = ApiResponse<string, string>;
+

@@ -93,12 +93,12 @@ BEGIN
 		IF OLD.bid_status = 'submitted' THEN 
 			IF NEW.bid_status = 'closed' OR NEW.bid_status = 'confirmed' THEN
 				RETURN NEW;
-			ELSE RAISE EXCEPTION 'Unknown new status';
+			ELSE RAISE EXCEPTION 'Invalid new status';
 			END IF;
 		ELSEIF OLD.bid_status = 'confirmed' THEN
 			IF NEW.bid_status = 'reviewed' THEN 
 				RETURN NEW;
-			ELSE RAISE EXCEPTION 'Unknown new status';
+			ELSE RAISE EXCEPTION 'Invalid new status';
 			END IF;
 		ELSE 
 			RAISE EXCEPTION 'Old status corrupted';
@@ -113,41 +113,41 @@ CREATE TRIGGER check_bid_update_status
 BEFORE UPDATE ON bid
 FOR EACH ROW EXECUTE PROCEDURE check_bid_update_status();
 
-CREATE OR REPLACE FUNCTION check_bid_insert_status()
+CREATE OR REPLACE FUNCTION check_bid_confirm_time()
 RETURNS TRIGGER AS
 $t$
 BEGIN
-	IF (NEW.bid_status = 'confirmed' OR NEW.bid_status = 'submitted') THEN
-		RETURN NEW;
-	ELSE
-		RAISE EXCEPTION 'Wrong input for insert status';
+	IF NEW.bid_status = 'confirmed' THEN
+		IF OLD.start_date < NOW() THEN
+			OLD.bid_status = 'closed';
+			RAISE EXCEPTION 'The bid starting date has passed!';
+		END IF;
 	END IF;
+	RETURN NEW;
 END;
 $t$
 LANGUAGE PLpgSQL;
 
-CREATE TRIGGER check_bid_insert_status
-BEFORE INSERT ON bid
-FOR EACH ROW EXECUTE PROCEDURE check_bid_insert_status();
+CREATE TRIGGER check_bid_confirm_time
+BEFORE UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE check_bid_confirm_time();
 
-CREATE OR REPLACE FUNCTION check_bid_insert_transport_method()
-RETURNS TRIGGER AS
-$t$
-BEGIN
-	IF (NEW.transport_method = 'delivery' 
-	OR NEW.transport_method = 'pcs' 
-	OR NEW.transport_method = 'pickup') THEN
-		RETURN NEW;
-	ELSE
-		RAISE EXCEPTION 'Wrong input for insert transport_method';
-	END IF;
-END;
-$t$
-LANGUAGE PLpgSQL;
+-- CREATE OR REPLACE FUNCTION check_bid_insert_status()
+-- RETURNS TRIGGER AS
+-- $t$
+-- BEGIN
+-- 	IF (NEW.bid_status = 'confirmed' OR NEW.bid_status = 'submitted') THEN
+-- 		RETURN NEW;
+-- 	ELSE
+-- 		RAISE EXCEPTION 'Wrong input for insert status';
+-- 	END IF;
+-- END;
+-- $t$
+-- LANGUAGE PLpgSQL;
 
-CREATE TRIGGER check_bid_insert_transport_method
-BEFORE INSERT ON bid
-FOR EACH ROW EXECUTE PROCEDURE check_bid_insert_transport_method();
+-- CREATE TRIGGER check_bid_insert_status
+-- BEFORE INSERT ON bid
+-- FOR EACH ROW EXECUTE PROCEDURE check_bid_insert_status();
 
 CREATE OR REPLACE FUNCTION pet_limit()
 RETURNS TRIGGER AS 
