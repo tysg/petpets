@@ -1,3 +1,11 @@
+const base_daily_specializes_search = (param: string) =>
+    `SELECT email, 
+            type_name as typeName, 
+            CASE WHEN s1.caretaker_status = 2 THEN
+            greatest(s1.ct_price_daily, p.base_daily_price)
+        ELSE s1.ct_price_daily END as ctPriceDaily 
+            FROM (select * from specializes_in WHERE type_name=${param}) s1 NATURAL JOIN pet_category p`;
+
 const base_daily_specializes = (param: string) =>
     `SELECT email, 
             type_name as typeName, 
@@ -94,8 +102,8 @@ export const caretaker_query = {
             WHERE EXISTS (
                 SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
             )
-        ) as s NATURAL JOIN person NATURAL JOIN caretaker c NATURAL JOIN (${base_daily_specializes(
-            "email"
+        ) as s NATURAL JOIN person NATURAL JOIN caretaker c NATURAL JOIN (${base_daily_specializes_search(
+            "$3"
         )}) s2
         WHERE NOT EXISTS (
             select 1 FROM 
