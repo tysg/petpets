@@ -54,9 +54,9 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
         fetchSchedule();
     }, []); // fetch on first load
 
-    const handleAddPeriod = () => {
+    const handleAddPeriod = async () => {
         try {
-            ScheduleApi.postSchedule(
+            await ScheduleApi.postSchedule(
                 selectedDates!,
                 isFulltime ? "full_timer" : "part_timer"
             );
