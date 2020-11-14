@@ -16,7 +16,7 @@ const upcomingFilter = (bid: BidJoinCareTaker) =>
     bid.bid_status === "confirmed" &&
     moment(bid.start_date).isSameOrAfter(Date.now());
 const completedFilter = (bid: BidJoinCareTaker) =>
-    bid.bid_status === "confirmed" &&
+    (bid.bid_status === "confirmed" || bid.bid_status === "reviewed") &&
     moment(bid.start_date).isBefore(Date.now());
 const closedFilter = (bid: BidJoinCareTaker) => bid.bid_status === "closed";
 
@@ -71,6 +71,17 @@ const Order = () => {
     }, [activeReview]);
 
     const [filteredBidDetails, canReview] = reducer(routeParams, bidDetails);
+    const sortedFilteredBidDetails = filteredBidDetails.sort((b1, b2) =>
+        moment(b1.start_date).isAfter(b2.start_date)
+            ? 1
+            : moment(b1.end_date).isAfter(b2.end_date)
+            ? 1
+            : b1.fullname > b2.fullname
+            ? 1
+            : b1.pet_name > b2.pet_name
+            ? 1
+            : -1
+    );
 
     const openModal = (order: BidJoinCareTaker) => {
         setActiveReview({ ...order });
@@ -90,8 +101,8 @@ const Order = () => {
                 onSubmit={postReview}
                 onCancel={() => setVisibleModal(false)}
             />
-            {filteredBidDetails?.length > 0 ? (
-                filteredBidDetails.map((o, i) => (
+            {sortedFilteredBidDetails?.length > 0 ? (
+                sortedFilteredBidDetails.map((o, i) => (
                     <OrderCard
                         key={i}
                         index={i}

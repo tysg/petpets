@@ -22,7 +22,12 @@ const ReviewModal = (props: any) => {
                     .then((values) => {
                         form.resetFields();
                         const { feedback, rating } = values;
-                        onSubmit({ ...order, feedback, rating });
+                        onSubmit({
+                            ...order,
+                            feedback,
+                            rating,
+                            bid_status: "reviewed"
+                        });
                     })
                     .catch((err) => console.log("Validation failed:", err));
             }}
