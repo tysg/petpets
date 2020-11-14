@@ -9,8 +9,9 @@ const ReviewModal = (props: any) => {
     return (
         <Modal
             visible={visible}
-            style={{ height: "30%", width: "50%" }}
+            style={{ minHeight: "40%", minWidth: "50%" }}
             title={order?.fullname}
+            centered
             okText="Submit"
             onCancel={onCancel}
             onOk={() => {
@@ -44,7 +45,7 @@ const ReviewModal = (props: any) => {
                 </Form.Item>
                 <Form.Item label="Feedback" name="feedback">
                     <Input.TextArea
-                        style={{ minHeight: "50%" }}
+                        style={{ minHeight: "10em" }}
                         bordered
                         showCount
                         value={order?.feedback}
