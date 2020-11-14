@@ -1,10 +1,13 @@
 import { Input, Form, Modal, Rate } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 
 const ReviewModal = (props: any) => {
     const { visible, onSubmit, onCancel, order } = props;
-    console.log(props, "order props");
     const [form] = Form.useForm();
+
+    form.setFieldsValue({
+        ...order
+    });
 
     return (
         <Modal
@@ -19,8 +22,12 @@ const ReviewModal = (props: any) => {
                     .then((values) => {
                         form.resetFields();
                         const { feedback, rating } = values;
-                        console.log(order);
-                        onSubmit({ ...order, feedback, rating });
+                        onSubmit({
+                            ...order,
+                            feedback,
+                            rating,
+                            bid_status: "reviewed"
+                        });
                     })
                     .catch((err) => console.log("Validation failed:", err));
             }}
@@ -41,15 +48,29 @@ const ReviewModal = (props: any) => {
                         })
                     ]}
                 >
-                    <Rate value={order?.rating} />
+                    <Rate />
                 </Form.Item>
-                <Form.Item label="Feedback" name="feedback">
+                <Form.Item
+                    label="Feedback"
+                    name="feedback"
+                    rules={[
+                        () => ({
+                            validator(rule, value) {
+                                if (value && value.length > 0) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                    "Feedback cannot be empty"
+                                );
+                            }
+                        })
+                    ]}
+                >
                     <Input.TextArea
                         style={{ minHeight: "10em" }}
                         bordered
                         showCount
-                        value={order?.feedback}
-                    ></Input.TextArea>
+                    />
                 </Form.Item>
             </Form>
         </Modal>
