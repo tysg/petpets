@@ -87,7 +87,8 @@ export const payments = async (req: Request, res: Response) => {
 
         const response: MonthlyPaymentsResponse = {
             data: {
-                monthly_payment: ctPaymentData
+                monthly_payment: ctPaymentData,
+                created_at: new Date(),
             },
             error: ""
         };

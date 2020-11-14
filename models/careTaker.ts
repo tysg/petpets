@@ -1,4 +1,4 @@
-import { ApiResponse } from "./index";
+import { ApiResponse, ApiTimedResponse } from "./index";
 import * as yup from "yup";
 
 export enum CaretakerStatus {
@@ -25,6 +25,7 @@ export interface MonthlyPayment {
  */
 export interface CareTakerPayment {
     monthly_payment: MonthlyPayment[];
+    created_at: Date;
 }
 
 export interface SpecializesIn {
