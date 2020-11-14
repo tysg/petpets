@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Table, DatePicker, Button, message } from "antd";
+import { Row, Col, Table, DatePicker, Button, message, PageHeader } from "antd";
 import { CareTakerSpecializesDetails } from "../../../../../models/careTaker";
 import { schedule as ScheduleApi } from "../../../common/api";
 import { Schedule } from "../../../../../models/schedule";
@@ -87,7 +87,7 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
     };
 
     return (
-        <>
+        <PageHeader title={isFulltime ? "My Leave" : "My Availability"}>
             <Row gutter={8}>
                 <Col span={8} style={{ marginBottom: 8 }}>
                     <RangePicker
@@ -130,7 +130,7 @@ const SchedulePage = (props: CareTakerSpecializesDetails) => {
                 ]}
                 dataSource={schedule.map(mapScheduleToTable)}
             />
-        </>
+        </PageHeader>
     );
 };
 
