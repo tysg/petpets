@@ -19,6 +19,7 @@ import PendingCard from "./caretaker/PendingCard";
 import Rates from "./caretaker/Rates";
 import Register from "./caretaker/Register";
 import Schedule from "./caretaker/Schedule";
+import ErrorPage from "./ErrorPage";
 
 const upcomingFilter = (bid: Bid) =>
     bid.bid_status === "confirmed" &&
@@ -112,6 +113,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
             <CareTakerRoute path={`${path}/rates`} careTakerDetails={careTaker}>
                 <Rates {...careTaker!} updateCareTaker={updateCareTaker} />
             </CareTakerRoute>
+            <Route component={ErrorPage}></Route>
         </Switch>
     );
 };
