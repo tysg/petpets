@@ -90,13 +90,17 @@ const columns = [
         title: "Pet Category",
         dataIndex: "typeName",
         key: "category",
-        width: "40%"
+        width: "40%",
+        sorter: (a: PetCategory, b: PetCategory) =>
+            a.typeName.localeCompare(b.typeName)
     },
     {
         title: "Daily Price (SGD)",
         dataIndex: "baseDailyPrice",
         key: "price",
-        width: "40%"
+        width: "40%",
+        sorter: (a: PetCategory, b: PetCategory) =>
+            a.baseDailyPrice - b.baseDailyPrice
     }
 ];
 
@@ -199,6 +203,7 @@ const Settings = () => {
             <Table
                 dataSource={petTypes}
                 columns={[...columns, actionColumn]}
+                pagination={{ hideOnSinglePage: true }}
             ></Table>
         </PageHeader>
     );

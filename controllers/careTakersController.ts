@@ -137,8 +137,6 @@ export const search = async (req: Request, res: Response) => {
             caretaker_query.search_caretaker,
             [`${start_date}`, `${end_date}`, `${pet_category}`]
         );
-        // TODO add check for no existing bookings
-        // TODO add check for PT for rating > some value and caring < 5
         const rows = qr.rows.map(mapSearchResponse);
         yup.array(CareTakerSpecializesInCategorySchema)
             .defined()

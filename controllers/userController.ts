@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import {
+    sqlifyProfile,
+    NewProfile,
     SignUpResponse,
     NewUser,
     SignInRequest,
     SignInResponse,
     UserInterface
 } from "./../models/user";
+import { ApiResponse, StringResponse } from "./../models";
 import { asyncQuery } from "./../utils/db";
 import { user_query } from "./../sql/sql_query";
 import { log } from "./../utils/logging";
@@ -15,6 +18,7 @@ import { errorResponse } from "../utils/errorFactory";
 import jwt from "jsonwebtoken";
 
 import { SECRET } from "./../utils/config";
+import { sqlify } from "../models/pet";
 
 const round = 10;
 const salt = bcrypt.genSaltSync(round);
@@ -111,4 +115,47 @@ const signIn = async (req: Request, res: Response) => {
     }
 };
 
-export default { signUp, signIn };
+const update = async (req: Request, res: Response) => {
+    try {
+        const profile: NewProfile = req.body;
+
+        const queryParams = sqlifyProfile(profile);
+        const qr = await asyncQuery(user_query.update_user, [
+            ...queryParams,
+            req.params.email
+        ]);
+        console.log(qr.rows[0]);
+        const {
+            email,
+            fullname,
+            password,
+            role,
+            phone,
+            address,
+            avatar_link
+        } = qr.rows[0];
+        const user: UserInterface = {
+            email,
+            fullname,
+            passwordHash: password,
+            role,
+            phone: parseInt(phone),
+            address,
+            avatarUrl: avatar_link
+        };
+
+        const response: ApiResponse<UserInterface, string> = {
+            data: user,
+            error: ""
+        };
+        res.send(response);
+    } catch (error) {
+        const response: StringResponse = {
+            data: "",
+            error: error
+        };
+        res.status(400).send(response);
+    }
+};
+
+export default { signUp, signIn, update };

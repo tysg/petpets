@@ -1,17 +1,25 @@
 import React from "react";
 import { Modal, Input, Form } from "antd";
 import { CreditCard } from "../../../../models/creditCard";
+import moment from "moment";
 
 export interface CreditCardModalFormProps {
     title: string;
     visible: boolean;
     onSubmit: (value: Omit<CreditCard, "cardholder">) => void;
     onCancel: () => void;
+    defaultCard?: Omit<CreditCard, "cardholder">;
 }
 
 const CreditCardModalForm = (props: CreditCardModalFormProps) => {
-    const { visible, onSubmit, onCancel, title } = props;
+    const { visible, onSubmit, onCancel, title, defaultCard } = props;
     const [form] = Form.useForm();
+    form.setFieldsValue({
+        ...defaultCard,
+        expiryDate: defaultCard
+            ? moment(defaultCard?.expiryDate).format("MM/YYYY")
+            : ""
+    });
     return (
         <Modal
             visible={visible}
@@ -22,14 +30,13 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
                 form.validateFields()
                     .then((values) => {
                         form.resetFields();
-                        const {
-                            cardNumber,
-                            expiryDate,
-                            securityCode
-                        } = values;
+                        let { cardNumber, expiryDate, securityCode } = values;
+                        console.log(expiryDate);
+
                         const record: Omit<CreditCard, "cardholder"> = {
                             cardNumber,
-                            expiryDate,
+                            // cast MM/YYYY to jS datem
+                            expiryDate: moment(expiryDate, "MM/YYYY").toDate(),
                             securityCode
                         };
                         onSubmit(record);
@@ -39,25 +46,30 @@ const CreditCardModalForm = (props: CreditCardModalFormProps) => {
         >
             <Form form={form}>
                 <Form.Item
-                    label="card number"
-                    name="card number"
+                    label="Card Number"
+                    name="cardNumber"
                     required
+                    // initialValue={defaultCard?.cardNumber}
                 >
-                    <Input></Input>
+                    <Input />
                 </Form.Item>
                 <Form.Item
-                    label="expiry date"
-                    name="expiry date"
+                    label="Expiry Date (MM/YYYY)"
+                    name="expiryDate"
                     required
+                    // initialValue={moment(defaultCard?.expiryDate).format(
+                    //     "MM/YYYY"
+                    // )}
                 >
-                    <Input></Input>
+                    <Input />
                 </Form.Item>
                 <Form.Item
-                    label="security code"
-                    name="security code"
+                    label="Security Code"
+                    name="securityCode"
                     required
+                    // initialValue={defaultCard?.securityCode}
                 >
-                    <Input></Input>
+                    <Input />
                 </Form.Item>
             </Form>
         </Modal>

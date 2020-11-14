@@ -1,6 +1,7 @@
 import React from "react";
 import {
     Redirect,
+    Route,
     RouteComponentProps,
     Switch,
     useRouteMatch
@@ -8,6 +9,7 @@ import {
 import AdminRoute from "../auth/AdminRoute";
 import Settings from "./admin/Settings";
 import Summary from "./admin/Summary";
+import ErrorPage from "./ErrorPage";
 
 const Admin = (props: RouteComponentProps) => {
     const { path } = useRouteMatch();
@@ -26,6 +28,7 @@ const Admin = (props: RouteComponentProps) => {
                 path={`${path}/summary`}
                 component={Summary}
             ></AdminRoute>
+            <Route component={ErrorPage}></Route>
         </Switch>
     );
 };

@@ -9,7 +9,9 @@ const CreditCards = () => {
     const [userCreditCards, setUserCreditCards] = useState<CreditCard[]>([]);
     const fetchUserCreditCards = async () => {
         try {
-            const fetchedCreditCards = (await CreditCardsApi.getUserCreditCards()).data.data;
+            const fetchedCreditCards = (
+                await CreditCardsApi.getUserCreditCards()
+            ).data.data;
             setUserCreditCards(fetchedCreditCards);
         } catch (err) {
             console.log("fetchCreditCards err", err);
@@ -24,16 +26,16 @@ const CreditCards = () => {
     const [visibleModal, setVisibleModal] = useState(false);
     const showModal = () => setVisibleModal(true);
     const hideModal = () => setVisibleModal(false);
-    const [record, setRecord] = useState<Omit<CreditCard, "cardholder">>({
-        cardNumber: 0,
-        expiryDate: new Date(),
-        securityCode: 505
-    });
+    const [record, setRecord] = useState<Omit<CreditCard, "cardholder"> | null>(
+        null
+    );
     const [title, setTitle] = useState("");
 
     const onSubmit = async (values: Omit<CreditCard, "cardholder">) => {
         try {
-            if (userCreditCards.find((c) => c.cardNumber === values.cardNumber)) {
+            if (
+                userCreditCards.find((c) => c.cardNumber === values.cardNumber)
+            ) {
                 await CreditCardsApi.putCreditCard(values);
                 message.success("Successfully edited credit card!");
             } else {
@@ -65,30 +67,27 @@ const CreditCards = () => {
     };
     const newModal = () => {
         setTitle("New Credit Card");
-        setRecord({
-            cardNumber: 0,
-            expiryDate: new Date(),
-            securityCode: 505
-        });
+        setRecord(null);
         showModal();
     };
     const generateModal = (record: Omit<CreditCard, "cardholder">) => {
-        setTitle("Edit CreditCard");
+        setTitle("Edit Credit Card");
         setRecord(record);
         showModal();
     };
 
     return (
         <PageHeader
-            title="Manage CreditCards"
+            title="Manage Credit Cards"
             extra={
                 <Button type="primary" onClick={newModal}>
-                    Add CreditCard
+                    Add Credit Card
                 </Button>
             }
         >
             {visibleModal && (
                 <CreditCardModalForm
+                    defaultCard={record!}
                     visible={visibleModal}
                     title={title}
                     onCancel={hideModal}

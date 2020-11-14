@@ -6,6 +6,16 @@ import { ApiResponse } from "./index";
 export type SignUpResponse = ApiResponse<string, string>;
 
 /**
+ * POST api/profile/:email
+ */
+export interface NewProfile {
+    fullname: string;
+    phone: number;
+    address: string;
+    avatarUrl?: string;
+}
+
+/**
  * POST api/signup, request.
  */
 export interface NewUser {
@@ -42,4 +52,12 @@ interface SignInPayload {
     accessToken: string;
     user: UserInterface;
 }
+
+export const sqlifyProfile = (p: NewProfile) => [
+    p.fullname,
+    p.address,
+    p.phone,
+    p.avatarUrl
+];
+
 export type SignInResponse = ApiResponse<SignInPayload, string>;

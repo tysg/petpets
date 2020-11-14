@@ -1,4 +1,4 @@
-import { message } from "antd";
+import { message, Rate } from "antd";
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
     Redirect,
@@ -7,13 +7,29 @@ import {
     useRouteMatch,
     Route
 } from "react-router-dom";
-import { Bid } from "../../../models/bid";
+import moment from "moment";
+import { Bid, BidJoinOwnerPet } from "../../../models/bid";
 import { CareTakerSpecializesDetails } from "../../../models/careTaker";
 import CareTakerRoute from "../auth/CareTakerRoute";
 import { bid as bidApi, careTaker as careTakerApi } from "../common/api";
+import AssignmentCard from "./caretaker/AssignmentCard";
 import Assignments from "./caretaker/Assignments";
+import PastCard from "./caretaker/PastCard";
+import PendingCard from "./caretaker/PendingCard";
 import Rates from "./caretaker/Rates";
 import Register from "./caretaker/Register";
+import Schedule from "./caretaker/Schedule";
+import ErrorPage from "./ErrorPage";
+
+const upcomingFilter = (bid: Bid) =>
+    bid.bid_status === "confirmed" &&
+    moment(bid.start_date).isSameOrAfter(Date.now());
+const pendingFilter = (bid: Bid) =>
+    bid.bid_status === "submitted" &&
+    moment(bid.start_date).isSameOrAfter(Date.now());
+const completedFilter = (bid: Bid) =>
+    // bid.bid_status === "reviewed" &&
+    moment(bid.start_date).isBefore(Date.now());
 
 const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
     const { path } = useRouteMatch();
@@ -21,36 +37,37 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
         careTaker,
         setCareTaker
     ] = useState<CareTakerSpecializesDetails | null>(null);
-    const [bids, setBids] = useState<Bid[]>([]);
-    useEffect(() => {
+    const [bids, setBids] = useState<BidJoinOwnerPet[]>([]);
+    const updateCareTaker = () => {
         careTakerApi
             .getCareTaker()
             .then((res) => {
                 const careTaker = res.data.data;
                 setCareTaker(careTaker);
-                // TODO: get all bids for this caretaker
-                bidApi
-                    .getForCareTaker()
-                    .then((res) => {
-                        setBids(res.data.data);
-                    })
-                    .catch((err) => {
-                        console.log("There are no bids for this user");
-                        console.log(err.response.data.err);
-                    });
+                refreshBids();
             })
             .catch((err) => {
                 console.log(err);
                 message.error(err.response.data.err);
             });
-    }, []);
+    };
+    useEffect(updateCareTaker, []);
+    const refreshBids = () =>
+        bidApi
+            .getForCareTaker()
+            .then((res) => {
+                setBids(res.data.data);
+            })
+            .catch((err) => {
+                console.log("There are no bids for this user");
+                console.log(err.response.data.err);
+            });
     return (
         <Switch>
             <Route exact path={`${path}/`}>
                 {careTaker ? (
                     <Redirect to={`${path}/upcoming`} />
                 ) : (
-                    // TODO:
                     <Register {...props} />
                 )}
             </Route>
@@ -59,8 +76,10 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
-                    dataSource={bids.filter((bid) => true)}
+                    refreshBids={refreshBids}
+                    dataSource={bids.filter(upcomingFilter)}
                     emptyMsg="No upcoming jobs"
+                    card={AssignmentCard}
                 />
             </CareTakerRoute>
             <CareTakerRoute
@@ -68,24 +87,33 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 careTakerDetails={careTaker}
             >
                 <Assignments
-                    dataSource={bids.filter((bid) => true)}
+                    refreshBids={refreshBids}
+                    dataSource={bids.filter(pendingFilter)}
                     emptyMsg="No pending jobs"
+                    card={PendingCard}
                 />
             </CareTakerRoute>
             <CareTakerRoute
-                path={`${path}/pastjobs`}
+                path={`${path}/reviews`}
                 careTakerDetails={careTaker}
             >
                 <Assignments
-                    dataSource={bids.filter((bid) => true)}
-                    emptyMsg="No past jobs"
+                    refreshBids={refreshBids}
+                    dataSource={bids.filter(completedFilter)}
+                    emptyMsg="No past assignments"
+                    card={PastCard}
                 />
             </CareTakerRoute>
             <CareTakerRoute
                 path={`${path}/schedule`}
-                component={Rates}
                 careTakerDetails={careTaker}
-            ></CareTakerRoute>
+            >
+                <Schedule {...careTaker!} />
+            </CareTakerRoute>
+            <CareTakerRoute path={`${path}/rates`} careTakerDetails={careTaker}>
+                <Rates {...careTaker!} updateCareTaker={updateCareTaker} />
+            </CareTakerRoute>
+            <Route component={ErrorPage}></Route>
         </Switch>
     );
 };
