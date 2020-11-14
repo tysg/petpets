@@ -181,7 +181,12 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
     try {
-        const { ct_email, pet_owner, pet_name, start_date, end_date } = req.params;
+        const { 
+            ct_email, 
+            pet_owner, 
+            pet_name, 
+            start_date, 
+            end_date } = req.params;
         var bid: Bid = req.body;
         CheckNotUndefined({"bid_status": bid.bid_status});
 
