@@ -4,11 +4,10 @@ import React, { useEffect } from "react";
 const ReviewModal = (props: any) => {
     const { visible, onSubmit, onCancel, order } = props;
     const [form] = Form.useForm();
+
     form.setFieldsValue({
         ...order
     });
-
-    useEffect(() => {}, [order]);
 
     return (
         <Modal

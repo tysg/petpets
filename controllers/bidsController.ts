@@ -159,7 +159,7 @@ export const create = async (req: Request, res: Response) => {
     } catch (error) {
         const {
             ct_email,
-            owner_email,
+            owner_email: pet_owner,
             pet_name,
             start_date,
             end_date
@@ -168,7 +168,7 @@ export const create = async (req: Request, res: Response) => {
         const response: StringResponse = {
             data: "",
             error:
-                `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be created: ` +
+                `Bid by ${pet_owner} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be created: ` +
                 error
         };
         res.status(400).send(response);
@@ -185,6 +185,8 @@ export const update = async (req: Request, res: Response) => {
             end_date
         } = req.params;
         var bid: Bid = req.body;
+        console.log(req.params);
+        console.log(bid.rating);
         await asyncQuery(bid_query.update_bid, [
             ct_email,
             owner_email,

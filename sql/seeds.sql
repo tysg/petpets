@@ -2,6 +2,9 @@ INSERT INTO person VALUES ('jan@gmail.com', 'jan', '$2b$10$yHkpPyW2w/xqIeO4Efi2t
 INSERT INTO person VALUES ('p@gmail.com', 'p', '$2b$10$7Fl/H4DxhlQrfHeHAvrQyOXkHDBO5Cmwy9I4lKokJKjHyLORxujcy', '81 pgp Rd', '62353535', 'user');
 INSERT INTO person VALUES ( 'admin@email.com', 'Bran Bong', '$2b$10$JUPcABQnf.k8qqW44CHAnuNK4ieRo6YOlZXw/db8ecl6PM/Q3aNEO', 'php', '91231233', 'admin'); 
 
+-- pet categories
+INSERT INTO pet_category values ('Cat', 29);
+INSERT INTO pet_category values ('Dog', 28);
 -- pets
 INSERT INTO pet VALUES ('Apple','jan@gmail.com','Cat','allergic to peanuts','a petty pet');
 INSERT INTO pet VALUES ('Pear','jan@gmail.com','Dog','allergic to peanuts','a petty pet');
@@ -40,12 +43,13 @@ INSERT INTO ft_leave_schedule VALUES ('ftct@gmail.com', '2021-10-30', '2021-10-3
 INSERT INTO bid VALUES('ftct@gmail.com', '50', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Crab', 'confirmed', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Apple', 'confirmed', '');
 INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'submitted', '');
+INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-10-10', '2020-10-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'submitted', '');
 INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'jan@gmail.com', 'Pear', 'confirmed', '');
-INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Brandt_Metz10@yahoo.com', 'Jailyn', 'confirmed', '');
-INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'confirmed', '');
--- INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'confirmed', '');
-INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'confirmed', '');
-INSERT INTO bid VALUES('ptct2@gmail.com', '69', '2020-09-05', '2020-09-09', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'confirmed', '');
+-- INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Brandt_Metz10@yahoo.com', 'Jailyn', 'confirmed', '');
+-- INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'confirmed', '');
+-- -- INSERT INTO bid VALUES('ftct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Cristobal33@yahoo.com', 'Einar', 'confirmed', '');
+-- INSERT INTO bid VALUES('ptct@gmail.com', '69', '2020-09-10', '2020-09-30', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'confirmed', '');
+-- INSERT INTO bid VALUES('ptct2@gmail.com', '69', '2020-09-05', '2020-09-09', 'true', NULL, 'pickup', 'Kattie75@hotmail.com', 'Jermaine', 'confirmed', '');
 
 -- credit cards
 -- Postgresql uses the yyyy-mm-dd format
