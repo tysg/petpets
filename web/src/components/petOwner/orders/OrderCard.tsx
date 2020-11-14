@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import {
     Space,
     Descriptions,
@@ -6,14 +7,22 @@ import {
     Row,
     Col,
     PageHeader,
-    Tag,
+    Button,
     Rate
 } from "antd";
 import moment from "moment";
 import { BidJoinCareTaker } from "../../../../../models/bid";
 import DescriptionsItem from "antd/lib/descriptions/Item";
 
-export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
+interface OrderCardProps {
+    order: BidJoinCareTaker;
+    key: number;
+    canReview: boolean;
+    openModal: (value: number) => void;
+}
+
+const OrderCard = (props: OrderCardProps) => {
+    const { order, key, canReview, openModal } = props;
     const {
         fullname,
         avatar_url,
@@ -27,7 +36,15 @@ export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
         avg_rating,
         caretaker_status,
         bid_status
-    } = bidDetails;
+    } = order;
+
+    const buttons = canReview
+        ? [
+              <Button key="1" onClick={() => openModal(key)}>
+                  Rate
+              </Button>
+          ]
+        : null;
 
     return (
         <Card>
@@ -38,6 +55,7 @@ export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
                     src: avatar_url
                 }}
                 subTitle={address}
+                extra={buttons}
             >
                 <Row gutter={[48, 16]}>
                     <Col span={24}>
@@ -70,3 +88,5 @@ export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
         </Card>
     );
 };
+
+export default OrderCard;
