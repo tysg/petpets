@@ -67,6 +67,35 @@ FOR EACH ROW EXECUTE PROCEDURE not_full_time();
 -- TODO set constraint for bids for schedule -> can't bid for leave
 -- TODO set constraint for schedule with bids -> can't take leave if bids
 
+
+CREATE OR REPLACE FUNCTION bid_availability()
+RETURNS TRIGGER AS 
+$t$ 
+DECLARE overlap NUMERIC;
+BEGIN 
+	IF EXISTS (SELECT 1 FROM full_time_ct WHERE email=NEW.ct_email) THEN
+		SELECT COUNT(*) INTO overlap FROM ft_leave_schedule WHERE NEW.start_date <= end_date and NEW.end_date >= start_date AND email=NEW.ct_email;
+		IF overlap > 0 THEN
+			raise exception 'caretaker on leave!';
+		ELSE
+			return new;
+		end if;
+	ELSE
+		SELECT COUNT(*) INTO overlap FROM pt_free_schedule WHERE NEW.start_date >= start_date and NEW.end_date <= end_date AND email=NEW.ct_email;
+		IF overlap > 0 THEN
+			return new;
+		ELSE
+			raise exception 'caretaker not available!';
+		end if;
+	END IF;
+	return new;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_bid_availability
+BEFORE INSERT ON bid
+FOR EACH ROW EXECUTE PROCEDURE bid_availability();
+
 -- Check that bid made isn't overlapping for pet
 CREATE OR REPLACE FUNCTION no_bid_overlap()
 RETURNS TRIGGER AS 
