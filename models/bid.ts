@@ -1,3 +1,4 @@
+import { CaretakerStatus } from "./careTaker";
 import { ApiResponse } from "./index";
 
 export type BidStatus = "submitted" | "confirmed" | "reviewed" | "closed";
@@ -25,11 +26,16 @@ export type CreateBidRequest = Pick<
     | "transport_method"
 >;
 
-interface UserInfoForCareTaker {
+interface UserInfoOfCareTaker {
     fullname: string;
     address: string;
     phone: number;
     avatar_url?: string;
+}
+
+interface CareTakerInfoForOwner extends UserInfoOfCareTaker {
+    caretaker_status: CaretakerStatus;
+    avg_rating: number;
 }
 
 interface PetInfoForCareTaker {
@@ -57,8 +63,10 @@ export interface Bid {
 
 export interface BidJoinOwnerPet
     extends Bid,
-        UserInfoForCareTaker,
+        UserInfoOfCareTaker,
         PetInfoForCareTaker {}
+
+export interface BidJoinCareTaker extends Bid, CareTakerInfoForOwner {}
 
 export const sqlify = (bid: Bid) => [
     bid.ct_email,
@@ -87,7 +95,7 @@ export const sqlify_price_query = (arg1: string, arg2: string) => [arg1, arg2];
 /**
  * GET api/bids/owner/:owner_email
  */
-export type OwnerResponse = ApiResponse<Bid[], string>;
+export type OwnerResponse = ApiResponse<BidJoinCareTaker[], string>;
 
 /**
  * GET api/bids/caretaker/:ct_email;
