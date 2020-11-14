@@ -130,6 +130,25 @@ CREATE TRIGGER check_bid_insert_status
 BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE check_bid_insert_status();
 
+CREATE OR REPLACE FUNCTION check_bid_insert_transport_method()
+RETURNS TRIGGER AS
+$t$
+BEGIN
+	IF (NEW.transport_method = 'delivery' 
+	OR NEW.transport_method = 'pcs' 
+	OR NEW.transport_method = 'pickup') THEN
+		RETURN NEW;
+	ELSE
+		RAISE EXCEPTION 'Wrong input for insert transport_method';
+	END IF;
+END;
+$t$
+LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_bid_insert_transport_method
+BEFORE INSERT ON bid
+FOR EACH ROW EXECUTE PROCEDURE check_bid_insert_transport_method();
+
 CREATE OR REPLACE FUNCTION pet_limit()
 RETURNS TRIGGER AS 
 $t$
