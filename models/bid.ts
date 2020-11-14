@@ -100,3 +100,11 @@ export type CareTakerResponse = ApiResponse<BidJoinOwnerPet[], string>;
 export type BidResponse = ApiResponse<Bid, string>;
 
 export type StringResponse = ApiResponse<string, string>;
+
+export const CheckNotUndefined = (params?: any[]) => {
+    for (let param in params) {
+        if (param === undefined) {
+            throw new Error(`${param} is undefined`);
+        }
+    }
+};
