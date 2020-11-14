@@ -1,4 +1,4 @@
-import { message, Rate, Statistic } from "antd";
+import { message, Statistic } from "antd";
 import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
     Redirect,
@@ -10,7 +10,6 @@ import {
 import moment from "moment";
 import { Bid, BidJoinOwnerPet } from "../../../models/bid";
 import {
-    CareTakerPayment,
     CareTakerSpecializesDetails,
     MonthlyPayment
 } from "../../../models/careTaker";
@@ -24,7 +23,6 @@ import Rates from "./caretaker/Rates";
 import Register from "./caretaker/Register";
 import Schedule from "./caretaker/availability/SchedulePage";
 import ErrorPage from "./ErrorPage";
-import { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } from "constants";
 
 const upcomingFilter = (bid: Bid) =>
     bid.bid_status === "confirmed" &&
