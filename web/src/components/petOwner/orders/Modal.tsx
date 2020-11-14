@@ -1,14 +1,17 @@
 import { Input, Form, Modal, Rate } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 
 const ReviewModal = (props: any) => {
     const { visible, onSubmit, onCancel, order } = props;
     const [form] = Form.useForm();
-    console.log("check modal", order);
+    form.setFieldsValue({
+        ...order
+    });
+
+    useEffect(() => {}, [order]);
 
     return (
         <Modal
-            destroyOnClose
             visible={visible}
             style={{ minHeight: "40%", minWidth: "50%" }}
             title={order?.fullname}
@@ -41,14 +44,13 @@ const ReviewModal = (props: any) => {
                         })
                     ]}
                 >
-                    <Rate value={order?.rating} />
+                    <Rate />
                 </Form.Item>
                 <Form.Item label="Feedback" name="feedback">
                     <Input.TextArea
                         style={{ minHeight: "10em" }}
                         bordered
                         showCount
-                        value={order?.feedback}
                     />
                 </Form.Item>
             </Form>
