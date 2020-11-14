@@ -22,7 +22,7 @@ interface OrderParams {
 }
 
 const Order = () => {
-    const match = useRouteMatch<OrderParams>(); // console.log(match?.params.type === "past");
+    const match = useRouteMatch<OrderParams>();
     const canReview = match.params.type === "past";
     const [bidDetails, setBidDetails] = useState<BidJoinCareTaker[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
@@ -59,7 +59,6 @@ const Order = () => {
     };
 
     const postReview = async (bid: Bid) => {
-        console.log(bid);
         await bidApi.updateBid(bid);
         await getBids();
         setVisibleModal(false);

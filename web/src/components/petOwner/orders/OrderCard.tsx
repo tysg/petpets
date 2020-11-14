@@ -34,8 +34,6 @@ const OrderCard = (props: OrderCardProps) => {
         rating
     } = order;
 
-    console.log(index, order);
-
     const buttons = canReview
         ? [
               <Button key="1" onClick={() => openModal(order)}>
@@ -79,7 +77,7 @@ const OrderCard = (props: OrderCardProps) => {
                                 />
                             </DescriptionsItem>
                             <DescriptionsItem label="Review" span={3}>
-                                {feedback}
+                                {feedback ? feedback : "No review presently"}
                             </DescriptionsItem>
                         </Descriptions>
                     </Col>

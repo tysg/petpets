@@ -3,11 +3,12 @@ import React from "react";
 
 const ReviewModal = (props: any) => {
     const { visible, onSubmit, onCancel, order } = props;
-    console.log(props, "order props");
     const [form] = Form.useForm();
+    console.log("check modal", order);
 
     return (
         <Modal
+            destroyOnClose
             visible={visible}
             style={{ minHeight: "40%", minWidth: "50%" }}
             title={order?.fullname}
@@ -19,7 +20,6 @@ const ReviewModal = (props: any) => {
                     .then((values) => {
                         form.resetFields();
                         const { feedback, rating } = values;
-                        console.log(order);
                         onSubmit({ ...order, feedback, rating });
                     })
                     .catch((err) => console.log("Validation failed:", err));
@@ -49,7 +49,7 @@ const ReviewModal = (props: any) => {
                         bordered
                         showCount
                         value={order?.feedback}
-                    ></Input.TextArea>
+                    />
                 </Form.Item>
             </Form>
         </Modal>
