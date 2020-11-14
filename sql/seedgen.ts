@@ -172,13 +172,12 @@ const BID_STATUS: BidStatus[] = [
     "closed"
 ];
 const TODAY = "11/14/2020";
-let start = moment(faker.date.recent(60, TODAY));
-const end = moment(faker.date.soon(60, TODAY));
+let start = moment(faker.date.recent(10, TODAY));
+const end = moment(faker.date.soon(50, TODAY));
 let fakeBids: string[] = [];
 while (end.diff(start, "days") > 7) {
     const periodEnd = faker.date.soon(7, start.toDate());
     const bidDeets = {
-        bid_status: BID_STATUS[0],
         start_date: start.toISOString(),
         end_date: periodEnd.toISOString(),
         is_cash: true,
@@ -186,6 +185,7 @@ while (end.diff(start, "days") > 7) {
     };
     let unassignedOwners = new Set(petOwners);
     const bids: (Bid | null)[] = careTakers.map((caretaker) => {
+        if (faker.random.float(1) < 0.4) return null;
         const category = faker.random.arrayElement(caretaker.allSpecializesIn);
         const validOwners = Array.from(unassignedOwners).filter(
             (pet) =>
@@ -196,8 +196,19 @@ while (end.diff(start, "days") > 7) {
         if (!assignment) return null;
         unassignedOwners.delete(assignment);
         const transport_method = faker.random.arrayElement(TRANSPORT_METHOD);
+        let restDeets: any = {
+            bid_status: start.isBefore(moment(TODAY))
+                ? BID_STATUS[1]
+                : BID_STATUS[0]
+        };
+        if (start.isBefore(moment(TODAY)) && faker.random.boolean()) {
+            const feedback = faker.lorem.sentences(2);
+            const rating = faker.random.number(2) + 3;
+            restDeets = { bid_status: BID_STATUS[2], feedback, rating };
+        }
         return {
             ...bidDeets,
+            ...restDeets,
             ct_email: caretaker.email,
             transport_method,
             ct_price: category.ctPriceDaily,
@@ -218,15 +229,19 @@ while (end.diff(start, "days") > 7) {
                     transport_method,
                     pet_owner,
                     pet_name,
-                    bid_status
+                    bid_status,
+                    feedback,
+                    rating
                 } = bid!;
-                return `INSERT INTO bid (ct_email, ct_price, start_date, end_date, is_cash, transport_method, pet_owner, pet_name, bid_status) VALUES ('${ct_email}', ${ct_price}, '${start_date}', '${end_date}', ${is_cash}, '${transport_method}', '${pet_owner}', '${pet_name}', '${bid_status}');`;
+                const getFeedback = (feedback: any) =>
+                    feedback ? `'${feedback}'` : "NULL";
+                return `INSERT INTO bid (ct_email, ct_price, start_date, end_date, is_cash, transport_method, pet_owner, pet_name, bid_status, feedback, rating) VALUES ('${ct_email}', ${ct_price}, '${start_date}', '${end_date}', ${is_cash}, '${transport_method}', '${pet_owner}', '${pet_name}', '${bid_status}', ${getFeedback(
+                    feedback
+                )}, ${rating || "NULL"});`;
             })
     );
     start = moment(periodEnd).add(1, "day");
 }
-
-console.log(fakeBids);
 
 const seedString =
     petCatEntries.join("\n") + fakePeople.join("\n") + fakeBids.join("\n");

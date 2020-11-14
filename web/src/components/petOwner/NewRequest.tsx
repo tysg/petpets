@@ -123,7 +123,7 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
                 pet_owner: getUser()?.email!,
                 pet_name: state.selectedPet?.name!,
                 ct_price: state.selectedCareTaker?.ctPriceDaily!,
-                credit_card: state.creditCardNumber ?? null,
+                credit_card: state.creditCardNumber ?? undefined,
                 transport_method: state.transportMethod!,
                 start_date: formatDate(state.selectedDates![0]),
                 end_date: formatDate(state.selectedDates![1]),
