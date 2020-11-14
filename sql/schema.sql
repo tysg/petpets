@@ -34,7 +34,7 @@ CREATE TABLE person(
 
 CREATE TABLE pet_category(
 	type_name varchar(64) PRIMARY KEY,
-	base_daily_price int NOT NULL
+	base_daily_price int NOT NULL CHECK (base_daily_price >= 0)
 );
 
 CREATE TABLE pet(
@@ -73,21 +73,21 @@ CREATE VIEW caretaker (email, caretaker_status, rating) AS (
 CREATE TABLE pt_specializes_in (
 	email varchar(64) REFERENCES part_time_ct(email) ON DELETE CASCADE,
 	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE ON UPDATE CASCADE,
-	ct_price_daily int NOT NULL,
+	ct_price_daily int NOT NULL CHECK (ct_price_daily >= 0),
 	CONSTRAINT pt_specializes_in_id PRIMARY KEY (email, type_name)
 );
 
 CREATE TABLE ft_specializes_in (
 	email varchar(64) REFERENCES full_time_ct(email) ON DELETE CASCADE,
 	type_name varchar(64) REFERENCES pet_category(type_name) ON DELETE CASCADE ON UPDATE CASCADE,
-	ct_price_daily int NOT NULL,
+	ct_price_daily int NOT NULL CHECK (ct_price_daily >= 0),
 	CONSTRAINT ft_specializes_in_id PRIMARY KEY (email, type_name)
 );
 
-CREATE VIEW specializes_in (email, type_name, ct_price_daily) as (
-	SELECT email, type_name, ct_price_daily FROM pt_specializes_in
+CREATE VIEW specializes_in (email, type_name, caretaker_status, ct_price_daily) as (
+	SELECT email, type_name, 1, ct_price_daily FROM pt_specializes_in
 	UNION
-	SELECT email, type_name, ct_price_daily FROM ft_specializes_in
+	SELECT email, type_name, 2, ct_price_daily FROM ft_specializes_in
 );
 
 CREATE TABLE pt_free_schedule (
