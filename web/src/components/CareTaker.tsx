@@ -117,6 +117,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
                 <Statistic
                     title="This Month's Salary"
                     value={salaries.length > 0 ? salaries[0].fullPay : "N/A"} // HACK: TODO: FIXME: NOTE: this is not correct
+                    prefix={"S$"}
                 />
                 <Assignments
                     refreshBids={refreshBids}
