@@ -145,12 +145,12 @@ export const create = async (req: Request, res: Response) => {
         };
         res.send(response);
     } catch (error) {
-        const { ct_email, owner_email, pet_name, start_date, end_date } = req.body;
+        const { ct_email, pet_owner, pet_name, start_date, end_date } = req.body;
         log.error("create bid error", error);
         const response: StringResponse = {
             data: "",
             error:
-                `Bid by ${owner_email} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be created: ` +
+                `Bid by ${pet_owner} with ${ct_email} for ${pet_name} from ${start_date} to on ${end_date} cannot be created: ` +
                 error
         };
         res.status(400).send(response);
