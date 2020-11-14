@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Space, Card, Rate } from "antd";
+import { Avatar, Space, Card, Rate, Statistic, Row, Col } from "antd";
 import { CareTakerSpecializesInCategory } from "../../../../models/careTaker";
 import { NewRequestState, Action } from "./NewRequest";
 
@@ -50,22 +50,28 @@ const CareTakerCard = (props: CareTakerCardProps) => {
                 dispatch({ type: "next" });
             }}
         >
-            <Meta
-                avatar={
-                    <Avatar
-                        style={{
-                            backgroundColor: "#f56a00",
-                            verticalAlign: "middle"
-                        }}
-                        size="large"
-                    >
-                        {ct.fullname.charAt(0).toUpperCase()}
-                    </Avatar>
-                }
-                title={<NameAndRating {...ct} />}
-                description={getCareTakerStatus(ct.caretakerStatus)}
-            />
-            {`$${ct.ctPriceDaily}/day`}
+            <Row align="middle">
+                <Col span={18}>
+                    <Meta
+                        style={{ display: "flex", alignItems: "center" }}
+                        avatar={
+                            <Avatar src={ct.avatarUrl} size={130}>
+                                {ct.fullname.charAt(0).toUpperCase()}
+                            </Avatar>
+                        }
+                        title={<NameAndRating {...ct} />}
+                        description={getCareTakerStatus(ct.caretakerStatus)}
+                    />
+                </Col>
+                <Col span={6}>
+                    <Statistic
+                        title="Daily Price"
+                        value={ct.ctPriceDaily}
+                        prefix="$"
+                        precision={2}
+                    />
+                </Col>
+            </Row>
         </Card>
     );
 };

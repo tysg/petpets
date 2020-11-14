@@ -35,6 +35,7 @@ export type NewRequestState = {
 
 export type Action = {
     type:
+        | "restart"
         | "next"
         | "prev"
         | "setDates"
@@ -51,6 +52,8 @@ export type Action = {
 
 const reducer: Reducer<NewRequestState, Action> = (state, action) => {
     switch (action.type) {
+        case "restart":
+            return INITIAL_STATE;
         case "next":
             return { ...state, step: state.step + 1 };
         case "prev":
@@ -100,7 +103,7 @@ const Content = (state: NewRequestState, dispatch: Dispatch<Action>) => {
         ) : (
             <Result
                 status="error"
-                title="There are some error processing your order."
+                title="There was some error processing your order."
                 // extra={[
                 //     <Button type="primary" key="console">
                 //         Go Console
@@ -163,7 +166,14 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
                     </Button>
                 );
             case 2: // last page
-                return <Button type="primary">Done</Button>;
+                return (
+                    <Button
+                        type="primary"
+                        onClick={() => dispatch({ type: "restart" })}
+                    >
+                        Done
+                    </Button>
+                );
         }
     };
 
@@ -182,11 +192,13 @@ const Controls = (state: NewRequestState, dispatch: Dispatch<Action>) => {
     );
 };
 
+const INITIAL_STATE = {
+    step: 0,
+    isProcessingOrder: true
+};
+
 const NewRequest = () => {
-    const [state, dispatch] = useReducer(reducer, {
-        step: 0,
-        isProcessingOrder: true
-    });
+    const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
     return (
         <>
