@@ -15,7 +15,7 @@ import Pets from "./pet";
 import { pets as PetsApi } from "../common/api";
 import OwnerRoute from "../auth/OwnerRoute";
 import { Pet } from "../../../models/pet";
-import { Button, Result } from "antd";
+import { Button, Col, Result, Row } from "antd";
 import ErrorPage from "./ErrorPage";
 
 const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
@@ -66,15 +66,19 @@ const Owner = (props: PropsWithChildren<RouteComponentProps>) => {
 
 const RegisterLanding = (props: LinkProps) => {
     return (
-        <Result
-            title="You are not registered as a Pet Owner yet!"
-            subTitle="Add pets to get started"
-            extra={[
-                <Button type="primary">
-                    <Link to={props.to}>Add Pets</Link>
-                </Button>
-            ]}
-        ></Result>
+        <Row style={{ height: "100%" }} justify="center" align="middle">
+            <Col>
+                <Result
+                    title="You are not registered as a Pet Owner yet!"
+                    subTitle="Add pets to get started"
+                    extra={[
+                        <Button type="primary">
+                            <Link to={props.to}>Add Pets</Link>
+                        </Button>
+                    ]}
+                ></Result>
+            </Col>
+        </Row>
     );
 };
 
