@@ -6,14 +6,22 @@ import {
     Row,
     Col,
     PageHeader,
-    Tag,
+    Button,
     Rate
 } from "antd";
 import moment from "moment";
 import { BidJoinCareTaker } from "../../../../../models/bid";
 import DescriptionsItem from "antd/lib/descriptions/Item";
 
-export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
+interface OrderCardProps {
+    order: BidJoinCareTaker;
+    index: number;
+    canReview: boolean;
+    openModal: (value: BidJoinCareTaker) => void;
+}
+
+const OrderCard = (props: OrderCardProps) => {
+    const { order, index, canReview, openModal } = props;
     const {
         fullname,
         avatar_url,
@@ -22,12 +30,19 @@ export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
         pet_name,
         start_date,
         end_date,
-        rating,
-        ct_price,
         avg_rating,
-        caretaker_status,
-        bid_status
-    } = bidDetails;
+        rating
+    } = order;
+
+    console.log(index, order);
+
+    const buttons = canReview
+        ? [
+              <Button key="1" onClick={() => openModal(order)}>
+                  Rate
+              </Button>
+          ]
+        : null;
 
     return (
         <Card>
@@ -38,6 +53,7 @@ export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
                     src: avatar_url
                 }}
                 subTitle={address}
+                extra={buttons}
             >
                 <Row gutter={[48, 16]}>
                     <Col span={24}>
@@ -53,11 +69,13 @@ export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
                                     "DD/MM/YYYY"
                                 )} - ${moment(end_date).format("DD/MM/YYYY")}`}
                             </DescriptionsItem>
-                            <DescriptionsItem label="Rating">
+                            <DescriptionsItem
+                                label={canReview ? "Rating" : "Average Rating"}
+                            >
                                 <Rate
                                     disabled
                                     allowHalf
-                                    defaultValue={rating}
+                                    value={canReview ? rating : avg_rating}
                                 />
                             </DescriptionsItem>
                             <DescriptionsItem label="Review" span={3}>
@@ -70,3 +88,5 @@ export default (bidDetails: BidJoinCareTaker, canReview: boolean) => {
         </Card>
     );
 };
+
+export default OrderCard;

@@ -185,6 +185,8 @@ export const update = async (req: Request, res: Response) => {
             end_date
         } = req.params;
         var bid: Bid = req.body;
+        console.log(req.params);
+        console.log(bid.rating);
         await asyncQuery(bid_query.update_bid, [
             ct_email,
             owner_email,
