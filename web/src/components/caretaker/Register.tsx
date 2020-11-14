@@ -8,7 +8,8 @@ import {
     Input,
     Select,
     Radio,
-    message
+    message,
+    Result
 } from "antd";
 import Modal, { ModalProps } from "antd/lib/modal/Modal";
 import Form, { useForm } from "antd/lib/form/Form";
@@ -119,10 +120,15 @@ const Register = (props: RouteComponentProps) => {
                     onSubmit={onSubmit}
                     onCancel={hideModal}
                 ></ModalForm>
-                <Typography.Paragraph>
-                    You are not registered as a Pet Sitter yet.
-                </Typography.Paragraph>
-                <Button onClick={showModal}>Register now?</Button>
+                <Result
+                    title="You are not registered as a Pet Sitter yet!"
+                    subTitle="What are you waiting for?"
+                    extra={[
+                        <Button onClick={showModal} type="primary">
+                            Register Now!
+                        </Button>
+                    ]}
+                ></Result>
             </Col>
         </Row>
     );
