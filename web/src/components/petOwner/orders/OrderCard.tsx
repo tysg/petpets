@@ -31,7 +31,8 @@ const OrderCard = (props: OrderCardProps) => {
         pet_name,
         start_date,
         end_date,
-        avg_rating
+        avg_rating,
+        rating
     } = order;
 
     console.log(index, order);
@@ -69,8 +70,14 @@ const OrderCard = (props: OrderCardProps) => {
                                     "DD/MM/YYYY"
                                 )} - ${moment(end_date).format("DD/MM/YYYY")}`}
                             </DescriptionsItem>
-                            <DescriptionsItem label="Rating">
-                                <Rate disabled allowHalf value={avg_rating} />
+                            <DescriptionsItem
+                                label={canReview ? "Rating" : "Average Rating"}
+                            >
+                                <Rate
+                                    disabled
+                                    allowHalf
+                                    value={canReview ? rating : avg_rating}
+                                />
                             </DescriptionsItem>
                             <DescriptionsItem label="Review" span={3}>
                                 {feedback}
