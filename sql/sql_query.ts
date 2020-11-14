@@ -274,9 +274,10 @@ export const schedule_query = {
 
 const PERSON_ATTR = `fullname, avatar_link as avatar_url, phone, address, email as pet_owner`;
 const PET_ATTR = `name as pet_name, owner as pet_owner, description, requirements, category`;
+const BID_CARETAKER_ATTR = `fullname, avatar_link as avatar_url, phone, address, email as ct_email`;
 
 export const bid_query = {
-    owner_get_bids: `SELECT * FROM bid WHERE pet_owner = $1`,
+    owner_get_bids: `SELECT * FROM (select * from bid WHERE pet_owner = $1) b NATURAL JOIN (SELECT email as ct_email, caretaker_status, rating as avg_rating FROM caretaker) ct NATURAL JOIN (SELECT ${BID_CARETAKER_ATTR} FROM person) ct_p`,
     caretaker_get_bids: `SELECT * FROM (select * from bid where ct_email=$1) b NATURAL JOIN (select ${PERSON_ATTR} FROM person) p NATURAL JOIN (select ${PET_ATTR} from pet) p2`,
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
@@ -291,8 +292,8 @@ export const bid_query = {
     INSERT INTO bid VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         `,
-    delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4 $4 AND end_date = $5`,
-    update_bid: `UPDATE bid SET (bid_status, rating, feedback) = ($6, $7, $8) WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = $4 AND end_date = $5`
+    delete_bid: `DELETE FROM bid WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = Date($4) AND end_date = Date($5)`,
+    update_bid: `UPDATE bid SET (bid_status, rating, feedback) = ($6, $7, $8) WHERE ct_email = $1 AND pet_owner = $2 AND pet_name = $3 AND start_date = Date($4) AND end_date = Date($5)`
 };
 
 export default { user_query, pet_query, credit_card_query };

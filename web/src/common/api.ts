@@ -23,7 +23,12 @@ import {
     MonthlyBestCareTakerIndexResponse,
     MonthlyRevenueIndexResponse
 } from "./../../../models/admin";
-import { CreateBidRequest, Bid, CareTakerResponse } from "../../../models/bid";
+import {
+    CreateBidRequest,
+    Bid,
+    CareTakerResponse,
+    OwnerResponse
+} from "../../../models/bid";
 import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
 import { NewProfile, NewUser, UserInterface } from "../../../models/user";
@@ -161,6 +166,9 @@ export const bid = {
     },
     getForCareTaker: (): Promise<AxiosResponse<CareTakerResponse>> => {
         return get("/api/bids/caretaker/" + email());
+    },
+    getForOwner: (): Promise<AxiosResponse<OwnerResponse>> => {
+        return get("/api/bids/owner/" + email());
     },
     updateBid: (bid: Bid) => patch(`/api/bids/${getBidIdentity(bid)}`, bid)
 };
