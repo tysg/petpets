@@ -45,7 +45,22 @@ const ReviewModal = (props: any) => {
                 >
                     <Rate />
                 </Form.Item>
-                <Form.Item label="Feedback" name="feedback">
+                <Form.Item
+                    label="Feedback"
+                    name="feedback"
+                    rules={[
+                        () => ({
+                            validator(rule, value) {
+                                if (value && value.length > 0) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(
+                                    "Feedback cannot be empty"
+                                );
+                            }
+                        })
+                    ]}
+                >
                     <Input.TextArea
                         style={{ minHeight: "10em" }}
                         bordered

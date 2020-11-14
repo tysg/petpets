@@ -77,7 +77,7 @@ const OrderCard = (props: OrderCardProps) => {
                                 />
                             </DescriptionsItem>
                             <DescriptionsItem label="Review" span={3}>
-                                {feedback ? feedback : "No review presently"}
+                                {feedback ? feedback : "-"}
                             </DescriptionsItem>
                         </Descriptions>
                     </Col>

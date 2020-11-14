@@ -7,23 +7,43 @@ import {
     bid as bidApi,
     careTaker as careTakerApi
 } from "../../../common/api";
+import { Empty } from "antd";
 import OrderCard from "./OrderCard";
 import ReviewModal from "./Modal";
 
+const pendingFilter = (bid: BidJoinCareTaker) => bid.bid_status === "submitted";
 const upcomingFilter = (bid: BidJoinCareTaker) =>
     bid.bid_status === "confirmed" &&
     moment(bid.start_date).isSameOrAfter(Date.now());
 const completedFilter = (bid: BidJoinCareTaker) =>
     bid.bid_status === "confirmed" &&
     moment(bid.start_date).isBefore(Date.now());
+const closedFilter = (bid: BidJoinCareTaker) => bid.bid_status === "closed";
 
+const reducer = (
+    params: string,
+    allBidDetails: BidJoinCareTaker[]
+): [BidJoinCareTaker[], boolean] => {
+    switch (params) {
+        case "pending":
+            return [allBidDetails.filter((b) => pendingFilter(b)), false];
+        case "past":
+            return [allBidDetails.filter((b) => completedFilter(b)), true];
+        case "upcoming":
+            return [allBidDetails.filter((b) => upcomingFilter(b)), false];
+        case "closed":
+            return [allBidDetails.filter((b) => closedFilter(b)), false];
+        default:
+            return [allBidDetails.filter((b) => closedFilter(b)), false];
+    }
+};
 interface OrderParams {
     type: "past" | "upcoming";
 }
 
 const Order = () => {
     const match = useRouteMatch<OrderParams>();
-    const canReview = match.params.type === "past";
+    const routeParams: string = match.params.type;
     const [bidDetails, setBidDetails] = useState<BidJoinCareTaker[]>([]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [activeReview, setActiveReview] = useState<BidJoinCareTaker | null>(
@@ -50,9 +70,7 @@ const Order = () => {
         if (activeReview !== null) setVisibleModal(true);
     }, [activeReview]);
 
-    const filteredBidDetails = canReview
-        ? bidDetails?.filter((r) => completedFilter(r))
-        : bidDetails?.filter((r) => upcomingFilter(r));
+    const [filteredBidDetails, canReview] = reducer(routeParams, bidDetails);
 
     const openModal = (order: BidJoinCareTaker) => {
         setActiveReview({ ...order });
@@ -72,15 +90,19 @@ const Order = () => {
                 onSubmit={postReview}
                 onCancel={() => setVisibleModal(false)}
             />
-            {filteredBidDetails?.map((o, i) => (
-                <OrderCard
-                    key={i}
-                    index={i}
-                    order={o}
-                    canReview={canReview}
-                    openModal={openModal}
-                />
-            ))}
+            {filteredBidDetails?.length > 0 ? (
+                filteredBidDetails.map((o, i) => (
+                    <OrderCard
+                        key={i}
+                        index={i}
+                        order={o}
+                        canReview={canReview}
+                        openModal={openModal}
+                    />
+                ))
+            ) : (
+                <Empty />
+            )}
         </div>
     );
 };
