@@ -46,13 +46,13 @@ export interface Bid {
     /** YYYY-MM-DD */
     end_date: string;
     is_cash: boolean;
-    credit_card: number | null;
+    credit_card?: number;
     transport_method: TransportMethod;
     pet_owner: string;
     pet_name: string;
     bid_status: BidStatus;
-    feedback: Text;
-    rating: number;
+    feedback?: string;
+    rating?: number;
 }
 
 export interface BidJoinOwnerPet
