@@ -136,10 +136,16 @@ export default (props: AssignmentCardProps) => {
                     <Col span={4}>
                         <Row>
                             <Statistic
-                                title="Payout"
+                                title="Daily Rate"
                                 prefix="$"
                                 precision={2}
-                                value={ct_price}
+                                value={
+                                    ct_price *
+                                    moment(start_date).diff(
+                                        moment(end_date),
+                                        "days"
+                                    )
+                                }
                             />
                         </Row>
                         <Divider />

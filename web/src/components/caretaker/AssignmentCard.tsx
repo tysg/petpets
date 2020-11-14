@@ -70,7 +70,13 @@ export default (props: BidJoinOwnerPet) => {
                                 title="Payout"
                                 prefix="$"
                                 precision={2}
-                                value={ct_price}
+                                value={
+                                    ct_price *
+                                    moment(start_date).diff(
+                                        moment(end_date),
+                                        "days"
+                                    )
+                                }
                             />
                         </Row>
                     </Col>
