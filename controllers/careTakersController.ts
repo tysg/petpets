@@ -221,17 +221,15 @@ export const remove = async (req: Request, res: Response) => {
 const create = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
-        const careTakerQuery =
+        const insertCareTakerQuery =
             ctStatus == CaretakerStatus.partTimeCt
                 ? caretaker_query.create_part_time_ct
                 : caretaker_query.create_full_time_ct;
 
-        const specializesQuery =
+        const insertSpecializationsQuery =
             ctStatus == CaretakerStatus.partTimeCt
                 ? specializes_query.set_pt_specializes
                 : specializes_query.set_ft_specializes;
-
-        await asyncQuery(careTakerQuery, [caretaker.email]);
 
         const specializesParams = caretaker.allSpecializes.map(
             (specializes: SpecializesIn) => [
@@ -241,9 +239,15 @@ const create = (ctStatus: number) => async (req: Request, res: Response) => {
             ]
         );
 
-        await specializesParams.map((params: any) =>
-            asyncQuery(specializesQuery, params)
+        const specializesQueries = specializesParams.map(
+            (row) => insertSpecializationsQuery
         );
+
+        const allQueries = [insertCareTakerQuery, ...specializesQueries];
+
+        const allParams = [[caretaker.email], ...specializesParams];
+
+        await asyncTransaction(allQueries, allParams);
 
         const response: StringResponse = {
             data: `${caretaker.email} created as caretaker`,
@@ -263,7 +267,7 @@ const create = (ctStatus: number) => async (req: Request, res: Response) => {
 const update = (ctStatus: number) => async (req: Request, res: Response) => {
     try {
         const caretaker: CareTaker = req.body;
-        const query =
+        const insertSpecializationsQuery =
             ctStatus == CaretakerStatus.partTimeCt
                 ? specializes_query.set_pt_specializes
                 : specializes_query.set_ft_specializes;
@@ -276,12 +280,22 @@ const update = (ctStatus: number) => async (req: Request, res: Response) => {
             ]
         );
 
-        await asyncTransaction(specializes_query.delete_specializes, [
-            [caretaker.email],
-            [caretaker.email]
-        ]);
+        const specializesQueries = specializesParams.map(
+            (row) => insertSpecializationsQuery
+        );
 
-        await specializesParams.map((params: any) => asyncQuery(query, params));
+        const allQueries = [
+            ...specializes_query.delete_specializes,
+            ...specializesQueries
+        ];
+
+        const allParams = [
+            [caretaker.email],
+            [caretaker.email],
+            ...specializesParams
+        ];
+
+        await asyncTransaction(allQueries, allParams);
 
         const response: StringResponse = {
             data: `${caretaker.email} specializations updated`,

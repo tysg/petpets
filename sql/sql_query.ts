@@ -202,7 +202,7 @@ export const admin_query = {
         ) as sem, bid 
         WHERE bid.start_date <= sem.endmonth
         AND sem.startmonth <= bid.end_date
-        AND bid.bid_status = 'confirmed'
+        AND (bid.bid_status = 'confirmed' OR bid.bid_status = 'reviewed')
         GROUP BY sem.startmonth
         HAVING startmonth <= CURRENT_DATE
     `,
@@ -234,9 +234,9 @@ export const admin_query = {
                         ) + interval '1 month' - interval '1 day' )::date AS endmonth
                         FROM
                             (SELECT min(start_date) AS sd, max(end_date) as ed
-                            FROM bid WHERE bid_status='confirmed') AS startend
+                            FROM bid WHERE bid_status='confirmed' OR bid_status='reviewed') AS startend
                             ORDER BY sd
-                    ) AS monthly, (SELECT * FROM bid WHERE bid_status='confirmed') as ct_bid
+                    ) AS monthly, (SELECT * FROM bid WHERE bid_status='confirmed' OR bid_status='reviewed') as ct_bid
                     WHERE ct_bid.start_date <= monthly.endmonth
                     AND monthly.startmonth <= ct_bid.end_date
                     GROUP BY startmonth, ct_email
