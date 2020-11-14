@@ -1,5 +1,11 @@
 import React, { useEffect } from "react";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
+import {
+    BrowserRouter as Router,
+    Route,
+    Switch,
+    Link,
+    RouteComponentProps
+} from "react-router-dom";
 import puppies from "./assets/puppies.jpg";
 import LoginOrSignUp from "./auth/Login";
 import Dashboard from "./Dashboard";
@@ -8,6 +14,8 @@ import PublicRoute from "./auth/PublicRoute";
 import "./App.css";
 import { user as userApi } from "./common/api";
 import { getToken, clearSession } from "./common/token";
+import DeniedPage from "./components/DeniedPage";
+import ErrorPage from "./components/ErrorPage";
 
 function Landing() {
     // unauthenticated request
@@ -38,10 +46,8 @@ const App = () => {
                 <PublicRoute exact path="/" component={Landing} />
                 <PublicRoute path="/login" component={LoginOrSignUp} />
                 <AuthenticatedRoute path="/dashboard" component={Dashboard} />
-                <Route exact path="/denied">
-                    Oops you don't have permission to access this page
-                </Route>
-                <Route>Oops this page does not exist</Route>
+                <Route exact path="/denied" component={DeniedPage} />
+                <Route component={ErrorPage}></Route>
             </Switch>
         </Router>
     );

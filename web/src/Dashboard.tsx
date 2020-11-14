@@ -11,6 +11,7 @@ import AdminRoute from "./auth/AdminRoute";
 import Admin from "./components/Admin";
 import CareTaker from "./components/CareTaker";
 import Owner from "./components/Owner";
+import ErrorPage from "./components/ErrorPage";
 
 const Dashboard = (props: RouteComponentProps) => {
     // useEffect(() => {
@@ -29,6 +30,7 @@ const Dashboard = (props: RouteComponentProps) => {
                 <Route path={`${path}/owner`} component={Owner} />
                 <Route path={`${path}/sitter`} component={CareTaker} />
                 <AdminRoute path={`${path}/admin`} component={Admin} />
+                <Route component={ErrorPage} />
             </Switch>
         </SiteLayout>
     );
