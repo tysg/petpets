@@ -83,29 +83,71 @@ CREATE TRIGGER check_no_bid_overlap
 BEFORE INSERT ON bid
 FOR EACH ROW EXECUTE PROCEDURE no_bid_overlap();
 
--- CREATE OR REPLACE FUNCTION prevent_update_bid()
--- RETURNS TRIGGER AS
--- $t$
--- DECLARE old_status VARCHAR(64);
--- BEGIN
--- 	SELECT bid_status INTO old_status FROM bid B
--- 		WHERE B.ct_email = NEW.ct_email
--- 	  AND B.pet_name = NEW.pet_name
--- 	  AND B.pet_owner = NEW.pet_owner
--- 	  AND B.start_date = NEW.start_date
--- 	  AND B.end_date = NEW.end_date;
+CREATE OR REPLACE FUNCTION check_bid_update_status()
+RETURNS TRIGGER AS
+$t$
+BEGIN
+	IF (OLD.bid_status = 'closed' OR OLD.bid_status = 'reviewed') THEN
+		RAISE EXCEPTION 'Bid is closed for modification';
+	ELSE
+		IF OLD.bid_status = 'submitted' THEN 
+			IF NEW.bid_status = 'closed' OR NEW.bid_status = 'confirmed' THEN
+				RETURN NEW;
+			ELSE RAISE EXCEPTION 'Unknown new status';
+			END IF;
+		ELSEIF OLD.bid_status = 'confirmed' THEN
+			IF NEW.bid_status = 'reviewed' THEN 
+				RETURN NEW;
+			ELSE RAISE EXCEPTION 'Unknown new status';
+			END IF;
+		ELSE 
+			RAISE EXCEPTION 'Old status corrupted';
+		END IF;
+	END IF;
+	RETURN NEW;
+END;
+$t$
+LANGUAGE PLpgSQL;
 
--- 	  IF old_status = 'closed' THEN
--- 	  RAISE EXCEPTION 'The bid is already closed!';
--- 	END if;
--- 	RETURN NEW;
--- END;
--- $t$
--- LANGUAGE PLpgSQL;
+CREATE TRIGGER check_bid_update_status
+BEFORE UPDATE ON bid
+FOR EACH ROW EXECUTE PROCEDURE check_bid_update_status();
 
--- CREATE TRIGGER prevent_bid
--- BEFORE UPDATE ON bid
--- FOR EACH ROW EXECUTE PROCEDURE prevent_update_bid();
+CREATE OR REPLACE FUNCTION check_bid_insert_status()
+RETURNS TRIGGER AS
+$t$
+BEGIN
+	IF (NEW.bid_status = 'confirmed' OR NEW.bid_status = 'submitted') THEN
+		RETURN NEW;
+	ELSE
+		RAISE EXCEPTION 'Wrong input for insert status';
+	END IF;
+END;
+$t$
+LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_bid_insert_status
+BEFORE INSERT ON bid
+FOR EACH ROW EXECUTE PROCEDURE check_bid_insert_status();
+
+CREATE OR REPLACE FUNCTION check_bid_insert_transport_method()
+RETURNS TRIGGER AS
+$t$
+BEGIN
+	IF (NEW.transport_method = 'delivery' 
+	OR NEW.transport_method = 'pcs' 
+	OR NEW.transport_method = 'pickup') THEN
+		RETURN NEW;
+	ELSE
+		RAISE EXCEPTION 'Wrong input for insert transport_method';
+	END IF;
+END;
+$t$
+LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_bid_insert_transport_method
+BEFORE INSERT ON bid
+FOR EACH ROW EXECUTE PROCEDURE check_bid_insert_transport_method();
 
 CREATE OR REPLACE FUNCTION pet_limit()
 RETURNS TRIGGER AS 
