@@ -9,7 +9,7 @@ import {
     StringResponse,
     BidJoinOwnerPet,
     sqlify,
-    BidJoinCareTaker,
+    BidJoinCareTaker
 } from "../models/bid";
 import { CaretakerStatus } from "../models/careTaker";
 import { asyncQuery } from "../utils/db";
@@ -135,7 +135,8 @@ export const test = async (req: Request, res: Response) => {
 
 export const create = async (req: Request, res: Response) => {
     try {
-        var bid: Bid = req.body;
+        const bid: Bid = req.body;
+        log.controller(bid as any);
 
         // query for the price & role of the CareTaker
         const priceStatusRow: QueryResult<CtStatusAndSpecializes> = await asyncQuery(
@@ -176,12 +177,12 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
     try {
-        const { 
-            ct_email, 
-            pet_owner, 
-            pet_name, 
-            start_date, 
-            end_date 
+        const {
+            ct_email,
+            pet_owner,
+            pet_name,
+            start_date,
+            end_date
         } = req.params;
         var bid: Bid = req.body;
         await asyncQuery(bid_query.update_bid, [
