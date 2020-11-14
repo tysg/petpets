@@ -24,6 +24,7 @@ import Rates from "./caretaker/Rates";
 import Register from "./caretaker/Register";
 import Schedule from "./caretaker/availability/SchedulePage";
 import ErrorPage from "./ErrorPage";
+import { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } from "constants";
 
 const upcomingFilter = (bid: Bid) =>
     bid.bid_status === "confirmed" &&
@@ -117,12 +118,7 @@ const CareTaker = (props: PropsWithChildren<RouteComponentProps>) => {
             >
                 <Statistic
                     title="This Month's Salary"
-                    value={
-                        salaries.find(
-                            (v) =>
-                                v.monthYear.getMonth() === new Date().getMonth()
-                        )?.fullPay ?? "N/A"
-                    }
+                    value={salaries.length > 0 ? salaries[0].fullPay : "N/A"} // HACK: TODO: FIXME: NOTE: this is not correct
                 />
                 <Assignments
                     refreshBids={refreshBids}
