@@ -9,13 +9,13 @@ import {
     StringResponse,
     BidJoinOwnerPet,
     sqlify,
-    CheckNotUndefined,
 } from "../models/bid";
 import { CaretakerStatus } from "../models/careTaker";
 import { asyncQuery } from "../utils/db";
 import { bid_query } from "../sql/sql_query";
 import { log } from "../utils/logging";
 import moment from "moment";
+import { CheckNotUndefined } from "../models";
 
 // const mapBidJoinOwnerPetQuery = (r: QueryBidJoinOwnerPet) => ({
 //     petOwner: r.pet_name,
@@ -125,7 +125,11 @@ export const test = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
     try {
         var bid: Bid = req.body;
-        CheckNotUndefined([bid.ct_email, bid.pet_owner, bid.pet_name, bid.start_date, bid.end_date]);
+        CheckNotUndefined({
+            "ct_email": bid.ct_email, 
+            "pet_owner": bid.pet_owner, 
+            "pet_name" : bid.pet_name});
+
         // query for the price & role of the CareTaker
         const priceStatusRow: QueryResult<CtStatusAndSpecializes> = await asyncQuery(
             bid_query.query_price_role,
@@ -161,6 +165,7 @@ export const update = async (req: Request, res: Response) => {
     try {
         const { ct_email, pet_owner, pet_name, start_date, end_date } = req.params;
         var bid: Bid = req.body;
+        CheckNotUndefined({"bid_status": bid.bid_status});
         await asyncQuery(bid_query.update_bid, [
             ct_email,
             pet_owner,
