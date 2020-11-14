@@ -163,7 +163,7 @@ export const create = async (req: Request, res: Response) => {
     } catch (error) {
         const {
             ct_email,
-            pet_owner: pet_owner,
+            pet_owner,
             pet_name,
             start_date,
             end_date

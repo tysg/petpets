@@ -79,6 +79,7 @@ export default (props: AssignmentCardProps) => {
         ct_price,
         transport_method
     } = props;
+    // TODO: verify working
     const acceptBid = () =>
         bidApi
             .updateBid({ ...props, bid_status: "confirmed" })
