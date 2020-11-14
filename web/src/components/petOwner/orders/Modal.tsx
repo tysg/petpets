@@ -2,14 +2,15 @@ import { Input, Form, Modal, Rate } from "antd";
 import React from "react";
 
 const ReviewModal = (props: any) => {
-    const { visible, onSubmit, onCancel, title, order } = props;
+    const { visible, onSubmit, onCancel, order } = props;
     console.log(props, "order props");
     const [form] = Form.useForm();
 
     return (
         <Modal
             visible={visible}
-            title={title}
+            style={{ height: "30%", width: "50%" }}
+            title={order?.fullname}
             okText="Submit"
             onCancel={onCancel}
             onOk={() => {
@@ -24,9 +25,6 @@ const ReviewModal = (props: any) => {
             }}
         >
             <Form form={form} initialValues={order}>
-                <Form.Item label="Feedback" name="feedback">
-                    <Input defaultValue={order?.feedback}></Input>
-                </Form.Item>
                 <Form.Item
                     label="Rating"
                     required
@@ -42,7 +40,15 @@ const ReviewModal = (props: any) => {
                         })
                     ]}
                 >
-                    <Rate defaultValue={order?.avg_rating} />
+                    <Rate value={order?.rating} />
+                </Form.Item>
+                <Form.Item label="Feedback" name="feedback">
+                    <Input.TextArea
+                        style={{ minHeight: "50%" }}
+                        bordered
+                        showCount
+                        value={order?.feedback}
+                    ></Input.TextArea>
                 </Form.Item>
             </Form>
         </Modal>
