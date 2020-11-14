@@ -29,6 +29,7 @@ import {
     CareTakerResponse,
     OwnerResponse
 } from "../../../models/bid";
+import { IndexResponse as ScheduleIndexResponse } from "./../../../models/schedule";
 import { Moment } from "moment";
 import { ApiResponse } from "../../../models";
 import { NewProfile, NewUser, UserInterface } from "../../../models/user";
@@ -219,5 +220,13 @@ export const admin = {
         return get(
             `/api/admin/best_caretakers_monthly/${yearMonth.format("YYYY-MM")}`
         );
+    }
+};
+
+export const schedule = {
+    getSchedule: (
+        type: "part_timer" | "full_timer"
+    ): Promise<AxiosResponse<ScheduleIndexResponse>> => {
+        return get(`/api/${type}/${email()}`);
     }
 };

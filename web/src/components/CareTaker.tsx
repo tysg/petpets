@@ -18,7 +18,7 @@ import PastCard from "./caretaker/PastCard";
 import PendingCard from "./caretaker/PendingCard";
 import Rates from "./caretaker/Rates";
 import Register from "./caretaker/Register";
-import Schedule from "./caretaker/Schedule";
+import Schedule from "./caretaker/availability/SchedulePage";
 import ErrorPage from "./ErrorPage";
 
 const upcomingFilter = (bid: Bid) =>
