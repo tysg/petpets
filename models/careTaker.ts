@@ -1,4 +1,4 @@
-import { ApiResponse} from "./index";
+import { ApiResponse } from "./index";
 import * as yup from "yup";
 
 export enum CaretakerStatus {
