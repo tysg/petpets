@@ -1,3 +1,11 @@
+const base_daily_specializes = (param: string) =>
+    `SELECT email, 
+            type_name as typeName, 
+            CASE WHEN s1.caretaker_status = 2 THEN
+            greatest(s1.ct_price_daily, p.base_daily_price)
+        ELSE s1.ct_price_daily END as ctPriceDaily 
+            FROM (select * from specializes_in WHERE email=${param}) s1 NATURAL JOIN pet_category p`;
+
 export const user_query = {
     userpass:
         "SELECT email, fullname, password, phone, address, role, avatar_link FROM person WHERE email=$1 LIMIT 1",
@@ -69,7 +77,7 @@ export const caretaker_query = {
         `DELETE FROM full_time_ct where email=$1`
     ],
     search_caretaker: `
-    SELECT ${CARETAKER_ATTR}, ct_price_daily as ctPriceDaily, type_name as typeName FROM (
+    SELECT ${CARETAKER_ATTR}, s2.ctpricedaily as ctPriceDaily, type_name as typeName FROM (
         SELECT email, $3 as type_name FROM 
             (SELECT DISTINCT email 
                 FROM pt_free_schedule 
@@ -86,7 +94,9 @@ export const caretaker_query = {
             WHERE EXISTS (
                 SELECT 1 FROM specializes_in s WHERE type_name = $3 AND s.email=free_sched.email
             )
-        ) as s NATURAL JOIN person NATURAL JOIN caretaker c NATURAL JOIN specializes_in
+        ) as s NATURAL JOIN person NATURAL JOIN caretaker c NATURAL JOIN (${base_daily_specializes(
+            "email"
+        )}) s2
         WHERE NOT EXISTS (
             select 1 FROM 
                 (select
@@ -126,9 +136,9 @@ const ptPaymentMonthly = `
             FROM
                 (SELECT min(start_date) AS sd, max(end_date) as ed
                 FROM bid 
-                WHERE ct_email=$1 AND bid_status='confirmed') AS startend
+                WHERE ct_email=$1 AND (bid_status='confirmed' OR bid_status='reviewed')) AS startend
                 ORDER BY sd
-        ) AS monthly, (SELECT * FROM bid WHERE bid.ct_email=$1 AND bid.bid_status='confirmed') as ct_bid
+        ) AS monthly, (SELECT * FROM bid WHERE bid.ct_email=$1 AND (bid.bid_status='confirmed' or bid.bid_status='reviewed')) as ct_bid
         WHERE ct_bid.start_date <= monthly.endmonth
         AND monthly.startmonth <= ct_bid.end_date
         AND ct_bid.start_date <= CURRENT_DATE
@@ -249,8 +259,8 @@ export const admin_query = {
 };
 
 export const specializes_query = {
-    get_specializes: `SELECT type_name as typeName, ct_price_daily as ctPriceDaily FROM specializes_in WHERE email=$1`,
-    get_specializes_admin: `SELECT type_name, ct_price_daily FROM specializes_in WHERE email=$1`,
+    get_specializes: base_daily_specializes("$1"),
+    get_specializes_admin: base_daily_specializes("$1"),
     delete_specializes: [
         `DELETE FROM ft_specializes_in WHERE email=$1`,
         `DELETE FROM pt_specializes_in WHERE email=$1`
@@ -282,12 +292,14 @@ export const bid_query = {
     query_price: `SELECT ct_price_daily 
         FROM specializes_in
         WHERE email= $1 AND type_name= $2`,
-    query_price_role: `SELECT caretaker_status, ct_price_daily
-        FROM caretaker 
-        NATURAL JOIN specializes_in 
-        NATURAL JOIN 
-        (select category as type_name FROM pet where name=$2 AND owner=$3) as ownerpet
-        WHERE email=$1`,
+    query_price_role: `
+    SELECT email, 
+        type_name as typeName, 
+        CASE WHEN s1.caretaker_status = 2 THEN
+        greatest(s1.ct_price_daily, p.base_daily_price)
+        ELSE s1.ct_price_daily END as ct_price_daily
+        FROM (select * from specializes_in WHERE email=$1) s1 NATURAL JOIN (select category as type_name FROM pet where name=$2 AND owner=$3) as ownerpet NATURAL JOIN pet_category p
+    `,
     create_bid: `
     INSERT INTO bid VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
@@ -297,3 +309,11 @@ export const bid_query = {
 };
 
 export default { user_query, pet_query, credit_card_query };
+
+/* 
+    SELECT caretaker_status, ctpricedaily as ct_price_daily
+        FROM caretaker 
+        NATURAL JOIN specializes_in 
+        NATURAL JOIN 
+        (select category as type_name FROM pet where name=$2 AND owner=$3) as ownerpet
+        WHERE email=$1 */

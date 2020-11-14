@@ -84,10 +84,10 @@ CREATE TABLE ft_specializes_in (
 	CONSTRAINT ft_specializes_in_id PRIMARY KEY (email, type_name)
 );
 
-CREATE VIEW specializes_in (email, type_name, ct_price_daily) as (
-	SELECT email, type_name, ct_price_daily FROM pt_specializes_in
+CREATE VIEW specializes_in (email, type_name, caretaker_status, ct_price_daily) as (
+	SELECT email, type_name, 1, ct_price_daily FROM pt_specializes_in
 	UNION
-	SELECT email, type_name, ct_price_daily FROM ft_specializes_in
+	SELECT email, type_name, 2, ct_price_daily FROM ft_specializes_in
 );
 
 CREATE TABLE pt_free_schedule (

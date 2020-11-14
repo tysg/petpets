@@ -10,6 +10,24 @@
 -- 		from caretaker where email=$1;'
 -- 	LANGUAGE PLpgSQL;
 
+-- base daily price for pets
+
+CREATE OR REPLACE FUNCTION above_base_daily()
+RETURNS TRIGGER AS 
+$t$ 
+DECLARE base_daily NUMERIC;
+
+BEGIN 
+	SELECT base_daily_price INTO base_daily FROM pet_category WHERE type_name=NEW.type_name;
+	NEW.ct_price_daily = GREATEST(base_daily, NEW.ct_price_daily) ;
+	RETURN NEW;
+END;
+$t$ LANGUAGE PLpgSQL;
+
+CREATE TRIGGER check_ft_price
+BEFORE INSERT OR UPDATE ON ft_specializes_in
+FOR EACH ROW EXECUTE PROCEDURE above_base_daily();
+
 CREATE OR REPLACE FUNCTION not_part_time()
 RETURNS TRIGGER AS 
 $t$ 
