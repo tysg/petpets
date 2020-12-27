@@ -1,9 +1,9 @@
 
 # Project Submission Files
 
-* [ER Diagram](docs/er_diagram.png)
-* [Project Report](docs/main.pdf)
-* [Demo](demo-video.mp4)
+* [ER Diagram](docs/report/er_diagram.png)
+* [Project Report](docs/report/main.pdf)
+* [Demo](docs/demo-video.mp4)
 
 # Petpets
 
