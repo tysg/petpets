@@ -25,6 +25,7 @@ export interface MonthlyPayment {
  */
 export interface CareTakerPayment {
     monthly_payment: MonthlyPayment[];
+    created_at: Date;
 }
 
 export interface SpecializesIn {
